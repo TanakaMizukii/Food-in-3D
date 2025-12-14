@@ -12,7 +12,7 @@ export default function ARStartPanel({ onUpdate, loading }: StartPanelProps) {
         onUpdate();
     };
     const backClick = () => {
-        router.push('/viewer');
+        router.push('/kaishu/viewer');
     }
 
     return(

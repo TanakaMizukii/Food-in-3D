@@ -11,7 +11,7 @@ export default function LandingPage() {
 
   const handleStart = () => {
     setLoading(true);
-    router.push('/viewer')
+    router.push('/kaishu/viewer')
   };
 
   return (

@@ -15,9 +15,9 @@ export default function PrimaryFab() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? '/arView' : '/arJS');
+            router.push(xr === 'supported' ? '/kaishu/arView' : '/kaishu/arJS');
         } else {
-            router.push('/viewer');
+            router.push('/kaishu/viewer');
             alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。');
         }
         setIsLoading(false);

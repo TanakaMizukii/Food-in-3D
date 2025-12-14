@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getMobileOS } from "../../lib/detectOS";
-import { checkImmersiveARSupport } from "../../lib/checkWebXR";
+import { getMobileOS } from "@/lib/detectOS";
+import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import MenuContainer from '@/components/MenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import dynamic from 'next/dynamic';
@@ -34,10 +34,10 @@ export default function LandingPage() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') { // 最後にar可能かどうかの分岐処理を付ける
-            router.push(xr === 'supported' ? '/arView' : '/arJS');
+            router.push(xr === 'supported' ? '/kaishu/arView' : '/kaishu/arJS');
             if (xr === 'supported') {setStart(true)}
         } else {
-            router.push('/viewer');
+            router.push('/kaishu/viewer');
             alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。')
         }
     }, [router]);
@@ -56,7 +56,7 @@ export default function LandingPage() {
 
     return (
         <>
-        {showARResetPanel 
+        {showARResetPanel
         ?(<ARResetPanel onRestart={handleStart}/>)
         :(<ARStartPanel onUpdate={handleStart} loading={loading} />)}
         {start &&
