@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { PMREMGenerator } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 await MeshoptDecoder.ready;
 
@@ -49,8 +49,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xaaaaaa);
 
-    const camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
-    camera.position.set(17, 42, 36);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
+    camera.position.set(0.17, 0.42, 0.36);
 
     // 簡易ライト
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
@@ -111,13 +111,15 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     };
 
     const pmrem = new PMREMGenerator(renderer);
-    new RGBELoader()
-    .setPath('/hdr/')
-    .load('kaisyu_73_small.hdr', (hdr) => {
+    pmrem.compileCubemapShader();
+    new HDRLoader()
+    .setPath('/hdr/dndn/')
+    .load('dndn_2.1_small.hdr', (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         scene.background = envTex;
         hdr.dispose();
+        // pmrem.dispose(); // 背景を頻繁に変える場合は有効化
     });
 
     return { renderer, scene, camera, controls, labelRenderer,loader, mouse, raycaster, detailNum, objectList, dispose };
