@@ -55,6 +55,9 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     // 簡易ライト
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     light.position.set( 1, 1, 1);
+    // const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+    // directionalLight.position.set(1, 1, 1).normalize;
+    // scene.add(directionalLight);
     scene.add(light);
 
     // 詳細画面表示用のRendererの作成
