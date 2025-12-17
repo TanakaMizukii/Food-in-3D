@@ -50,7 +50,6 @@ export const UseARToolkit = ({ domElement, camera, cameraParaDatURL, markerPatte
         arToolkitSource.onResizeElement();
         arToolkitSource.copyElementSizeTo(domElement);
         if (window.arToolkitContext?.arController !== null) {
-            console.log(window.arToolkitContext)
             arToolkitSource.copyElementSizeTo(
                 window.arToolkitContext.arController.canvas
             );

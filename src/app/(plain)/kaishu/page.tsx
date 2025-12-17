@@ -1,20 +1,30 @@
 'use client';
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { getMobileOS } from "@/lib/detectOS";
+import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
 import KaishuStartPanel from "@/components/KaishuStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
-  const handleStart = () => {
+  const handleARStart = async () => {
     setLoading(true);
-    router.push('/kaishu/viewer')
-  };
+    const os = getMobileOS();
+    const xr = await checkImmersiveARSupport();
+    if (os === 'android' || os === 'ios') {
+      router.push(xr === 'supported' ? `${pathname}/arView` : `${pathname}/arJS`);
+    } else {
+      router.push(`${pathname}/viewer`);
+    }
+    setLoading(false);
+  }
 
   return (
-    <KaishuStartPanel onUpdate={handleStart} loading={loading} />
+    <KaishuStartPanel onUpdate={handleARStart} loading={loading} />
   );
 }

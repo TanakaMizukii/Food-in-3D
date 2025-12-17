@@ -5,7 +5,7 @@ import { loadModel, disposeModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
 import LoadingPanel from "@/components/LoadingPanel";
 import ARHelper from "@/components/ARHelper";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 
 /** AR.js Main */
@@ -22,6 +22,8 @@ type ThreeMainProps = {
 
 export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss }: ThreeMainProps) {
     const router = useRouter();
+    const pathname = usePathname();
+    const parent = pathname.split('/').slice(0, -1).join('/') || '/';
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -87,7 +89,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss]);
 
     const handleExit = () => {
-        router.push('/arView');
+        router.push(`${parent}/arView`);
     };
 
     return (

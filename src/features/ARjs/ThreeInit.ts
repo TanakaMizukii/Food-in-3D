@@ -52,7 +52,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera();
-    camera.far = 5;
+    camera.far = 0.5;
 
     // 簡易ライト
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);

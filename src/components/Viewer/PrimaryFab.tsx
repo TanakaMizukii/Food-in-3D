@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 
 export default function PrimaryFab() {
     const router = useRouter();
+    const pathname = usePathname();
+    const parent = pathname.split('/').slice(0, -1).join('/') || '/';
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -15,9 +17,9 @@ export default function PrimaryFab() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? '/kaishu/arView' : '/kaishu/arJS');
+            router.push(xr === 'supported' ? `${parent}/arView` : `${parent}/arJS`);
         } else {
-            router.push('/kaishu/viewer');
+            router.push(`${parent}/viewer`);
             alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。');
         }
         setIsLoading(false);
