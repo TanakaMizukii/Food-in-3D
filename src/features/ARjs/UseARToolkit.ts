@@ -50,14 +50,13 @@ export const UseARToolkit = ({ domElement, camera, cameraParaDatURL, markerPatte
         arToolkitSource.onResizeElement();
         arToolkitSource.copyElementSizeTo(domElement);
         if (window.arToolkitContext?.arController !== null) {
+            console.log(window.arToolkitContext)
             arToolkitSource.copyElementSizeTo(
                 window.arToolkitContext.arController.canvas
             );
         }
         // 保険：投影は常にAR由来
-        if (arToolkitContext.getProjectionMatrix) {
-            camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-        }
+        camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
     }
     window.addEventListener("resize", arResize);
 
