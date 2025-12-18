@@ -2,14 +2,15 @@ import styled from "styled-components";
 
 import { useContext } from 'react';
 import { ModelChangeContext } from "../../contexts/ModelChangeContext";
-import productModels from "@/data/MenuInfo";
+import type { ProductModelsProps } from "@/data/types";
 
 type ArrowsProps = {
     currentIndex: number;
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+    productModels: ProductModelsProps;
 }
 
-export default function NavArrows({currentIndex, setCurrentIndex}: ArrowsProps) {
+export default function NavArrows({currentIndex, setCurrentIndex, productModels}: ArrowsProps) {
     const { changeModel } = useContext(ModelChangeContext);
     const handleItemBackChange = (index: number) => {
         if (currentIndex > 0) {

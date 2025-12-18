@@ -3,24 +3,30 @@ import styled from "styled-components";
 import React from "react";
 import { useContext } from 'react';
 import { ModelChangeContext } from "../../contexts/ModelChangeContext";
-import { categories, productModels } from "@/data/MenuInfo";
-import type { ProductModel } from "@/data/MenuInfo";
+import type { Category, ProductModel, ProductModelsProps } from "@/data/types";
 
 type SpecificProps = {
     currentIndex: number;
     currentCategory: number;
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+    categories: Category[];
+    productModels: ProductModelsProps;
 }
 
-export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex }: SpecificProps) {
-    const selectCategory: {[index: string] : string[]}  = {
-        'メインメニュー': ['盛り合わせ', 'カルビ', 'タン', 'ホルモン', '締めの一品'],
-        '盛り合わせ': ['盛り合わせ'],
-        'カルビ': ['カルビ'],
-        'ホルモン': ['ホルモン'],
-        '締めの一品': ['締めの一品'],
-        // 'その他': ['その他'],
-    }
+export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels }: SpecificProps) {
+    // カテゴリーごとの表示設定（店舗のcategoriesに基づいて動的に生成）
+    const selectCategory: {[index: string] : string[]}  = {};
+
+    // メインメニューは全カテゴリーを表示（メインメニュー自体を除く）
+    const allCategoryNames = categories.map(c => c.name).filter(name => name !== 'メインメニュー');
+    selectCategory['メインメニュー'] = allCategoryNames;
+
+    // 各カテゴリーは自身のみを表示
+    categories.forEach(cat => {
+        if (cat.name !== 'メインメニュー') {
+            selectCategory[cat.name] = [cat.name];
+        }
+    });
     // まず今回配置する配列を取り出しておく
     const nowCategory = categories[currentCategory].name;
     const viewCategories = selectCategory[nowCategory] ?? [];

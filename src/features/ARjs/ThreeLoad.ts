@@ -18,7 +18,7 @@ export type ModelProps = {
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THREE.Group<THREE.Object3DEventMap> | null): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
         modelName = 'カルビ盛り',
-        modelPath = 'models/calbee_set_comp.glb',
+        modelPath = '/models/denden/お試し皿盆4_raw_comp.glb',
         modelDetail = '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
         modelPrice = '2,300 (税込 2,530)',
     } = Model;
@@ -45,7 +45,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
             ctx.objectList = [];
         }
         const model = objects.scene;
-        model.scale.set(0.09, 0.09, 0.09);
+        model.scale.set(7, 7, 7);
         // 詳細オブジェクトの表示状態をboolean値で設定
         model.userData.isDetail = true;
         ctx.smoothedRoot.add(model);

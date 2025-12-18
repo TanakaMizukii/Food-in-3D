@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { PMREMGenerator } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 await MeshoptDecoder.ready;
 
@@ -27,6 +27,8 @@ export type InitOptions = {
     alpha?: boolean;
     antialias?: boolean;
     useControls?: boolean;
+    hdrPath?: string;       // 環境マップのパス (例: '/hdr/kaishu/')
+    hdrFile?: string;       // HDRファイル名 (例: 'kaishu_env.hdr')
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -37,6 +39,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         alpha = false,
         antialias = true,
         useControls = false,
+        hdrPath = '/hdr/denden/',
+        hdrFile = 'dndn_2.1_small.hdr',
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -49,12 +53,15 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xaaaaaa);
 
-    const camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
-    camera.position.set(17, 42, 36);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
+    camera.position.set(0.17, 0.42, 0.36);
 
     // 簡易ライト
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     light.position.set( 1, 1, 1);
+    // const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+    // directionalLight.position.set(1, 1, 1).normalize;
+    // scene.add(directionalLight);
     scene.add(light);
 
     // 詳細画面表示用のRendererの作成
@@ -111,13 +118,15 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     };
 
     const pmrem = new PMREMGenerator(renderer);
-    new RGBELoader()
-    .setPath('/hdr/')
-    .load('kaisyu_73_small.hdr', (hdr) => {
+    pmrem.compileCubemapShader();
+    new HDRLoader()
+    .setPath(hdrPath)
+    .load(hdrFile, (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         scene.background = envTex;
         hdr.dispose();
+        // pmrem.dispose(); // 背景を頻繁に変える場合は有効化
     });
 
     return { renderer, scene, camera, controls, labelRenderer,loader, mouse, raycaster, detailNum, objectList, dispose };

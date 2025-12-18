@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 
 export default function PrimaryFab() {
     const router = useRouter();
+    const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -14,12 +15,20 @@ export default function PrimaryFab() {
         const os = getMobileOS();
         const xr = await checkImmersiveARSupport();
 
-        if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? '/arView' : '/arJS');
+        // 末尾 / を消してから親を計算
+        const current = pathname.replace(/\/$/, "");
+        const parent = current.split("/").slice(0, -1).join("/") || "/";
+
+        // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
+        const base = parent === "/" ? "" : parent;
+
+        if (os === "android" || os === "ios") {
+            router.push(xr === "supported" ? `${base}/arView` : `${base}/arJS`);
         } else {
-            router.push('/viewer');
-            alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。');
+            router.push(`${base}/viewer`);
+            alert("デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。");
         }
+
         setIsLoading(false);
     }
 
