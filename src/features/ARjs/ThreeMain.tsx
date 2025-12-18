@@ -89,7 +89,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss]);
 
     const handleExit = () => {
-        router.push(`${parent}/arView`);
+        router.push(`${parent}/viewer`);
     };
 
     return (
