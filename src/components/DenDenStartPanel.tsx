@@ -14,14 +14,14 @@ export default function DendenStartPanel({ onUpdate, loading }: StartPanelProps)
         // <!-- スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />
+                {/* <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} /> */}
                 <img src="/thumb/海州ロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '3D空間準備中' : '商品の立体表示を開始'}
                     </button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
-                <img src="/thumb/カルビ盛り切り抜き.png" alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} />
+                {/* <img src="/thumb/カルビ盛り切り抜き.png" alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} /> */}
             </div>
         </MyStart>
     )
@@ -112,7 +112,7 @@ const MyStart = styled.div`
     font-weight: 600;
     letter-spacing: 1px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
-    border: 1px solid #b22222;
+    border: 1px solid #f5f5f5;
     cursor: pointer;
     min-width: 280px;
     text-align: center;

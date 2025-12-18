@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
-import DendenStartPanel from "@/components/KaishuStartPanel";
+import DendenStartPanel from "@/components/DenDenStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
