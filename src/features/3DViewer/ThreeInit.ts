@@ -116,7 +116,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const pmrem = new PMREMGenerator(renderer);
     pmrem.compileCubemapShader();
     new HDRLoader()
-    .setPath('/hdr/dndn/')
+    .setPath('/hdr/denden/')
     .load('dndn_2.1_small.hdr', (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;

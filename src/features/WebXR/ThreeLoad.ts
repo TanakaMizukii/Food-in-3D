@@ -18,7 +18,7 @@ export type ModelProps = {
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
         modelName = 'カルビ盛り',
-        modelPath = '/models/calbee_set_comp.glb',
+        modelPath = '/models/denden/お試し皿盆4_raw_comp.glb',
         modelDetail = '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
         modelPrice = '2,300 (税込 2,530)',
     } = Model;
