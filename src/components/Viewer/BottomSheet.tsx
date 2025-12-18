@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import React from "react";
 import { useState } from "react";
-import type { ProductModel } from "@/data/MenuInfo";
+import type { ProductModel } from "@/data/types";
 
 type BottomProps = {
     currentProduct: ProductModel;

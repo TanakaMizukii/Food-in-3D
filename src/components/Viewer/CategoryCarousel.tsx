@@ -1,15 +1,7 @@
 import styled from "styled-components";
 
 import { useState, useRef, useEffect } from "react";
-import { categories } from "@/data/MenuInfo";
-
-export interface Category {
-    id: number;
-    name: string;
-    icon: string;
-    count: number;
-    description: string;
-}
+import type { Category } from "@/data/types";
 
 export type CategoryState = 'center' | 'adjacent' | 'far';
 
@@ -20,8 +12,9 @@ export interface CategoryStates {
 type CategoryProps = {
     currentCategory: number;
     setCurrentCategory: React.Dispatch<React.SetStateAction<number>>;
+    categories: Category[];
 }
-export default function CategoryCarousel({setCurrentCategory}: CategoryProps) {
+export default function CategoryCarousel({setCurrentCategory, categories}: CategoryProps) {
     const [categoryStates, setCategoryStates] = useState<CategoryStates>({});
     const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -69,8 +62,7 @@ export default function CategoryCarousel({setCurrentCategory}: CategoryProps) {
                 container.removeEventListener('scroll', handleScroll);
             };
         }
-    }, [setCurrentCategory]);
-0
+    }, [setCurrentCategory, categories]);
     const scrollToCategory = (index: number) => {
         if (!categoryScrollRef.current) return;
         const container = categoryScrollRef.current;

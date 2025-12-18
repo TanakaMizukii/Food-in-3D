@@ -3,8 +3,7 @@ import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
 import TabNavigation from "./TabNavigation";
 import { MyContent } from "./MenuContent";
-import { productCategory, productModels } from "../data/MenuInfo";
-
+import type { ProductModelsProps } from "@/data/types";
 
 import React, { useEffect, useState } from "react";
 import { ToggleChangeContext } from "../contexts/ToggleChangeContext";
@@ -12,12 +11,14 @@ import { ToggleChangeContext } from "../contexts/ToggleChangeContext";
 // 型エイリアスの作成
 type MenuContainerProps = {
     className?: string;
+    productCategory: string[];
+    productModels: ProductModelsProps;
 };
 type MyContainerProps = {
     $expanded: boolean;
 }
 
-export default function MenuContainer({ className } : MenuContainerProps) {
+export default function MenuContainer({ className, productCategory, productModels } : MenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
 

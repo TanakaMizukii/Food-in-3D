@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import '../App.css';
 import ARStartPanel from "@/components/ARStartPanel";
 import ARResetPanel from "@/components/ARResetPanel";
+import { productModels, productCategory } from '@/data/kaishu/MenuInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
@@ -62,7 +63,7 @@ export default function LandingPage() {
         {start &&
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset}/>
-                <MenuContainer />
+                <MenuContainer productCategory={productCategory} productModels={productModels} />
             </ModelChangeContext.Provider>
         }
         </>

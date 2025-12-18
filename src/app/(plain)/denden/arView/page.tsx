@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import '../App.css';
 import ARStartPanel from "@/components/ARStartPanel";
 import ARResetPanel from "@/components/ARResetPanel";
+import { productModels, productCategory } from '@/data/denden/MenuInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
@@ -34,10 +35,10 @@ export default function LandingPage() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') { // 最後にar可能かどうかの分岐処理を付ける
-            router.push(xr === 'supported' ? '/kaishu/arView' : '/kaishu/arJS');
+            router.push(xr === 'supported' ? '/denden/arView' : '/denden/arJS');
             if (xr === 'supported') {setStart(true)}
         } else {
-            router.push('/kaishu/viewer');
+            router.push('/denden/viewer');
             alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。')
         }
     }, [router]);
@@ -62,7 +63,7 @@ export default function LandingPage() {
         {start &&
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset}/>
-                <MenuContainer />
+                <MenuContainer productCategory={productCategory} productModels={productModels} />
             </ModelChangeContext.Provider>
         }
         </>

@@ -7,6 +7,7 @@ import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import dynamic from 'next/dynamic';
 import LoadingPanel from '@/components/LoadingPanel';
 import GuideQRCode from '@/components/GuideQRCode';
+import { productModels, productCategory } from '@/data/denden/MenuInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
@@ -52,7 +53,7 @@ export default function ARjsPage() {
                     onCameraReady={handleCameraReady}
                     onGuideDismiss={handleGuideDismiss}
                 />
-                <MenuContainer />
+                <MenuContainer productCategory={productCategory} productModels={productModels} />
             </ModelChangeContext.Provider>
         </>
     );

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
+import type { StoreEnvironment } from "@/data/types";
 
 type ThreeContext = ReturnType<typeof initThree>;
 
@@ -14,9 +15,10 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onLoadingChange: (loading: boolean) => void;
+    storeEnvironment?: StoreEnvironment;
 };
 
-export default function ThreeMain({ setChangeModel, onLoadingChange }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onLoadingChange, storeEnvironment }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -47,6 +49,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange }: ThreeMain
             alpha: true,
             antialias: true,
             useControls: true,
+            hdrPath: storeEnvironment?.hdrPath,
+            hdrFile: storeEnvironment?.hdrFile,
         };
         const threeContext = initThree(canvasElement, rendererOptions);
         setCtx(threeContext);
@@ -56,7 +60,13 @@ export default function ThreeMain({ setChangeModel, onLoadingChange }: ThreeMain
         threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
 
         (async () => {
-            const firstModel = {};
+            // 初期モデルの設定（storeEnvironmentがあればそれを使用）
+            const firstModel = storeEnvironment?.defaultModel ? {
+                modelName: storeEnvironment.defaultModel.name,
+                modelPath: storeEnvironment.defaultModel.path,
+                modelDetail: storeEnvironment.defaultModel.detail,
+                modelPrice: storeEnvironment.defaultModel.price,
+            } : {};
             onLoadingChange(true);
             // useEffect内で直接呼び出す代わりに、state更新後のeffectを利用
             if(threeContext){
@@ -81,7 +91,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange }: ThreeMain
             detach();
             threeContext.dispose();
         };
-    }, [onLoadingChange]);
+    }, [onLoadingChange, storeEnvironment]);
 
     return (
         <>

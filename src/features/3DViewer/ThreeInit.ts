@@ -27,6 +27,8 @@ export type InitOptions = {
     alpha?: boolean;
     antialias?: boolean;
     useControls?: boolean;
+    hdrPath?: string;       // 環境マップのパス (例: '/hdr/kaishu/')
+    hdrFile?: string;       // HDRファイル名 (例: 'kaishu_env.hdr')
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -37,6 +39,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         alpha = false,
         antialias = true,
         useControls = false,
+        hdrPath = '/hdr/denden/',
+        hdrFile = 'dndn_2.1_small.hdr',
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -116,8 +120,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const pmrem = new PMREMGenerator(renderer);
     pmrem.compileCubemapShader();
     new HDRLoader()
-    .setPath('/hdr/denden/')
-    .load('dndn_2.1_small.hdr', (hdr) => {
+    .setPath(hdrPath)
+    .load(hdrFile, (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         scene.background = envTex;

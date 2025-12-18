@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { MyContent } from "../MenuContent";
-import productModels from "@/data/MenuInfo";
+import type { ProductModelsProps } from "@/data/types";
 
-type TopAppBarProps = {
+type SideSlidePanelProps = {
     menuOpen: boolean;
     setMenuOpen: (open: boolean) => void;
+    productModels: ProductModelsProps;
 };
 
-export default function SideSlidePanel({ menuOpen, setMenuOpen }: TopAppBarProps) {
+export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels }: SideSlidePanelProps) {
     return(
         <MySideSlide>
             {/* Overlay */}

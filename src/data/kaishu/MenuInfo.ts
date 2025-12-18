@@ -1,9 +1,16 @@
-export interface Category {
-    id: number;
-    name: string;
-    count: number;
-    description: string;
-}
+import type { Category, ProductModel, ProductModelsProps, StoreEnvironment } from '../types';
+
+// 店舗環境設定
+export const storeEnvironment: StoreEnvironment = {
+    hdrPath: '/hdr/kaishu/',
+    hdrFile: 'kaisyu_73_small.hdr',
+    defaultModel: {
+        name: 'カルビ盛り',
+        path: '/models/calbee_set_comp.glb',
+        detail: '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
+        price: '2,400 (税込 2,640)',
+    },
+};
 
 export const categories: Category[] = [
     {
@@ -38,7 +45,7 @@ export const categories: Category[] = [
     },
 ];
 
-export const productCategory : string[] =[
+export const productCategory: string[] = [
     'メインメニュー',
     '盛り合わせ',
     'カルビ',
@@ -46,30 +53,8 @@ export const productCategory : string[] =[
     '締めの一品',
 ];
 
-export type ProductModel = {
-    id: number;
-    name: string;
-    shortName: string;
-    category: string;
-    price: string;
-    minPrice: string;
-    description: string;
-    image: string;
-    model: string;
-    minDetail?: string;
-    serving: string;
-    part: string | null;
-    origin: string | null;
-    recPeople?: string | null;
-    recommended: string;
-    tags: string[];
-};
-
-// 配列型（= 既存の ProductModelsProps）
-export type ProductModelsProps = ProductModel[];
-
 // 商品とモデルの関連付け
-export const productModels : ProductModelsProps = [
+export const productModels: ProductModelsProps = [
     {
         id: 1,
         name: 'カルビ盛り（2,3人前）',
@@ -254,7 +239,7 @@ export const productModels : ProductModelsProps = [
         part: '牛の小腸',
         origin: '信州牛',
         recommended: '味噌・塩両方',
-        tags: ['ぷりぷり', '味噌味', 'お酒に合う','マルチョウ']
+        tags: ['ぷりぷり', '味噌味', 'お酒に合う', 'マルチョウ']
     },
     {
         id: 12,
@@ -308,4 +293,5 @@ export const productModels : ProductModelsProps = [
         tags: ['シメ', '温まる', '優しい味', '卵スープ']
     },
 ];
+
 export default productModels;
