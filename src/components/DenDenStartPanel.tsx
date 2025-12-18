@@ -15,7 +15,7 @@ export default function DendenStartPanel({ onUpdate, loading }: StartPanelProps)
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
                 {/* <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} /> */}
-                <img src="/thumb/海州ロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
+                <img src="/thumb/でんでんロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '3D空間準備中' : '商品の立体表示を開始'}

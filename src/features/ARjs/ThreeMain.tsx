@@ -23,7 +23,8 @@ type ThreeMainProps = {
 export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss }: ThreeMainProps) {
     const router = useRouter();
     const pathname = usePathname();
-    const parent = pathname.split('/').slice(0, -1).join('/') || '/';
+    const current = pathname.replace(/\/$/, "");
+    const parent = current.split("/").slice(0, -1).join("/") || "/";
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -89,6 +90,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss]);
 
     const handleExit = () => {
+        const base = parent === "/" ? "" : parent;
         router.push(`${parent}/viewer`);
     };
 
