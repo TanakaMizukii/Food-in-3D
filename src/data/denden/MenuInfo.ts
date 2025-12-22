@@ -6,7 +6,7 @@ export const storeEnvironment: StoreEnvironment = {
     hdrFile: 'dndn_2.1_small.hdr',
     defaultModel: {
         name: '2種の鶏唐コンビ丼（通常）',
-        path: '/models/denden/お試し皿盆4_raw_comp.glb',
+        path: '/models/denden/data_vol4_comp.glb',
         detail: '2種類の鶏唐揚げが楽しめるコンビ丼です。',
         price: '--- (税込 ---)',
     },

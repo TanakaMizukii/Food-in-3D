@@ -54,7 +54,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     scene.background = new THREE.Color(0xaaaaaa);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
-    camera.position.set(0.17, 0.42, 0.36);
+    camera.position.set(0.34, 0.77, 0.49);
 
     // 簡易ライト
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);

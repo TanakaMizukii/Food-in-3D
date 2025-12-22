@@ -14,7 +14,7 @@ export default function TopAppBar({ menuOpen, setMenuOpen }: TopAppBarProps) {
             {/* Top App Bar */}
             <div className="top-app-bar">
                 <button onClick={() => router.back()}>←</button>
-                <h1>ホルモン屋海州</h1>
+                <h1>でんでん</h1>
                 <button onClick={() => setMenuOpen(!menuOpen)}>⋮</button>
             </div>
         </MyTopBar>
