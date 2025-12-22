@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ren:*)",
+      "Bash(ren \"オムライス1.jpg\" \"omurice_special.jpg\")"
+    ]
+  }
+}
