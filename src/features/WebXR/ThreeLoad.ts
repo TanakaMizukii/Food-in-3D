@@ -60,7 +60,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
         // 詳細オブジェクトの表示状態をboolean値で設定
         clone.userData.isDetail = true;
         ctx.reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
-        clone.scale.set(0.8, 0.8, 0.8); // 改変されてしまうためdecomposeの後に記述
+        clone.scale.set(0.75, 0.75, 0.75); // 改変されてしまうためdecomposeの後に記述
         clone.add(detail);
 
         // 新しいモデルのバウンディングボックスを作成
