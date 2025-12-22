@@ -55,7 +55,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
     camera.far = 0.5;
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 2);
     light.position.set( 1, 1, 1);
     scene.add(light);
 
@@ -143,8 +143,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
 
     const pmrem = new PMREMGenerator(renderer);
     new RGBELoader()
-    .setPath('/hdr/')
-    .load('kaisyu_73_small.hdr', (hdr) => {
+    .setPath('/hdr/denden/')
+    .load('dndn_2.1_small.hdr', (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         hdr.dispose();

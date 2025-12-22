@@ -12,14 +12,14 @@ export default function ARStartPanel({ onUpdate, loading }: StartPanelProps) {
         onUpdate();
     };
     const backClick = () => {
-        router.push('/kaishu/viewer');
+        router.push('/denden/viewer');
     }
 
     return(
         // <!-- スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src="/thumb/海州ロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
+                <img src="/thumb/でんでんロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>ARエクスペリエンスを開始</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '判定中…' : 'AR体験を始める'}

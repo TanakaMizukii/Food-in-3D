@@ -132,8 +132,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
 
     const pmrem = new PMREMGenerator(renderer);
     new RGBELoader()
-    .setPath('/hdr/')
-    .load('kaisyu_73_small.hdr', (hdr) => {
+    .setPath('/hdr/denden')
+    .load('dndn_2.1_small.hdr', (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         hdr.dispose();
