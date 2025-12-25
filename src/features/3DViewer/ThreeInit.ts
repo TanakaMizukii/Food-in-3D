@@ -27,8 +27,8 @@ export type InitOptions = {
     alpha?: boolean;
     antialias?: boolean;
     useControls?: boolean;
-    hdrPath?: string;       // 環境マップのパス (例: '/hdr/kaishu/')
-    hdrFile?: string;       // HDRファイル名 (例: 'kaishu_env.hdr')
+    hdrPath?: string;
+    hdrFile?: string;
 };
 
 /** Three.js 初期化（canvas必須） */

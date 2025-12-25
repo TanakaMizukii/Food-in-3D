@@ -4,7 +4,7 @@ import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { UseARToolkit } from './UseARToolkit';
 import { PMREMGenerator } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 await MeshoptDecoder.ready;
 
@@ -31,7 +31,8 @@ export type InitOptions = {
     pixelRatioCap?: number; // モバイル負荷対策
     alpha?: boolean;
     antialias?: boolean;
-    useControls?: boolean;
+    hdrPath?: string;
+    hdrFile?: string;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -41,6 +42,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
         pixelRatioCap = 2,
         alpha = true, // ARでは背景を透過させるためtrue推奨
         antialias = true,
+        hdrPath = '/hdr/denden/',
+        hdrFile = 'dndn_2.1_small.hdr',
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -142,9 +145,9 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
     };
 
     const pmrem = new PMREMGenerator(renderer);
-    new RGBELoader()
-    .setPath('/hdr/denden/')
-    .load('dndn_2.1_small.hdr', (hdr) => {
+    new HDRLoader()
+    .setPath(hdrPath)
+    .load(hdrFile, (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         hdr.dispose();
