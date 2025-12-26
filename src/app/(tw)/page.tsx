@@ -1,4 +1,5 @@
 import Link from "next/link";
+import storeNames from "@/data/storeInfo";
 
 export default function Home() {
   return (
@@ -18,16 +19,13 @@ export default function Home() {
         </div>
         <div className="w-full max-w-sm animate-fade-in-up animation-delay-600">
           <div className="grid grid-cols-1 gap-4">
-            <Link href="/kaishu" passHref>
-              <div className="flex items-center justify-center w-full h-16 px-6 rounded-lg bg-gray-900 border border-gray-800 text-lg font-medium text-gray-100 transition-all duration-200 ease-in-out hover:bg-gray-800 hover:border-gray-700 hover:-translate-y-0.5 cursor-pointer">
-                ホルモン屋 海州
-              </div>
-            </Link>
-            <Link href="/denden" passHref>
-              <div className="flex items-center justify-center w-full h-16 px-6 rounded-lg bg-gray-900 border border-gray-800 text-lg font-medium text-gray-100 transition-all duration-200 ease-in-out hover:bg-gray-800 hover:border-gray-700 hover:-translate-y-0.5 cursor-pointer">
-                でんでん
-              </div>
-            </Link>
+            {storeNames.map((storeName) => (
+              <Link key={storeName.id} href={`/${storeName.use_name}`} passHref>
+                <div className="flex items-center justify-center w-full h-16 px-6 rounded-lg bg-gray-900 border border-gray-800 text-lg font-medium text-gray-100 transition-all duration-200 ease-in-out hover:bg-gray-800 hover:border-gray-700 hover:-translate-y-0.5 cursor-pointer">
+                  {storeName.true_name}
+                </div>
+              </Link>
+            ))}
             {/* Add more store buttons here as needed */}
           </div>
         </div>
