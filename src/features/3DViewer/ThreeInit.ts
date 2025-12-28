@@ -27,8 +27,8 @@ export type InitOptions = {
     alpha?: boolean;
     antialias?: boolean;
     useControls?: boolean;
-    hdrPath?: string;       // 環境マップのパス (例: '/hdr/kaishu/')
-    hdrFile?: string;       // HDRファイル名 (例: 'kaishu_env.hdr')
+    hdrPath?: string;
+    hdrFile?: string;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -54,10 +54,10 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     scene.background = new THREE.Color(0xaaaaaa);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
-    camera.position.set(0.17, 0.42, 0.36);
+    camera.position.set(0.34, 0.77, 0.49);
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 2);
     light.position.set( 1, 1, 1);
     // const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
     // directionalLight.position.set(1, 1, 1).normalize;

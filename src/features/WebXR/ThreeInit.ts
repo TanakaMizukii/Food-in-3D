@@ -4,8 +4,9 @@ import { TransformControls } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { PMREMGenerator } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+
 await MeshoptDecoder.ready;
 
 export type ThreeCtx = {
@@ -33,6 +34,8 @@ export type InitOptions = {
     pixelRatioCap?: number; // モバイル負荷対策
     alpha?: boolean;
     antialias?: boolean;
+    hdrPath?: string;
+    hdrFile?: string;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -42,6 +45,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         pixelRatioCap = 2,
         alpha = false,
         antialias = true,
+        hdrPath = '/hdr/denden/',
+        hdrFile = 'dndn_2.1_small.hdr',
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -131,9 +136,9 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     };
 
     const pmrem = new PMREMGenerator(renderer);
-    new RGBELoader()
-    .setPath('/hdr/')
-    .load('kaisyu_73_small.hdr', (hdr) => {
+    new HDRLoader()
+    .setPath(hdrPath)
+    .load(hdrFile, (hdr) => {
         const envTex = pmrem.fromEquirectangular(hdr).texture;
         scene.environment = envTex;
         hdr.dispose();

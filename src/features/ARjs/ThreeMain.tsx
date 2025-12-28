@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "@/features/ARjs/ThreeInit";
-import { loadModel, disposeModel } from "@/features/ARjs/ThreeLoad";
+import { loadModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
 import LoadingPanel from "@/components/LoadingPanel";
 import ARHelper from "@/components/ARHelper";
 import { useRouter, usePathname } from "next/navigation";
-
+import { firstEnvironment } from "@/data/denden/MenuInfo";
 
 /** AR.js Main */
 type ThreeContext = ReturnType<typeof initThree>;
@@ -43,7 +43,6 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         return () => setChangeModel(() => async () => {});
     }, [changeModel, setChangeModel]);
 
-
     useEffect(() => {
         if (!containerRef.current || !canvasRef.current) return;
 
@@ -61,10 +60,15 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
 
         (async () => {
-            const firstModel = {};
-            // useEffect内で直接呼び出す代わりに、state更新後のeffectを利用
+            const firstModel = firstEnvironment.defaultModel;
+
             if(threeContext){
-                const nowModel = await loadModel(firstModel, threeContext, null);
+                const nowModel = await loadModel({
+                    modelName: firstModel.name,
+                    modelPath: firstModel.path,
+                    modelDetail: firstModel.detail,
+                    modelPrice: firstModel.price,
+                }, threeContext, null);
                 nowModelRef.current = nowModel;
             }
         })();

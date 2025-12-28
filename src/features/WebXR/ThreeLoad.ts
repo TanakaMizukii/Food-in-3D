@@ -18,7 +18,7 @@ export type ModelProps = {
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
         modelName = 'カルビ盛り',
-        modelPath = '/models/denden/お試し皿盆4_raw_comp.glb',
+        modelPath = '/models/denden/chicken_combo_large_comp.glb',
         modelDetail = '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
         modelPrice = '2,300 (税込 2,530)',
     } = Model;
@@ -60,7 +60,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
         // 詳細オブジェクトの表示状態をboolean値で設定
         clone.userData.isDetail = true;
         ctx.reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
-        clone.scale.set(0.0085, 0.0085, 0.0085); // 改変されてしまうためdecomposeの後に記述
+        clone.scale.set(0.75, 0.75, 0.75); // 改変されてしまうためdecomposeの後に記述
         clone.add(detail);
 
         // 新しいモデルのバウンディングボックスを作成
@@ -77,7 +77,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
 
             if (newModelBox.intersectsBox(existingModelBox)) {
                 // 衝突が検出された場合、古いモデルを削除
-                existingModel.traverse((child) => {
+                existingModel.traverse((child: THREE.Object3D) => {
                     if (child instanceof CSS2DObject) {
                         child.element.remove();
                     }

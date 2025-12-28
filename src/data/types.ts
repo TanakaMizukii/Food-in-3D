@@ -28,7 +28,7 @@ export type ProductModel = {
 export type ProductModelsProps = ProductModel[];
 
 // 店舗環境設定
-export type StoreEnvironment = {
+export type FirstEnvironment = {
     hdrPath: string;        // 環境マップのパス (例: '/hdr/kaishu/')
     hdrFile: string;        // HDRファイル名 (例: 'kaishu_env.hdr')
     defaultModel: {
@@ -38,3 +38,9 @@ export type StoreEnvironment = {
         price: string;
     };
 };
+
+export type StoreNames = {
+    id: number,
+    use_name: string,
+    true_name: string,
+}
