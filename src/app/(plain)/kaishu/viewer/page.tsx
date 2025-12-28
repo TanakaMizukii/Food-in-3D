@@ -13,7 +13,7 @@ import BottomSheet from '@/components/Viewer/BottomSheet';
 import PrimaryFab from '@/components/Viewer/PrimaryFab';
 import LoadingPanel from '@/components/LoadingPanel';
 
-import { productModels, categories, storeEnvironment } from '@/data/kaishu/MenuInfo';
+import { productModels, categories, firstEnvironment } from '@/data/kaishu/MenuInfo';
 import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/TutorialOverlay';
@@ -57,7 +57,7 @@ export default function ViewerPage() {
         <ModelChangeContext.Provider value={{ changeModel: wrappedChangeModel }}>
             <Root>
                 <SceneLayer>
-                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} storeEnvironment={storeEnvironment} />
+                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} firstEnvironment={firstEnvironment} />
                 </SceneLayer>
 
                 <TopLayer>
