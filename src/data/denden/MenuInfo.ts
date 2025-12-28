@@ -1,7 +1,7 @@
-import type { Category, ProductModel, ProductModelsProps, StoreEnvironment } from '../types';
+import type { Category, ProductModelsProps, FirstEnvironment } from '../types';
 
-// 店舗環境設定
-export const storeEnvironment: StoreEnvironment = {
+// 初期環境設定
+export const firstEnvironment: FirstEnvironment = {
     hdrPath: '/hdr/denden/',
     hdrFile: 'dndn_2.1_small.hdr',
     defaultModel: {

@@ -14,3 +14,7 @@ const storeNames: StoreNames[] = [
 ];
 
 export default storeNames;
+
+export function findStoreBySlug(slug: string) {
+    return storeNames.find((s) => s.use_name === slug) ?? null;
+}
