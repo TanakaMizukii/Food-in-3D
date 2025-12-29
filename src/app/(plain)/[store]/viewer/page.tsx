@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '../App.css';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
-import dynamic from 'next/dynamic';
 import TopAppBar from '@/components/Viewer/TopAppBar';
 import CategoryCarousel from '@/components/Viewer/CategoryCarousel';
 import NavArrows from '@/components/Viewer/NavArrows';
@@ -13,22 +12,18 @@ import BottomSheet from '@/components/Viewer/BottomSheet';
 import PrimaryFab from '@/components/Viewer/PrimaryFab';
 import LoadingPanel from '@/components/LoadingPanel';
 
-import { productModels, categories, firstEnvironment } from '@/data/kaishu/MenuInfo';
+import { productModels, categories, firstEnvironment } from '@/data/denden/MenuInfo';
 import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/TutorialOverlay';
+import ThreeMain from '@/features/3DViewer/ThreeMain';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-// ThreeMainコンポーネントをdynamic importに書き換えてハイドレーションエラーが起きないようにする。
-const ThreeMain = dynamic(() => import('@/features/3DViewer/ThreeMain'), {
-    ssr: false, // サーバーサイドレンダリングを無効化
-});
-
 export default function ViewerPage() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [currentCategory, setCurrentCategory] = useState(1); // カルビが初期選択
+    const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
@@ -39,7 +34,6 @@ export default function ViewerPage() {
         console.warn("changeModel is not yet initialized", info);
     });
 
-    // changeModelをラップして、メニューを閉じる機能を追加
     const wrappedChangeModel: ChangeModelFn = async (info) => {
         setMenuOpen(false);
         await changeModel(info);
@@ -81,13 +75,13 @@ export default function ViewerPage() {
 const Root = styled.div`
     position: relative;
     width: 100%;
-    height: 100dvh;      /* 動的ビューポート高 */
+    height: 100dvh;
     overflow: hidden;
 `;
 
 const SceneLayer = styled.div`
     position: absolute;
-    inset: 0;            /* = top:0; right:0; bottom:0; left:0 */
+    inset: 0;
     z-index: 0;
 `;
 
@@ -97,9 +91,8 @@ const TopLayer = styled.div`
     left: 0;
     right: 0;
     z-index: 10;
-    /* 下の3Dを操作可能に保ちたい時は必要に応じて */
     pointer-events: auto;
-    & > * { pointer-events: auto; } /* ボタン等は操作可能 */
+    & > * { pointer-events: auto; }
 `;
 
 const BottomLayer = styled.div`
@@ -108,7 +101,6 @@ const BottomLayer = styled.div`
     right: 0;
     bottom: 0;
     z-index: 10;
-    /* 下の3Dを操作可能に保ちたい時は必要に応じて */
     pointer-events: auto;
-    & > * { pointer-events: auto; } /* ボタン等は操作可能 */
+    & > * { pointer-events: auto; }
 `;

@@ -75,7 +75,9 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     let controls: OrbitControls | undefined;
     if (useControls) {
         controls = new OrbitControls(camera, labelRenderer.domElement);
+        controls.autoRotate = true;
         controls.enableDamping = true;
+        controls.dampingFactor = 0.2;
         controls.target.set(0, 0, 0);
     }
 

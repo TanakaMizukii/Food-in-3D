@@ -17,10 +17,10 @@ export type ModelProps = {
 
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
-        modelName = 'カルビ盛り',
+        modelName = '2種の鶏唐コンビ丼（特盛）',
         modelPath = '/models/denden/chicken_combo_large_comp.glb',
-        modelDetail = '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
-        modelPrice = '2,300 (税込 2,530)',
+        modelDetail = '2種類の鶏唐揚げが通常盛りの倍量で楽しめます！。',
+        modelPrice = '税込み:1250',
     } = Model;
 
     let detailDiv = null;
@@ -49,8 +49,8 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
 
         // 作成したdiv情報をオブジェクトとして作成
         const detail = new CSS2DObject(detailDiv);
-        detail.position.set(4, 6, -7);
-        detail.center.set(0, 0.8);
+        detail.position.set(0, 0.06, -0.7);
+        detail.center.set(0, 0.08);
         detail.layers.set(1);
 
         // 今回表すモデルの表示
