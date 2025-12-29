@@ -10,7 +10,7 @@ export default function GuideQRCode({ isVisible }: Props) {
         <MyGuideQR>
             <div id="guideMarker" className={`guide-overlay ${isVisible ? 'visible' : ''}`}>
                 {/* 台形の穴を持つSVGオーバーレイ */}
-                <svg className="guide-mask" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <svg className="guide-mask" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                     <defs>
                         <mask id="trapezoidHole">
                             <rect width="100" height="100" fill="white"/>

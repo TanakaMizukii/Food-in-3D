@@ -19,7 +19,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
     const {
         modelName = '2種の鶏唐コンビ丼（特盛）',
         modelPath = '/models/denden/chicken_combo_large_comp.glb',
-        modelDetail = '2種類の鶏唐揚げが通常盛りの倍の量で楽しめます！。',
+        modelDetail = '2種類の鶏唐揚げが通常盛りの倍量で楽しめます！。',
         modelPrice = '税込み:1250',
     } = Model;
 
