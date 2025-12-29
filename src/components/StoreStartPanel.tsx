@@ -3,15 +3,16 @@ import styled from "styled-components";
 type StartPanelProps = {
     onUpdate: () => void;
     loading: boolean;
+    pathname: string;
 }
 
-export default function KaishuStartPanel({ onUpdate, loading }: StartPanelProps) {
+export default function StoreStartPanel({ onUpdate, loading, pathname }: StartPanelProps) {
     const handleClick = () => {
         onUpdate();
     };
 
     return(
-        // <!-- スタートパネル -->
+        // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
                 <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />

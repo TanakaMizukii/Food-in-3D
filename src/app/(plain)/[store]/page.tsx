@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
-import DendenStartPanel from "@/components/DenDenStartPanel";
+import StoreStartPanel from "@/components/StoreStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -25,6 +25,6 @@ export default function LandingPage() {
   }
 
   return (
-    <DendenStartPanel onUpdate={handleARStart} loading={loading} />
+    <StoreStartPanel onUpdate={handleARStart} loading={loading} pathname={pathname}/>
   );
 }

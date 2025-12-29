@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
-import KaishuStartPanel from "@/components/KaishuStartPanel";
+import KaishuStartPanel from "@/components/StoreStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
