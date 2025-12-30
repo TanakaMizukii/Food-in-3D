@@ -43,4 +43,7 @@ export type StoreNames = {
     id: number,
     use_name: string,
     true_name: string,
+    logo?: string,
+    right_top?: string | null,
+    left_bottom?: string | null,
 }

@@ -5,11 +5,17 @@ const storeNames: StoreNames[] = [
         id: 1,
         use_name: 'kaishu',
         true_name: 'ホルモン 屋海州',
+        logo: '海州ロゴ',
+        right_top: 'ファミリーセット切り抜き',
+        left_bottom: 'カルビ盛り切り抜き',
     },
     {
         id: 2,
         use_name: 'denden',
         true_name: 'でんでん',
+        logo: 'でんでんロゴ',
+        right_top: null,
+        left_bottom: null,
     },
     {
         id: 3,

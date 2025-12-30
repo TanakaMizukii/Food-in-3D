@@ -10,6 +10,7 @@ import StoreStartPanel from "@/components/StoreStartPanel";
 export default function LandingPage() {
   const router = useRouter();
   const pathname = usePathname();
+  const store = pathname.replace(/^\/+|\/+$/g, "");
   const [loading, setLoading] = useState(false);
 
   const handleARStart = async () => {
@@ -25,6 +26,6 @@ export default function LandingPage() {
   }
 
   return (
-    <StoreStartPanel onUpdate={handleARStart} loading={loading} pathname={pathname}/>
+    <StoreStartPanel onUpdate={handleARStart} loading={loading} store={store}/>
   );
 }

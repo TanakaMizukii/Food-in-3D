@@ -1,28 +1,44 @@
 import styled from "styled-components";
+import storeNames from "@/data/storeInfo";
 
 type StartPanelProps = {
     onUpdate: () => void;
     loading: boolean;
-    pathname: string;
+    store: string;
 }
 
-export default function StoreStartPanel({ onUpdate, loading, pathname }: StartPanelProps) {
+export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const handleClick = () => {
         onUpdate();
     };
+
+    type ThumbRole = "right_top" | "logo" | "left_bottom";
+
+    function thumbSrc(role: ThumbRole, ext = "png") {
+        // 1) 安全のため最低限のサニタイズ（スラッシュ禁止）
+        const nowStoreInfo = storeNames.find((s) => {
+            return s.use_name == store;
+        });
+        const baseName = nowStoreInfo?.[role];
+        console.log(baseName);
+        if (!baseName) {
+            return `/thumb/${store}/fallback_${role}.${ext}`; // 任意: フォールバック
+        }
+        return `/thumb/${store}/${baseName}.${ext}`;
+    }
 
     return(
         // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />
-                <img src="/thumb/海州ロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
+                <img src={thumbSrc("right_top")} alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />
+                <img src={thumbSrc("logo")} alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '3D空間準備中' : '商品の立体表示を開始'}
                     </button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
-                <img src="/thumb/カルビ盛り切り抜き.png" alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} />
+                <img src={thumbSrc("left_bottom")} alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} />
             </div>
         </MyStart>
     )
