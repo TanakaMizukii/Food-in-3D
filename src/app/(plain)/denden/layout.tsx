@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "海州 商品3Dビュワー",
+  title: "でんでん 商品3Dビュワー",
   description: "Start 3D Viewer",
 };
 

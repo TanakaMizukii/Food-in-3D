@@ -25,6 +25,6 @@ export default function LandingPage() {
   }
 
   return (
-    <KaishuStartPanel onUpdate={handleARStart} loading={loading} />
+    <KaishuStartPanel onUpdate={handleARStart} loading={loading} store="kaishu" />
   );
 }
