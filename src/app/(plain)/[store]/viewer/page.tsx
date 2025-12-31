@@ -24,9 +24,10 @@ type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string;
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ViewerPage() {
-    const storeSlug = catchParentPathName();
-    const storeMenu = getStoreMenu(storeSlug);
-    const storeInfo = findStoreBySlug(storeSlug);
+    const nowStore = catchParentPathName();
+    const storeMenu = getStoreMenu(nowStore);
+    const storeInfo = findStoreBySlug(nowStore);
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);

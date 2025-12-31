@@ -22,6 +22,7 @@ export default function ARViewPage() {
     const nowStore = catchParentPathName();
     const storeMenu = getStoreMenu(nowStore);
     const storeInfo = findStoreBySlug(nowStore);
+
     const [loading, setLoading] = useState(false);
     const [start, setStart] = useState(false);
     const [showARResetPanel, setShowARResetPanel] = useState(false);
