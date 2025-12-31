@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { catchPathStoreInfo } from "@/lib/catchStoreInfo";
+import { findStoreBySlug } from "@/data/storeInfo";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -15,12 +15,12 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
     type ThumbRole = "right_top" | "logo" | "left_bottom";
 
     function thumbSrc(role: ThumbRole) {
-        const nowStoreInfo = catchPathStoreInfo(store);
-        const baseName = nowStoreInfo?.[role];
-        if (!baseName) {
+        const storeInfo = findStoreBySlug(store);
+        const pictureName = storeInfo?.[role];
+        if (!pictureName) {
             return `/thumb/${store}/fallback`; // 任意: フォールバック
         }
-        return `/thumb/${store}/${baseName}`;
+        return `/thumb/${store}/${pictureName}`;
     }
 
     return(

@@ -42,7 +42,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
         pixelRatioCap = 2,
         alpha = true, // ARでは背景を透過させるためtrue推奨
         antialias = true,
-        hdrPath = '/hdr/denden/',
+        hdrPath = '/hdr/kaishu/',
         hdrFile = 'dndn_2.1_small.hdr',
     } = opts;
 

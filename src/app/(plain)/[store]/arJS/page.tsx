@@ -1,18 +1,23 @@
 'use client'
 
-import { useState, useCallback } from 'react';
 import '../App.css';
+import { useState, useCallback } from 'react';
 import MenuContainer from '@/components/MenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import LoadingPanel from '@/components/LoadingPanel';
 import GuideQRCode from '@/components/GuideQRCode';
 import { productModels, productCategory } from '@/data/denden/MenuInfo';
 import ThreeMain from '@/features/ARjs/ThreeMain';
+import { findStoreBySlug } from '@/data/storeInfo';
+import { catchParentPathName } from '@/lib/catchPathname';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ARjsPage() {
+    const storeSlug = catchParentPathName();
+    const storeInfo = findStoreBySlug(storeSlug);
+
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
     });
@@ -47,6 +52,7 @@ export default function ARjsPage() {
                     setChangeModel={setChangeModel}
                     onCameraReady={handleCameraReady}
                     onGuideDismiss={handleGuideDismiss}
+                    storeInfo={storeInfo}
                 />
                 <MenuContainer productCategory={productCategory} productModels={productModels} />
             </ModelChangeContext.Provider>

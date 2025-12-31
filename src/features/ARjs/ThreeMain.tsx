@@ -5,8 +5,10 @@ import { loadModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
 import LoadingPanel from "@/components/LoadingPanel";
 import ARHelper from "@/components/ARHelper";
-import { useRouter, usePathname } from "next/navigation";
-import { firstEnvironment } from "@/data/denden/MenuInfo";
+import { useRouter } from "next/navigation";
+import { catchParentPathName } from '@/lib/catchPathname';
+
+import type { StoreInfo } from "@/data/types";
 
 /** AR.js Main */
 type ThreeContext = ReturnType<typeof initThree>;
@@ -18,13 +20,12 @@ type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onCameraReady: () => void;
     onGuideDismiss: () => void;
+    storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, storeInfo }: ThreeMainProps) {
     const router = useRouter();
-    const pathname = usePathname();
-    const current = pathname.replace(/\/$/, "");
-    const parent = current.split("/").slice(0, -1).join("/") || "/";
+    const nowStore = catchParentPathName();
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -47,10 +48,13 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         if (!containerRef.current || !canvasRef.current) return;
 
         const canvasElement = canvasRef.current;
+        const firstEnvironment = storeInfo?.firstEnvironment;
         const rendererOptions = {
             pixelRatioCap: 2,
             alpha: true,
             antialias: true,
+            hdrPath: firstEnvironment?.hdrPath,
+            hdrFile: firstEnvironment?.hdrFile,
         };
         const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
         setCtx(threeContext);
@@ -60,6 +64,8 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
 
         (async () => {
+            if (!firstEnvironment) return;
+
             const firstModel = firstEnvironment.defaultModel;
 
             if(threeContext){
@@ -91,11 +97,10 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
             detach();
             threeContext.dispose();
         };
-    }, [onCameraReady, onGuideDismiss]);
+    }, [onCameraReady, onGuideDismiss, storeInfo]);
 
     const handleExit = () => {
-        const base = parent === "/" ? "" : parent;
-        router.push(`${parent}/viewer`);
+        router.push(`${nowStore}/viewer`);
     };
 
     return (

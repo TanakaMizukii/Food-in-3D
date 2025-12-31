@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { catchStorename } from "@/lib/catchStoreInfo";
+import { catchPathname } from "@/lib/catchPathname";
 import { useState } from "react";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
@@ -10,7 +10,7 @@ import StoreStartPanel from "@/components/StoreStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
-  const store = catchStorename();
+  const currentStore = catchPathname();
   const [loading, setLoading] = useState(false);
 
   const handleARStart = async () => {
@@ -18,14 +18,14 @@ export default function LandingPage() {
     const os = getMobileOS();
     const xr = await checkImmersiveARSupport();
     if (os === 'android' || os === 'ios') {
-      router.push(xr === 'supported' ? `/${store}/arView` : `/${store}/arJS`);
+      router.push(xr === 'supported' ? `/${currentStore}/arView` : `/${currentStore}/arJS`);
     } else {
-      router.push(`/${store}/viewer`);
+      router.push(`/${currentStore}/viewer`);
     }
     setLoading(false);
   }
 
   return (
-    <StoreStartPanel onUpdate={handleARStart} loading={loading} store={store}/>
+    <StoreStartPanel onUpdate={handleARStart} loading={loading} store={currentStore}/>
   );
 }
