@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import storeNames from "@/data/storeInfo";
+import { catchPathStoreInfo } from "@/lib/catchStoreInfo";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -15,10 +15,7 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
     type ThumbRole = "right_top" | "logo" | "left_bottom";
 
     function thumbSrc(role: ThumbRole) {
-        // 1) 安全のため最低限のサニタイズ（スラッシュ禁止）
-        const nowStoreInfo = storeNames.find((s) => {
-            return s.use_name == store;
-        });
+        const nowStoreInfo = catchPathStoreInfo(store);
         const baseName = nowStoreInfo?.[role];
         if (!baseName) {
             return `/thumb/${store}/fallback`; // 任意: フォールバック
