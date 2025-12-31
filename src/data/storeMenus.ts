@@ -1,19 +1,20 @@
-import type { ProductModelsProps } from './types';
+import type { ProductModelsProps, Category } from './types';
 
 // 店舗ごとのMenuInfo
-import { productModels as dendenModels, productCategory as dendenCategory } from './denden/MenuInfo';
-import { productModels as kaishuModels, productCategory as kaishuCategory } from './kaishu/MenuInfo';
+import { productModels as dendenModels, productCategory as dendenCategory, categories as dendenCategories } from './denden/MenuInfo';
+import { productModels as kaishuModels, productCategory as kaishuCategory, categories as kaishuCategories } from './kaishu/MenuInfo';
 
 export type StoreMenu = {
     productModels: ProductModelsProps;
     productCategory: string[];
+    categories: Category[];
 };
 
 // 店舗ごとのメニューマッピング
 // 新しい店舗を追加する場合はここにエントリを追加してください
 export const storeMenuMap: Record<string, StoreMenu> = {
-    denden: { productModels: dendenModels, productCategory: dendenCategory },
-    kaishu: { productModels: kaishuModels, productCategory: kaishuCategory },
+    denden: { productModels: dendenModels, productCategory: dendenCategory, categories: dendenCategories },
+    kaishu: { productModels: kaishuModels, productCategory: kaishuCategory, categories: kaishuCategories },
 };
 
 // デフォルトの店舗メニュー

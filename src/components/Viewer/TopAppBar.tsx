@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 type TopAppBarProps = {
     menuOpen: boolean;
     setMenuOpen: (open: boolean) => void;
+    storeName?: string;
 };
 
-export default function TopAppBar({ menuOpen, setMenuOpen }: TopAppBarProps) {
+export default function TopAppBar({ menuOpen, setMenuOpen, storeName }: TopAppBarProps) {
     const router = useRouter();
 
     return(
@@ -14,7 +15,7 @@ export default function TopAppBar({ menuOpen, setMenuOpen }: TopAppBarProps) {
             {/* Top App Bar */}
             <div className="top-app-bar">
                 <button onClick={() => router.back()}>←</button>
-                <h1>でんでん</h1>
+                <h1>{storeName ?? '商品 3Dビュワー'}</h1>
                 <button onClick={() => setMenuOpen(!menuOpen)}>⋮</button>
             </div>
         </MyTopBar>

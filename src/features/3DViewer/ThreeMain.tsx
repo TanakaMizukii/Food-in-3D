@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
-import type { FirstEnvironment } from "@/data/types";
+import type { StoreInfo } from "@/data/types";
 
 type ThreeContext = ReturnType<typeof initThree>;
 
@@ -11,14 +11,13 @@ type ThreeContext = ReturnType<typeof initThree>;
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-// これにする：
 type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onLoadingChange: (loading: boolean) => void;
-    firstEnvironment?: FirstEnvironment;
+    storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnvironment }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -44,6 +43,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
         if (!containerRef.current || !canvasRef.current) return;
 
         const canvasElement = canvasRef.current;
+        const firstEnvironment = storeInfo?.firstEnvironment;
         const rendererOptions = {
             pixelRatioCap: 2,
             alpha: true,
@@ -91,7 +91,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
             detach();
             threeContext.dispose();
         };
-    }, [onLoadingChange, firstEnvironment]);
+    }, [onLoadingChange, storeInfo]);
 
     return (
         <>
