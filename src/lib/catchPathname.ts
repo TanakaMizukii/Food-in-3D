@@ -11,3 +11,10 @@ export function catchParentPathName(): string{
     const parent = current.split("/").slice(0, -1).join("/") || "/";
     return parent;
 }
+
+// パスから店舗名（最初のセグメント）を取得
+export function catchStoreName(): string {
+    const pathname = usePathname();
+    const segments = pathname.replace(/^\/+|\/+$/g, "").split("/");
+    return segments[0] || "";
+}

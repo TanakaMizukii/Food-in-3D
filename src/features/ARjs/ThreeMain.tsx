@@ -100,7 +100,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss, storeInfo]);
 
     const handleExit = () => {
-        router.push(`${nowStore}/viewer`);
+        router.push(`/${nowStore}/viewer`);
     };
 
     return (
