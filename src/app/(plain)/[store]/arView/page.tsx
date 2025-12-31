@@ -9,14 +9,19 @@ import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import '../App.css';
 import ARStartPanel from "@/components/ARStartPanel";
 import ARResetPanel from "@/components/ARResetPanel";
-import { productModels, productCategory } from '@/data/denden/MenuInfo';
 import ThreeMain from '@/features/WebXR/ThreeMain';
+import { catchParentPathName } from '@/lib/catchPathname';
+import { getStoreMenu } from '@/data/storeMenus';
+import { findStoreBySlug } from '@/data/storeInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ARViewPage() {
     const router = useRouter();
+    const nowStore = catchParentPathName();
+    const storeMenu = getStoreMenu(nowStore);
+    const storeInfo = findStoreBySlug(nowStore);
     const [loading, setLoading] = useState(false);
     const [start, setStart] = useState(false);
     const [showARResetPanel, setShowARResetPanel] = useState(false);
@@ -30,13 +35,13 @@ export default function ARViewPage() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? '/denden/arView' : '/denden/arJS');
+            router.push(xr === 'supported' ? `/${nowStore}/arView` : `/${nowStore}/arJS`);
             if (xr === 'supported') {setStart(true)}
         } else {
-            router.push('/denden/viewer');
+            router.push(`/${nowStore}/viewer`);
             alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。')
         }
-    }, [router]);
+    }, [router, nowStore]);
 
     const handleSessionEnd = () => {
         setStart(false);
@@ -54,11 +59,11 @@ export default function ARViewPage() {
         <>
         {showARResetPanel
         ?(<ARResetPanel onRestart={handleStart}/>)
-        :(<ARStartPanel onUpdate={handleStart} loading={loading} />)}
+        :(<ARStartPanel onUpdate={handleStart} loading={loading} store={nowStore} />)}
         {start &&
             <ModelChangeContext.Provider value={{ changeModel }}>
-                <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset}/>
-                <MenuContainer productCategory={productCategory} productModels={productModels} />
+                <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={storeInfo} />
+                <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
             </ModelChangeContext.Provider>
         }
         </>

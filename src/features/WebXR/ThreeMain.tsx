@@ -8,6 +8,8 @@ import ARHelper from "@/components/ARHelper";
 import { updateHitTest, handleFirstHit } from "./ThreeHitTest";
 import { handleSessionEndCleanup, handleSessionResetCleanup } from './ThreeCleanup';
 
+import type { StoreInfo } from "@/data/types";
+
 type ThreeContext = ReturnType<typeof initThree>;
 
 // 先に型を用意
@@ -19,9 +21,10 @@ type ThreeMainProps = {
     startAR: boolean;
     onSessionEnd: () => void;
     onSessionReset: () => void;
+    storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSessionReset }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSessionReset, storeInfo }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
@@ -90,10 +93,13 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
         if (!containerRef.current || !canvasRef.current) return;
 
         const canvasElement = canvasRef.current;
+        const firstEnvironment = storeInfo?.firstEnvironment;
         const rendererOptions = {
             pixelRatioCap: 2,
             alpha: true,
             antialias: true,
+            hdrPath: firstEnvironment?.hdrPath,
+            hdrFile: firstEnvironment?.hdrFile,
         };
         const threeContext = initThree(canvasElement, rendererOptions);
         setCtx(threeContext);
@@ -102,13 +108,21 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
 
         const detach = attachResizeHandlers(threeContext, containerRef.current);
 
+        // 初期モデル情報を準備
+        const firstModelInfo = firstEnvironment?.defaultModel ? {
+            modelName: firstEnvironment.defaultModel.name,
+            modelPath: firstEnvironment.defaultModel.path,
+            modelDetail: firstEnvironment.defaultModel.detail,
+            modelPrice: firstEnvironment.defaultModel.price,
+        } : undefined;
+
         // 毎フレーム実行部分
         threeContext.renderer.setAnimationLoop(animate);
         async function animate(timestamp: DOMHighResTimeStamp, frame: XRFrame) {
             // ヒットテスト実行関数
             updateHitTest(threeContext, frame);
             // 初回ヒット時の処理関数
-            await handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef);
+            await handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
 
             // レンダリング
             threeContext.renderer.render(threeContext.scene, threeContext.camera);
@@ -121,7 +135,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             detach();
             threeContext.dispose();
         };
-    }, []);
+    }, [storeInfo]);
 
     const handleExit = () => {
         if (ctx && ctx.currentSession) {

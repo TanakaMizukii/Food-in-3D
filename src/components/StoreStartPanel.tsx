@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { findStoreBySlug } from "@/data/storeInfo";
+import { getThumbSrc } from "@/lib/thumbSrc";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -12,16 +12,7 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
         onUpdate();
     };
 
-    type ThumbRole = "right_top" | "logo" | "left_bottom";
-
-    function thumbSrc(role: ThumbRole) {
-        const storeInfo = findStoreBySlug(store);
-        const pictureName = storeInfo?.[role];
-        if (!pictureName) {
-            return `/thumb/${store}/fallback`; // 任意: フォールバック
-        }
-        return `/thumb/${store}/${pictureName}`;
-    }
+    const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
 
     return(
         // <!-- 店舗スタートパネル -->

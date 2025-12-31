@@ -1,25 +1,30 @@
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
+import { getThumbSrc } from "@/lib/thumbSrc";
 
 type StartPanelProps = {
     onUpdate: () => void;
     loading: boolean;
+    store: string;
 }
 
-export default function ARStartPanel({ onUpdate, loading }: StartPanelProps) {
+export default function ARStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const router = useRouter();
+
     const handleClick = () => {
         onUpdate();
     };
     const backClick = () => {
-        router.push('/denden/viewer');
+        router.push(`/${store}/viewer`);
     }
+
+    const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
 
     return(
         // <!-- スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src="/thumb/でんでんロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
+                <img src={thumbSrc("logo")} alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>ARエクスペリエンスを開始</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '判定中…' : 'AR体験を始める'}
