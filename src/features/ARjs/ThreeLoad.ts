@@ -26,8 +26,8 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         displaySettings,
     } = Model;
 
-    // デフォルト値を設定
-    const scale = displaySettings?.scale ?? 1;
+    // デフォルト値を設定（scaleARjs > scale > 1 の優先順位）
+    const scale = displaySettings?.scaleARjs ?? displaySettings?.scale ?? 1;
     const detailPosition = displaySettings?.detailPosition ?? [0, 0, 0];
     const detailCenter = displaySettings?.detailCenter ?? [0, 0];
 

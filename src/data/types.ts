@@ -29,7 +29,10 @@ export type ProductModelsProps = ProductModel[];
 
 // モデル表示設定
 export type ModelDisplaySettings = {
-    scale: number;                      // モデルのスケール
+    scale: number;                      // モデルのスケール（後方互換性のため残す）
+    scaleARjs?: number;                 // ARjs用スケール
+    scaleWebXR?: number;                // WebXR用スケール
+    scale3DViewer?: number;             // 3DViewer用スケール
     detailPosition: [number, number, number];  // 詳細情報の位置 [x, y, z]
     detailCenter: [number, number];     // 詳細情報の中心 [x, y]
 };

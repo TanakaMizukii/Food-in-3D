@@ -26,8 +26,8 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
         displaySettings,
     } = Model;
 
-    // デフォルト値を設定
-    const scale = displaySettings?.scale ?? 0.75;
+    // デフォルト値を設定（scaleWebXR > scale > 0.75 の優先順位）
+    const scale = displaySettings?.scaleWebXR ?? displaySettings?.scale ?? 0.75;
     const detailPosition = displaySettings?.detailPosition ?? [0, 0, 0];
     const detailCenter = displaySettings?.detailCenter ?? [0, 0];
 

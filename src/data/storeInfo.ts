@@ -19,6 +19,9 @@ const storeInfo: StoreInfo[] = [
             },
             modelDisplaySettings: {
                 scale: 1,
+                scaleARjs: 0.09,
+                scaleWebXR: 0.0085,
+                scale3DViewer: 1,
                 detailPosition: [4, 6, -7],
                 detailCenter: [0, 0.8],
             },
@@ -43,7 +46,10 @@ const storeInfo: StoreInfo[] = [
                 price: '税込み:1250',
             },
             modelDisplaySettings: {
-                scale: 7,
+                scale: 1,
+                scaleARjs: 7,
+                scaleWebXR: 0.7,
+                scale3DViewer: 1,
                 detailPosition: [0, 0.06, -0.7],
                 detailCenter: [0, 0.08],
             },
