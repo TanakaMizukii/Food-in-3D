@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import type { ThreeCtx } from './ThreeInit';
+import type { ModelDisplaySettings } from '@/data/types';
 
 export type LoadCtx = {
     nowModel?: null|THREE.Group<THREE.Object3DEventMap>;
@@ -13,6 +14,7 @@ export type ModelProps = {
     modelPath?: string;
     modelDetail?: string;
     modelPrice?: string;
+    displaySettings?: ModelDisplaySettings;
 }
 
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THREE.Group<THREE.Object3DEventMap> | null): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
@@ -21,7 +23,13 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         modelPath = '/models/denden/お試し皿盆4_raw_comp.glb',
         modelDetail = '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
         modelPrice = '2,300 (税込 2,530)',
+        displaySettings,
     } = Model;
+
+    // デフォルト値を設定（kaishuの設定をデフォルトとする）
+    const scale = displaySettings?.scale ?? 1;
+    const detailPosition = displaySettings?.detailPosition ?? [0, 0, 0];
+    const detailCenter = displaySettings?.detailCenter ?? [0, 0];
 
     let detailDiv = null;
     try {
@@ -47,7 +55,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         const objects = await ctx.loader.loadAsync(modelPath);
 
         const model = objects.scene;
-        model.scale.set(1, 1, 1);
+        model.scale.set(scale, scale, scale);
         // 詳細オブジェクトの表示状態をboolean値で設定
         model.userData.isDetail = true;
         ctx.scene.add(model);
@@ -73,8 +81,8 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
 
         // 作成したdiv情報をオブジェクトとして作成
         const detail = new CSS2DObject(detailDiv);
-        detail.position.set(0, 0.06, -0.7);
-        detail.center.set(0, 0.08);
+        detail.position.set(detailPosition[0], detailPosition[1], detailPosition[2]);
+        detail.center.set(detailCenter[0], detailCenter[1]);
         model.add(detail);
         detail.layers.set(1);
 

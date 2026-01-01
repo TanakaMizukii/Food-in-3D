@@ -8,12 +8,12 @@ import ARHelper from "@/components/ARHelper";
 import { updateHitTest, handleFirstHit } from "./ThreeHitTest";
 import { handleSessionEndCleanup, handleSessionResetCleanup } from './ThreeCleanup';
 
-import type { StoreInfo } from "@/data/types";
+import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
 type ThreeContext = ReturnType<typeof initThree>;
 
 // 先に型を用意
-type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
+type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 type ThreeMainProps = {
@@ -100,6 +100,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             antialias: true,
             hdrPath: firstEnvironment?.hdrPath,
             hdrFile: firstEnvironment?.hdrFile,
+            lightIntensity: firstEnvironment?.lightIntensity,
         };
         const threeContext = initThree(canvasElement, rendererOptions);
         setCtx(threeContext);
@@ -114,6 +115,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             modelPath: firstEnvironment.defaultModel.path,
             modelDetail: firstEnvironment.defaultModel.detail,
             modelPrice: firstEnvironment.defaultModel.price,
+            displaySettings: firstEnvironment.modelDisplaySettings,
         } : undefined;
 
         // 毎フレーム実行部分

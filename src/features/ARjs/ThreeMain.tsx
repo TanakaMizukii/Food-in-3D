@@ -8,12 +8,12 @@ import ARHelper from "@/components/ARHelper";
 import { useRouter } from "next/navigation";
 import { catchParentPathName } from '@/lib/catchPathname';
 
-import type { StoreInfo } from "@/data/types";
+import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
 /** AR.js Main */
 type ThreeContext = ReturnType<typeof initThree>;
 
-type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
+type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 type ThreeMainProps = {
@@ -55,6 +55,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
             antialias: true,
             hdrPath: firstEnvironment?.hdrPath,
             hdrFile: firstEnvironment?.hdrFile,
+            lightIntensity: firstEnvironment?.lightIntensity,
         };
         const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
         setCtx(threeContext);
@@ -74,6 +75,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
                     modelPath: firstModel.path,
                     modelDetail: firstModel.detail,
                     modelPrice: firstModel.price,
+                    displaySettings: firstEnvironment.modelDisplaySettings,
                 }, threeContext, null);
                 nowModelRef.current = nowModel;
             }

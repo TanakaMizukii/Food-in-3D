@@ -3,12 +3,12 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
-import type { StoreInfo } from "@/data/types";
+import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
 type ThreeContext = ReturnType<typeof initThree>;
 
 // 先に型を用意
-type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
+type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 type ThreeMainProps = {
@@ -51,6 +51,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             useControls: true,
             hdrPath: firstEnvironment?.hdrPath,
             hdrFile: firstEnvironment?.hdrFile,
+            cameraPosition: firstEnvironment?.cameraPosition,
+            lightIntensity: firstEnvironment?.lightIntensity,
         };
         const threeContext = initThree(canvasElement, rendererOptions);
         setCtx(threeContext);
@@ -66,6 +68,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 modelPath: firstEnvironment.defaultModel.path,
                 modelDetail: firstEnvironment.defaultModel.detail,
                 modelPrice: firstEnvironment.defaultModel.price,
+                displaySettings: firstEnvironment.modelDisplaySettings,
             } : {};
             onLoadingChange(true);
             // useEffect内で直接呼び出す代わりに、state更新後のeffectを利用

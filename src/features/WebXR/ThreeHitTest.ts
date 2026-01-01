@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { ThreeCtx } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import type { RefObject } from 'react';
+import type { ModelDisplaySettings } from '@/data/types';
 
 export async function updateHitTest(ctx: ThreeCtx, frame: XRFrame | undefined) {
     if (!frame) return;
@@ -62,7 +63,7 @@ export async function updateHitTest(ctx: ThreeCtx, frame: XRFrame | undefined) {
     }
 }
 
-type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
+type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 
 export async function handleFirstHit(
     ctx: ThreeCtx,

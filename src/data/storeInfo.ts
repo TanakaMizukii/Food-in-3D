@@ -17,6 +17,13 @@ const storeInfo: StoreInfo[] = [
                 detail: '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
                 price: '2,400 (税込 2,640)',
             },
+            modelDisplaySettings: {
+                scale: 1,
+                detailPosition: [4, 6, -7],
+                detailCenter: [0, 0.8],
+            },
+            cameraPosition: [17, 42, 36],
+            lightIntensity: 1,
         }
     },
     {
@@ -35,6 +42,13 @@ const storeInfo: StoreInfo[] = [
                 detail: '2種類の鶏唐揚げが通常盛りの倍の量で楽しめます！。',
                 price: '税込み:1250',
             },
+            modelDisplaySettings: {
+                scale: 7,
+                detailPosition: [0, 0.06, -0.7],
+                detailCenter: [0, 0.08],
+            },
+            cameraPosition: [1.5, 5.2, 3.3],
+            lightIntensity: 2,
         }
     },
     {
