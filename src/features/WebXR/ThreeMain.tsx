@@ -33,11 +33,19 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     const inFlightRef = useRef(false);
     const reset = useRef(false);
 
-    const changeModel = useCallback(async (modelInfo: { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; }) => {
+    // 店舗のmodelDisplaySettingsを取得
+    const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
+
+    const changeModel = useCallback(async (modelInfo: { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; }) => {
         if (!ctx) return;
+        // displaySettingsが渡されていない場合は店舗のmodelDisplaySettingsを使用
+        const modelWithSettings = {
+            ...modelInfo,
+            displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
+        };
         // 新しいモデルをロード
-        await loadModel(modelInfo, ctx);
-    }, [ctx]);
+        await loadModel(modelWithSettings, ctx);
+    }, [ctx, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);

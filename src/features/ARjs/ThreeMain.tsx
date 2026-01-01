@@ -31,12 +31,20 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     const nowModelRef = useRef<THREE.Group | null>(null);
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
 
-    const changeModel = useCallback(async (modelInfo: { modelName?: string, modelPath?: string; modelDetail?: string; modelPrice?: string; }) => {
+    // 店舗のmodelDisplaySettingsを取得
+    const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
+
+    const changeModel = useCallback(async (modelInfo: { modelName?: string, modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; }) => {
         if (!ctx) return;
+        // displaySettingsが渡されていない場合は店舗のmodelDisplaySettingsを使用
+        const modelWithSettings = {
+            ...modelInfo,
+            displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
+        };
         // 新しいモデルをロード
-        const nowModel = await loadModel(modelInfo, ctx, nowModelRef.current);
+        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
         nowModelRef.current = nowModel;
-    }, [ctx]);
+    }, [ctx, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
