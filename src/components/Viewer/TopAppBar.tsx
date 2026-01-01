@@ -1,20 +1,23 @@
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
+import { catchParentPathName } from "@/lib/catchPathname";
 
 type TopAppBarProps = {
     menuOpen: boolean;
     setMenuOpen: (open: boolean) => void;
+    storeName?: string;
 };
 
-export default function TopAppBar({ menuOpen, setMenuOpen }: TopAppBarProps) {
+export default function TopAppBar({ menuOpen, setMenuOpen, storeName }: TopAppBarProps) {
     const router = useRouter();
+    const store = catchParentPathName();
 
     return(
         <MyTopBar>
             {/* Top App Bar */}
             <div className="top-app-bar">
-                <button onClick={() => router.back()}>←</button>
-                <h1>でんでん</h1>
+                <button onClick={() => router.push(`/${store}`)}>←</button>
+                <h1>{storeName ?? '商品 3Dビュワー'}</h1>
                 <button onClick={() => setMenuOpen(!menuOpen)}>⋮</button>
             </div>
         </MyTopBar>

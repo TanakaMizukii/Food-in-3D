@@ -29,6 +29,8 @@ export type InitOptions = {
     useControls?: boolean;
     hdrPath?: string;
     hdrFile?: string;
+    cameraPosition?: [number, number, number]; // カメラ位置 [x, y, z]
+    lightIntensity?: number; // ライトの強さ
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -41,6 +43,8 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         useControls = false,
         hdrPath = '/hdr/denden/',
         hdrFile = 'dndn_2.1_small.hdr',
+        cameraPosition = [0.34, 0.77, 0.49],
+        lightIntensity = 2,
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -54,14 +58,11 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     scene.background = new THREE.Color(0xaaaaaa);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 1000);
-    camera.position.set(0.34, 0.77, 0.49);
+    camera.position.set(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 2);
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, lightIntensity);
     light.position.set( 1, 1, 1);
-    // const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-    // directionalLight.position.set(1, 1, 1).normalize;
-    // scene.add(directionalLight);
     scene.add(light);
 
     // 詳細画面表示用のRendererの作成

@@ -3,35 +3,42 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
-import type { FirstEnvironment } from "@/data/types";
+import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
 type ThreeContext = ReturnType<typeof initThree>;
 
 // 先に型を用意
-type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
+type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-// これにする：
 type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onLoadingChange: (loading: boolean) => void;
-    firstEnvironment?: FirstEnvironment;
+    storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnvironment }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
 
-    const changeModel = useCallback(async (modelInfo: { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; }) => {
+    // 店舗のmodelDisplaySettingsを取得
+    const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
+
+    const changeModel = useCallback(async (modelInfo: { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; }) => {
         if (!ctx) return;
         onLoadingChange(true);
+        // displaySettingsが渡されていない場合は店舗のmodelDisplaySettingsを使用
+        const modelWithSettings = {
+            ...modelInfo,
+            displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
+        };
         // 新しいモデルをロード
-        const nowModel = await loadModel(modelInfo, ctx, nowModelRef.current);
+        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
         nowModelRef.current = nowModel;
         onLoadingChange(false);
-    }, [ctx, onLoadingChange]);
+    }, [ctx, onLoadingChange, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -44,6 +51,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
         if (!containerRef.current || !canvasRef.current) return;
 
         const canvasElement = canvasRef.current;
+        const firstEnvironment = storeInfo?.firstEnvironment;
         const rendererOptions = {
             pixelRatioCap: 2,
             alpha: true,
@@ -51,6 +59,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
             useControls: true,
             hdrPath: firstEnvironment?.hdrPath,
             hdrFile: firstEnvironment?.hdrFile,
+            cameraPosition: firstEnvironment?.cameraPosition,
+            lightIntensity: firstEnvironment?.lightIntensity,
         };
         const threeContext = initThree(canvasElement, rendererOptions);
         setCtx(threeContext);
@@ -66,6 +76,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
                 modelPath: firstEnvironment.defaultModel.path,
                 modelDetail: firstEnvironment.defaultModel.detail,
                 modelPrice: firstEnvironment.defaultModel.price,
+                displaySettings: firstEnvironment.modelDisplaySettings,
             } : {};
             onLoadingChange(true);
             // useEffect内で直接呼び出す代わりに、state更新後のeffectを利用
@@ -91,7 +102,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, firstEnviro
             detach();
             threeContext.dispose();
         };
-    }, [onLoadingChange, firstEnvironment]);
+    }, [onLoadingChange, storeInfo]);
 
     return (
         <>

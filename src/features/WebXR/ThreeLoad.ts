@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import type { ThreeCtx } from './ThreeInit';
+import type { ModelDisplaySettings } from '@/data/types';
 
 export type LoadCtx = {
     nowModel?: null|THREE.Group<THREE.Object3DEventMap>;
@@ -13,6 +14,7 @@ export type ModelProps = {
     modelPath?: string;
     modelDetail?: string;
     modelPrice?: string;
+    displaySettings?: ModelDisplaySettings;
 }
 
 export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
@@ -21,7 +23,13 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
         modelPath = '/models/denden/chicken_combo_large_comp.glb',
         modelDetail = '2種類の鶏唐揚げが通常盛りの倍量で楽しめます！。',
         modelPrice = '税込み:1250',
+        displaySettings,
     } = Model;
+
+    // デフォルト値を設定（scaleWebXR > scale > 0.75 の優先順位）
+    const scale = displaySettings?.scaleWebXR ?? displaySettings?.scale ?? 0.75;
+    const detailPosition = displaySettings?.detailPosition ?? [0, 0, 0];
+    const detailCenter = displaySettings?.detailCenter ?? [0, 0];
 
     let detailDiv = null;
     try {
@@ -49,8 +57,8 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
 
         // 作成したdiv情報をオブジェクトとして作成
         const detail = new CSS2DObject(detailDiv);
-        detail.position.set(0, 0.06, -0.7);
-        detail.center.set(0, 0.08);
+        detail.position.set(detailPosition[0], detailPosition[1], detailPosition[2]);
+        detail.center.set(detailCenter[0], detailCenter[1]);
         detail.layers.set(1);
 
         // 今回表すモデルの表示
@@ -60,7 +68,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx): Promise<THREE
         // 詳細オブジェクトの表示状態をboolean値で設定
         clone.userData.isDetail = true;
         ctx.reticle.matrix.decompose(clone.position, clone.quaternion, clone.scale);
-        clone.scale.set(0.75, 0.75, 0.75); // 改変されてしまうためdecomposeの後に記述
+        clone.scale.set(scale, scale, scale); // 改変されてしまうためdecomposeの後に記述
         clone.add(detail);
 
         // 新しいモデルのバウンディングボックスを作成

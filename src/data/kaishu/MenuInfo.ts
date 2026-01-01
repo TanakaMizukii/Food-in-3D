@@ -1,16 +1,4 @@
-import type { Category, ProductModelsProps, FirstEnvironment } from '../types';
-
-// 初期環境設定
-export const firstEnvironment: FirstEnvironment = {
-    hdrPath: '/hdr/kaishu/',
-    hdrFile: 'kaisyu_73_small.hdr',
-    defaultModel: {
-        name: 'カルビ盛り',
-        path: '/models/calbee_set_comp.glb',
-        detail: '特上カルビ・上カルビ・並みカルビ・切り落としカルビがワンプレートでまとめて食べられます！！',
-        price: '2,400 (税込 2,640)',
-    },
-};
+import type { Category, ProductModelsProps } from '../types';
 
 export const categories: Category[] = [
     {

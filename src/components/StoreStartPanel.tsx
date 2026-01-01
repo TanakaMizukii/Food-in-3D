@@ -1,27 +1,31 @@
 import styled from "styled-components";
+import { getThumbSrc } from "@/lib/thumbSrc";
 
 type StartPanelProps = {
     onUpdate: () => void;
     loading: boolean;
+    store: string;
 }
 
-export default function KaishuStartPanel({ onUpdate, loading }: StartPanelProps) {
+export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const handleClick = () => {
         onUpdate();
     };
 
+    const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
+
     return(
-        // <!-- スタートパネル -->
+        // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src="/thumb/ファミリーセット切り抜き.png" alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />
-                <img src="/thumb/海州ロゴ.png" alt="メインイメージ" id="start-image" className={"startImage"} />
+                <img src={thumbSrc("right_top")} alt="商品イメージ" id="start-right-up" className={"startSideImg rightTopImg"} />
+                <img src={thumbSrc("logo")} alt="メインイメージ" id="start-image" className={"startImage"} />
                 <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '3D空間準備中' : '商品の立体表示を開始'}
                     </button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
-                <img src="/thumb/カルビ盛り切り抜き.png" alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} />
+                <img src={thumbSrc("left_bottom")} alt="商品イメージ" id="start-left-bottom" className={"startSideImg leftBottomImg"} />
             </div>
         </MyStart>
     )

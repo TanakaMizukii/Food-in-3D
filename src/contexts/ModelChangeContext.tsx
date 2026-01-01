@@ -1,10 +1,12 @@
 import { createContext } from 'react';
+import type { ModelDisplaySettings } from '@/data/types';
 
 type ModelInfo = {
     modelName?: string;
     modelPath?: string | undefined;
     modelDetail?: string | undefined;
-    modelPrice?: string
+    modelPrice?: string;
+    displaySettings?: ModelDisplaySettings;
 };
 
 type ModelChangeContextType = {

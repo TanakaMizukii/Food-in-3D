@@ -36,6 +36,7 @@ export type InitOptions = {
     antialias?: boolean;
     hdrPath?: string;
     hdrFile?: string;
+    lightIntensity?: number; // ライトの強さ
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -47,6 +48,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         antialias = true,
         hdrPath = '/hdr/denden/',
         hdrFile = 'dndn_2.1_small.hdr',
+        lightIntensity = 1,
     } = opts;
 
     const renderer = new THREE.WebGLRenderer({
@@ -62,7 +64,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const camera = new THREE.PerspectiveCamera(75, 1, 0.05, 10);
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, lightIntensity);
     light.position.set( 1, 1, 1);
     scene.add(light);
 

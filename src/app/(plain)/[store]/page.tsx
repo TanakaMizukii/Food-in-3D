@@ -1,15 +1,16 @@
 'use client';
 
+import { useRouter } from "next/navigation";
+import { catchPathname } from "@/lib/catchPathname";
 import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
-import DendenStartPanel from "@/components/DenDenStartPanel";
+import StoreStartPanel from "@/components/StoreStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
-  const pathname = usePathname();
+  const currentStore = catchPathname();
   const [loading, setLoading] = useState(false);
 
   const handleARStart = async () => {
@@ -17,14 +18,14 @@ export default function LandingPage() {
     const os = getMobileOS();
     const xr = await checkImmersiveARSupport();
     if (os === 'android' || os === 'ios') {
-      router.push(xr === 'supported' ? `${pathname}/arView` : `${pathname}/arJS`);
+      router.push(xr === 'supported' ? `/${currentStore}/arView` : `/${currentStore}/arJS`);
     } else {
-      router.push(`${pathname}/viewer`);
+      router.push(`/${currentStore}/viewer`);
     }
     setLoading(false);
   }
 
   return (
-    <DendenStartPanel onUpdate={handleARStart} loading={loading} />
+    <StoreStartPanel onUpdate={handleARStart} loading={loading} store={currentStore}/>
   );
 }

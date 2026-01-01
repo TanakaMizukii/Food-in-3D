@@ -12,23 +12,29 @@ import BottomSheet from '@/components/Viewer/BottomSheet';
 import PrimaryFab from '@/components/Viewer/PrimaryFab';
 import LoadingPanel from '@/components/LoadingPanel';
 
-import { productModels, categories, firstEnvironment } from '@/data/denden/MenuInfo';
 import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
+import { catchParentPathName } from '@/lib/catchPathname';
+import { getStoreMenu } from '@/data/storeMenus';
+import { findStoreBySlug } from '@/data/storeInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ViewerPage() {
+    const nowStore = catchParentPathName();
+    const storeMenu = getStoreMenu(nowStore);
+    const storeInfo = findStoreBySlug(nowStore);
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
 
-    const currentProduct: ProductModel = productModels[currentIndex]
+    const currentProduct: ProductModel = storeMenu.productModels[currentIndex]
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -51,19 +57,19 @@ export default function ViewerPage() {
         <ModelChangeContext.Provider value={{ changeModel: wrappedChangeModel }}>
             <Root>
                 <SceneLayer>
-                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} firstEnvironment={firstEnvironment} />
+                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} storeInfo={storeInfo} />
                 </SceneLayer>
 
                 <TopLayer>
-                    <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>
-                    <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={categories}/>
+                    <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
+                    <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
                     <PrimaryFab />
                 </TopLayer>
 
                 <BottomLayer>
-                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={productModels}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={productModels}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={categories} productModels={productModels}/>
+                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels}/>
                     <BottomSheet currentProduct={currentProduct}/>
                 </BottomLayer>
             </Root>
