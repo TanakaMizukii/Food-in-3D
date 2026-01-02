@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { catchParentPathName } from "@/lib/catchPathname";
+import { HiOutlineArrowLeft, HiOutlineMenu } from "react-icons/hi";
 
 type TopAppBarProps = {
     menuOpen: boolean;
@@ -16,9 +17,9 @@ export default function TopAppBar({ menuOpen, setMenuOpen, storeName }: TopAppBa
         <MyTopBar>
             {/* Top App Bar */}
             <div className="top-app-bar">
-                <button onClick={() => router.push(`/${store}`)}>←</button>
+                <button onClick={() => router.push(`/${store}`)}><HiOutlineArrowLeft /></button>
                 <h1>{storeName ?? '商品 3Dビュワー'}</h1>
-                <button onClick={() => setMenuOpen(!menuOpen)}>⋮</button>
+                <button onClick={() => setMenuOpen(!menuOpen)}><HiOutlineMenu /></button>
             </div>
         </MyTopBar>
     )
@@ -54,6 +55,11 @@ const MyTopBar = styled.div`
         align-items: center;
         justify-content: center;
         transition: all 0.2s;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
     }
 
     .top-app-bar button:active {

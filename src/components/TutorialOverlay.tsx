@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { HiOutlineCursorClick, HiOutlineMenu } from "react-icons/hi";
+import { HiCubeTransparent, HiChevronDown } from "react-icons/hi2";
 
 type TutorialOverlayProps = {
     isVisible: boolean;
@@ -14,19 +16,19 @@ export default function TutorialOverlay({ isVisible, onClose }: TutorialOverlayP
                     <h3>ビューアー操作ガイド</h3>
                     <div className="tutorial-gestures">
                         <div className="gesture-item">
-                            <div className="gesture-icon">👆</div>
+                            <div className="gesture-icon"><HiOutlineCursorClick /></div>
                             <div className="gesture-text"><strong>モデル操作:</strong> ドラッグで回転、ピンチでズームが可能です。</div>
                         </div>
                         <div className="gesture-item">
-                            <div className="gesture-icon">👁️‍🗨️</div>
+                            <div className="gesture-icon"><HiCubeTransparent /></div>
                             <div className="gesture-text"><strong>ARモード:<span className="col-red">ARボタンから商品を現実空間に表示可能です！</span></strong></div>
                         </div>
                         <div className="gesture-item">
-                            <div className="gesture-icon">☰</div>
+                            <div className="gesture-icon"><HiOutlineMenu /></div>
                             <div className="gesture-text">メニュー:右上のアイコンで開閉し、商品を選択可能です</div>
                         </div>
                         <div className="gesture-item">
-                            <div className="gesture-icon">🔽</div>
+                            <div className="gesture-icon"><HiChevronDown /></div>
                             <div className="gesture-text">詳細情報: 下部のシートをドラッグで開いて商品詳細を確認。</div>
                         </div>
                     </div>
@@ -47,7 +49,7 @@ const MyTutorialOverlay = styled.div`
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.5);
         align-items: center;
         justify-content: center;
         z-index: 0;
@@ -97,6 +99,12 @@ const MyTutorialOverlay = styled.div`
                         align-items: center;
                         justify-content: center;
                         font-size: 20px;
+                        flex-shrink: 0;
+
+                        svg {
+                            width: 24px;
+                            height: 24px;
+                        }
                     }
 
                     .gesture-text {
