@@ -17,7 +17,8 @@ export default function ARHelper({ onExit, onClear, onReset, showClearObjects, s
                 <div>商品の選択可能</div>
             </div>
 
-            <button id="exit-button" className="exit-button" onClick={onExit}>AR終了</button>
+            {/* <button id="exit-button" className="exit-button" onClick={onExit}>AR終了</button> */}
+            <button id="exit-button" className="send-viewer-button" onClick={onExit}>3Dビュワーへ</button>
             {showClearObjects && (
                 <div id="clear-objects" className="clear-objects">
                     <button id="clear-button" className="clear-button" onClick={onClear}>♻️</button>
@@ -61,6 +62,37 @@ const MyHelper = styled.div`
     cursor: pointer;
     display: none;
     z-index: 100;
+}
+
+.send-viewer-button {
+    position: absolute;
+    top: 40px;
+    right: 25px;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.9), rgba(30, 136, 229, 0.95));
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.send-viewer-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(33, 150, 243, 0.5);
+    background: linear-gradient(135deg, rgba(30, 136, 229, 0.95), rgba(25, 118, 210, 1));
+}
+.send-viewer-button:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 3px 8px rgba(33, 150, 243, 0.3);
+}
+.send-viewer-button:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.6);
+    outline-offset: 3px;
 }
 
 .clear-objects {
