@@ -35,7 +35,7 @@ export default function ARjsPage() {
 
     const handleInitialModelLoaded = useCallback(() => {
         setIsInitialModelLoaded(true);
-        // モデルロード完了後にopenPanelを表示（ローディング画面と被らないように）
+        // モデルロード完了後にopenPanelを表示（ローディング画面と被らないように)
         const openPanel = document.getElementById('menu-openGuide');
         if (openPanel) {
             openPanel.style.display = 'flex';
