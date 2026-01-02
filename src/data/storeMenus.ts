@@ -21,6 +21,6 @@ export const storeMenuMap: Record<string, StoreMenu> = {
 export const defaultStoreMenu: StoreMenu = storeMenuMap['denden'];
 
 // 店舗スラッグからメニューを取得する関数
-export function getStoreMenu(storeSlug: string): StoreMenu {
-    return storeMenuMap[storeSlug] ?? defaultStoreMenu;
+export function getStoreMenu(store: string): StoreMenu {
+    return storeMenuMap[store] ?? defaultStoreMenu;
 }

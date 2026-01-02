@@ -1,7 +1,7 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import LoadingPanel from '@/components/Common/LoadingPanel';
@@ -15,9 +15,9 @@ type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string;
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ARjsPage() {
-    const storeSlug = catchParentPathName();
-    const storeInfo = findStoreBySlug(storeSlug);
-    const storeMenu = getStoreMenu(storeSlug);
+    const nowStore = catchParentPathName();
+    const storeInfo = findStoreBySlug(nowStore);
+    const storeMenu = getStoreMenu(nowStore);
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -35,11 +35,6 @@ export default function ARjsPage() {
 
     const handleInitialModelLoaded = useCallback(() => {
         setIsInitialModelLoaded(true);
-        // モデルロード完了後にopenPanelを表示（ローディング画面と被らないように)
-        const openPanel = document.getElementById('menu-openGuide');
-        if (openPanel) {
-            openPanel.style.display = 'flex';
-        }
     }, []);
 
     const handleGuideDismiss = useCallback(() => {
@@ -54,6 +49,16 @@ export default function ARjsPage() {
             exitButton.style.display = 'block';
         }
     }, []);
+
+    // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
+    useEffect(() => {
+        if (isInitialModelLoaded && isMarkerFound) {
+            const openPanel = document.getElementById('menu-openGuide');
+            if (openPanel) {
+                openPanel.style.display = 'flex';
+            }
+        }
+    }, [isInitialModelLoaded, isMarkerFound]);
 
     // ローディングパネルの表示条件:
     // 1. カメラ準備中 (!isCameraReady)
