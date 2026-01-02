@@ -6,7 +6,7 @@ import { MyContent } from "./MenuContent";
 import type { ProductModelsProps } from "@/data/types";
 
 import React, { useEffect, useState } from "react";
-import { ToggleChangeContext } from "../contexts/ToggleChangeContext";
+import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 
 // 型エイリアスの作成
 type MenuContainerProps = {

@@ -3,8 +3,8 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "@/features/ARjs/ThreeInit";
 import { loadModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
-import LoadingPanel from "@/components/LoadingPanel";
-import ARHelper from "@/components/ARHelper";
+import LoadingPanel from "@/components/Common/LoadingPanel";
+import ARHelper from "@/components/AR/ARHelper";
 import { useRouter } from "next/navigation";
 import { catchParentPathName } from '@/lib/catchPathname';
 

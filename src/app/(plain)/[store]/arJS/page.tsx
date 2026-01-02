@@ -2,10 +2,10 @@
 
 import '../App.css';
 import { useState, useCallback } from 'react';
-import MenuContainer from '@/components/MenuContainer';
+import MenuContainer from '@/components/Menu/MenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
-import LoadingPanel from '@/components/LoadingPanel';
-import GuideQRCode from '@/components/GuideQRCode';
+import LoadingPanel from '@/components/Common/LoadingPanel';
+import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName } from '@/lib/catchPathname';

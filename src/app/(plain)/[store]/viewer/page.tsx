@@ -10,11 +10,11 @@ import NavArrows from '@/components/Viewer/NavArrows';
 import SpecificPanels from '@/components/Viewer/SpecificPanels';
 import BottomSheet from '@/components/Viewer/BottomSheet';
 import PrimaryFab from '@/components/Viewer/PrimaryFab';
-import LoadingPanel from '@/components/LoadingPanel';
+import LoadingPanel from '@/components/Common/LoadingPanel';
 
 import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
-import TutorialOverlay from '@/components/TutorialOverlay';
+import TutorialOverlay from '@/components/Viewer/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
 import { catchParentPathName } from '@/lib/catchPathname';
 import { getStoreMenu } from '@/data/storeMenus';

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { initThree, attachResizeHandlers, startARSession } from "@/features/WebXR/ThreeInit";
 import { loadModel, disposeModel } from "@/features/WebXR/ThreeLoad";
 import { handleClick } from "@/features/WebXR/ThreeClick";
-import LoadingPanel from "@/components/LoadingPanel";
-import GuideScanPlane from "@/components/GuideScanPlane";
-import ARHelper from "@/components/ARHelper";
+import LoadingPanel from "@/components/Common/LoadingPanel";
+import GuideScanPlane from "@/components/AR/GuideScanPlane";
+import ARHelper from "@/components/AR/ARHelper";
 import { updateHitTest, handleFirstHit } from "./ThreeHitTest";
 import { handleSessionEndCleanup, handleSessionResetCleanup } from './ThreeCleanup';
 

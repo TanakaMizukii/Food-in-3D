@@ -6,7 +6,7 @@ import { useState } from "react";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import './App.css';
-import StoreStartPanel from "@/components/StoreStartPanel";
+import StoreStartPanel from "@/components/StartPanel/StoreStartPanel";
 
 export default function LandingPage() {
   const router = useRouter();
