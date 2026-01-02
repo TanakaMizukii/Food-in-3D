@@ -24,6 +24,8 @@ export default function ARjsPage() {
     });
     const [isCameraReady, setIsCameraReady] = useState(false);
     const [isGuideVisible, setIsGuideVisible] = useState(false);
+    const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
+    const [isMarkerFound, setIsMarkerFound] = useState(false);
     const [guideText, setGuideText] = useState("カメラを準備しています...\n少々お待ちください。\n\n案内が出たら「許可」を押してください");
 
     const handleCameraReady = useCallback(() => {
@@ -31,28 +33,43 @@ export default function ARjsPage() {
         setIsGuideVisible(true);
     }, []);
 
+    const handleInitialModelLoaded = useCallback(() => {
+        setIsInitialModelLoaded(true);
+        // モデルロード完了後にopenPanelを表示（ローディング画面と被らないように）
+        const openPanel = document.getElementById('menu-openGuide');
+        if (openPanel) {
+            openPanel.style.display = 'flex';
+        }
+    }, []);
+
     const handleGuideDismiss = useCallback(() => {
         setIsGuideVisible(false);
+        setIsMarkerFound(true);
         setGuideText("モデルを読み込み中です...\n少々お待ちください");
-        const openPanel = document.getElementById('menu-openGuide')
+        // arUIとexitButtonはマーカー検知時に表示
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
-        if (openPanel && arUI && exitButton) {
-            openPanel.style.display = 'flex';
+        if (arUI && exitButton) {
             arUI.style.display = 'block';
             exitButton.style.display = 'block';
-        };
+        }
     }, []);
+
+    // ローディングパネルの表示条件:
+    // 1. カメラ準備中 (!isCameraReady)
+    // 2. マーカー検知後、まだ初期モデルがロードされていない (isMarkerFound && !isInitialModelLoaded)
+    const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
 
     return (
         <>
-            <LoadingPanel isVisible={!isCameraReady} text={guideText} />
+            <LoadingPanel isVisible={showLoading} text={guideText} />
             <GuideQRCode isVisible={isGuideVisible} />
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain
                     setChangeModel={setChangeModel}
                     onCameraReady={handleCameraReady}
                     onGuideDismiss={handleGuideDismiss}
+                    onInitialModelLoaded={handleInitialModelLoaded}
                     storeInfo={storeInfo}
                 />
                 <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
