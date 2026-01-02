@@ -33,6 +33,7 @@ export default function ViewerPage() {
     const [loading, setLoading] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
+    const [sheetExpanded, setSheetExpanded] = useState(false);
 
     const currentProduct: ProductModel = storeMenu.productModels[currentIndex]
 
@@ -68,9 +69,9 @@ export default function ViewerPage() {
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
                     <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels}/>
-                    <BottomSheet currentProduct={currentProduct}/>
+                    <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>
                 </BottomLayer>
             </Root>
         </ModelChangeContext.Provider>

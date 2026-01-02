@@ -29,7 +29,7 @@ export default function ARStartPanel({ onUpdate, loading, store }: StartPanelPro
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? '判定中…' : 'AR体験を始める'}
                     </button>
-                    <button id="back-button" className={'backButton'} onClick={backClick}>3Dビュワーに戻る</button>
+                    <button id="back-button" className={'backButton'} onClick={backClick}>3Dビュワーへ</button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>
