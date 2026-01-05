@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MyContent } from "../MenuContent";
+import { MyContent } from "@/components/Menu/MenuContent";
 import type { ProductModelsProps } from "@/data/types";
 
 type SideSlidePanelProps = {

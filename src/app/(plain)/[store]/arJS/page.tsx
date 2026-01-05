@@ -1,11 +1,11 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback } from 'react';
-import MenuContainer from '@/components/MenuContainer';
+import { useState, useCallback, useEffect } from 'react';
+import MenuContainer from '@/components/Menu/MenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
-import LoadingPanel from '@/components/LoadingPanel';
-import GuideQRCode from '@/components/GuideQRCode';
+import LoadingPanel from '@/components/Common/LoadingPanel';
+import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName } from '@/lib/catchPathname';
@@ -15,15 +15,17 @@ type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string;
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ARjsPage() {
-    const storeSlug = catchParentPathName();
-    const storeInfo = findStoreBySlug(storeSlug);
-    const storeMenu = getStoreMenu(storeSlug);
+    const nowStore = catchParentPathName();
+    const storeInfo = findStoreBySlug(nowStore);
+    const storeMenu = getStoreMenu(nowStore);
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
     });
     const [isCameraReady, setIsCameraReady] = useState(false);
     const [isGuideVisible, setIsGuideVisible] = useState(false);
+    const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
+    const [isMarkerFound, setIsMarkerFound] = useState(false);
     const [guideText, setGuideText] = useState("カメラを準備しています...\n少々お待ちください。\n\n案内が出たら「許可」を押してください");
 
     const handleCameraReady = useCallback(() => {
@@ -31,28 +33,48 @@ export default function ARjsPage() {
         setIsGuideVisible(true);
     }, []);
 
+    const handleInitialModelLoaded = useCallback(() => {
+        setIsInitialModelLoaded(true);
+    }, []);
+
     const handleGuideDismiss = useCallback(() => {
         setIsGuideVisible(false);
+        setIsMarkerFound(true);
         setGuideText("モデルを読み込み中です...\n少々お待ちください");
-        const openPanel = document.getElementById('menu-openGuide')
+        // arUIとexitButtonはマーカー検知時に表示
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
-        if (openPanel && arUI && exitButton) {
-            openPanel.style.display = 'flex';
+        if (arUI && exitButton) {
             arUI.style.display = 'block';
             exitButton.style.display = 'block';
-        };
+        }
     }, []);
+
+    // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
+    useEffect(() => {
+        if (isInitialModelLoaded && isMarkerFound) {
+            const openPanel = document.getElementById('menu-openGuide');
+            if (openPanel) {
+                openPanel.style.display = 'flex';
+            }
+        }
+    }, [isInitialModelLoaded, isMarkerFound]);
+
+    // ローディングパネルの表示条件:
+    // 1. カメラ準備中 (!isCameraReady)
+    // 2. マーカー検知後、まだ初期モデルがロードされていない (isMarkerFound && !isInitialModelLoaded)
+    const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
 
     return (
         <>
-            <LoadingPanel isVisible={!isCameraReady} text={guideText} />
+            <LoadingPanel isVisible={showLoading} text={guideText} />
             <GuideQRCode isVisible={isGuideVisible} />
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain
                     setChangeModel={setChangeModel}
                     onCameraReady={handleCameraReady}
                     onGuideDismiss={handleGuideDismiss}
+                    onInitialModelLoaded={handleInitialModelLoaded}
                     storeInfo={storeInfo}
                 />
                 <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />

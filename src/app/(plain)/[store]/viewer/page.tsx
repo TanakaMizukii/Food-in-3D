@@ -10,11 +10,11 @@ import NavArrows from '@/components/Viewer/NavArrows';
 import SpecificPanels from '@/components/Viewer/SpecificPanels';
 import BottomSheet from '@/components/Viewer/BottomSheet';
 import PrimaryFab from '@/components/Viewer/PrimaryFab';
-import LoadingPanel from '@/components/LoadingPanel';
+import LoadingPanel from '@/components/Common/LoadingPanel';
 
 import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
-import TutorialOverlay from '@/components/TutorialOverlay';
+import TutorialOverlay from '@/components/Viewer/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
 import { catchParentPathName } from '@/lib/catchPathname';
 import { getStoreMenu } from '@/data/storeMenus';
@@ -33,6 +33,7 @@ export default function ViewerPage() {
     const [loading, setLoading] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
+    const [sheetExpanded, setSheetExpanded] = useState(false);
 
     const currentProduct: ProductModel = storeMenu.productModels[currentIndex]
 
@@ -68,9 +69,9 @@ export default function ViewerPage() {
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
                     <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels}/>
-                    <BottomSheet currentProduct={currentProduct}/>
+                    <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>
                 </BottomLayer>
             </Root>
         </ModelChangeContext.Provider>

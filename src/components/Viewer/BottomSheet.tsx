@@ -1,15 +1,15 @@
 import styled from "styled-components";
 
 import React from "react";
-import { useState } from "react";
 import type { ProductModel } from "@/data/types";
 
 type BottomProps = {
     currentProduct: ProductModel;
+    sheetExpanded: boolean;
+    setSheetExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function BottomSheet({currentProduct}: BottomProps) {
-    const [sheetExpanded, setSheetExpanded] = useState(false);
+export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpanded}: BottomProps) {
     const contentRef = React.useRef<HTMLDivElement | null>(null);
 
     // スワイプ用state

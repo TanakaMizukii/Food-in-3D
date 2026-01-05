@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
 import { getThumbSrc } from "@/lib/thumbSrc";
 
 type StartPanelProps = {
@@ -8,28 +7,51 @@ type StartPanelProps = {
     store: string;
 }
 
-export default function ARStartPanel({ onUpdate, loading, store }: StartPanelProps) {
-    const router = useRouter();
+type OptionalImgProps = {
+    src: string | undefined;
+    alt: string;
+    id?: string;
+    className?: string;
+};
 
+export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const handleClick = () => {
         onUpdate();
     };
-    const backClick = () => {
-        router.push(`/${store}/viewer`);
-    }
 
     const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
 
+    function OptionalImg({ src, alt, id, className }: OptionalImgProps) {
+        if (!src) return null;
+        return <img src={src} alt={alt} id={id} className={className} />;
+    }
+
     return(
-        // <!-- スタートパネル -->
+        // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
-                <img src={thumbSrc("logo")} alt="メインイメージ" id="start-image" className={"startImage"} />
-                <div id="status-text" className={'startText'}>ARエクスペリエンスを開始</div>
+                <OptionalImg
+                    src={thumbSrc("right_top")}
+                    alt="右上商品イメージ"
+                    id="start-right-up"
+                    className="startSideImg rightTopImg"
+                />
+                <OptionalImg
+                    src={thumbSrc("logo")}
+                    alt="メインイメージ"
+                    id="start-image"
+                    className="startImage"
+                />
+                <OptionalImg
+                    src={thumbSrc("left_bottom")}
+                    alt="左下商品イメージ"
+                    id="start-left-bottom"
+                    className="startSideImg leftBottomImg"
+                />
+                <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
-                        {loading ? '判定中…' : 'AR体験を始める'}
+                        {loading ? '3D空間準備中' : '商品の立体表示を開始'}
                     </button>
-                    <button id="back-button" className={'backButton'} onClick={backClick}>3Dビュワーに戻る</button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>
@@ -85,6 +107,22 @@ const MyStart = styled.div`
     left: -40vw; /* Adjusted for overflow */
     transform: rotate(-15deg); /* Added rotation */
     animation-delay: 0.6s;
+}
+
+@media (min-width: 768px) {
+    .startSideImg {
+        max-width: 500px; /* Set a max-width for larger screens */
+    }
+
+    .rightTopImg {
+        top: -5vh;
+        right: -20vw; /* Adjust position for desktop */
+    }
+
+    .leftBottomImg {
+        bottom: -5vh;
+        left: -20vw; /* Adjust position for desktop */
+    }
 }
 
 .startText {
@@ -155,31 +193,5 @@ const MyStart = styled.div`
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.backButton {
-    background: linear-gradient(145deg, rgba(60, 180, 90, 0.25), rgba(40, 160, 70, 0.25));
-    color: #eaffea;
-    margin: 20px;
-    padding: 12px 32px;
-    border-radius: 40px;
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    border: 1px solid rgba(80, 200, 120, 0.4);
-    backdrop-filter: blur(6px); /* ← 未来感UP（過飾ではない） */
-    cursor: pointer;
-    min-width: 150px;
-    text-align: center;
-    transition: all 0.25s ease;
-    text-shadow: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-/* ホバーで少しだけ存在感UP（光が入る感じ） */
-.backButton:hover {
-    background: linear-gradient(145deg, rgba(60, 200, 100, 0.32), rgba(40, 180, 80, 0.32));
-    border-color: rgba(100, 255, 150, 0.5);
-    box-shadow: 0 6px 16px rgba(0, 255, 120, 0.15);
 }
 `

@@ -29,8 +29,8 @@ export type InitOptions = {
     useControls?: boolean;
     hdrPath?: string;
     hdrFile?: string;
-    cameraPosition?: [number, number, number]; // カメラ位置 [x, y, z]
-    lightIntensity?: number; // ライトの強さ
+    cameraPosition?: [number, number, number];
+    lightIntensity?: number;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -151,7 +151,7 @@ export function attachResizeHandlers(ctx: ThreeCtx, container: HTMLElement, opts
     onResize();
 
     // これはクリーンナップ関数というもので、1,コンポーネントがDOMから完全に削除されるとき
-    // 2, 依存配列の値が変わるとき（useEffect(..., [依存値]) の依存値が変化して再実行される前）
+    // 依存配列の値が変わるとき（useEffect(..., [依存値]) の依存値が変化して再実行される前）
     // つまり、useEffectが次に実行される前に必ず呼ばれる処理である。
     return () => {
         // 監視対象を完全に解除するメソッド

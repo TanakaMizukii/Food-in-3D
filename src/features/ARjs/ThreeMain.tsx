@@ -3,8 +3,8 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "@/features/ARjs/ThreeInit";
 import { loadModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
-import LoadingPanel from "@/components/LoadingPanel";
-import ARHelper from "@/components/ARHelper";
+import LoadingPanel from "@/components/Common/LoadingPanel";
+import ARHelper from "@/components/AR/ARHelper";
 import { useRouter } from "next/navigation";
 import { catchParentPathName } from '@/lib/catchPathname';
 
@@ -20,10 +20,11 @@ type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onCameraReady: () => void;
     onGuideDismiss: () => void;
+    onInitialModelLoaded: () => void;
     storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, storeInfo }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, storeInfo }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
     const containerRef = useRef<HTMLDivElement>(null);
@@ -86,6 +87,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
                     displaySettings: firstEnvironment.modelDisplaySettings,
                 }, threeContext, null);
                 nowModelRef.current = nowModel;
+                onInitialModelLoaded();
             }
         })();
 
