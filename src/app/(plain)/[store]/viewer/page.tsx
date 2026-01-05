@@ -27,6 +27,7 @@ export default function ViewerPage() {
     const nowStore = catchParentPathName();
     const storeMenu = getStoreMenu(nowStore);
     const storeInfo = findStoreBySlug(nowStore);
+    const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
     // Find initial index based on storeInfo's default model
     const getInitialIndex = () => {
@@ -76,7 +77,7 @@ export default function ViewerPage() {
                 </TopLayer>
 
                 <BottomLayer>
-                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels}/>
+                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} menuDisplayMode={menuDisplayMode}/>
                     <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
                     <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>

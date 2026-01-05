@@ -1,14 +1,16 @@
 import styled from "styled-components";
 import { MyContent } from "@/components/Menu/MenuContent";
-import type { ProductModelsProps } from "@/data/types";
+import { MyCompactContent } from "@/components/Menu/CompactMenuContent";
+import type { ProductModelsProps, MenuDisplayMode } from "@/data/types";
 
 type SideSlidePanelProps = {
     menuOpen: boolean;
     setMenuOpen: (open: boolean) => void;
     productModels: ProductModelsProps;
+    menuDisplayMode?: MenuDisplayMode;
 };
 
-export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels }: SideSlidePanelProps) {
+export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels, menuDisplayMode = 'standard' }: SideSlidePanelProps) {
     return(
         <MySideSlide>
             {/* Overlay */}
@@ -16,7 +18,11 @@ export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels }:
 
             {/* Side Slide Bar */}
             <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
-                <MyContent nowCategory="メインメニュー" models={productModels} viewer={true} />
+                {menuDisplayMode === 'compact' ? (
+                    <MyCompactContent nowCategory="メインメニュー" models={productModels} viewer={true} />
+                ) : (
+                    <MyContent nowCategory="メインメニュー" models={productModels} viewer={true} />
+                )}
             </div>
         </MySideSlide>
     )
