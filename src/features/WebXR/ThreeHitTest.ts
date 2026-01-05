@@ -80,7 +80,7 @@ export async function handleFirstHit(
 
     if (isVisible) {
         const scanningOverlay = document.getElementById('scanning-overlay');
-        const menuContainer = document.getElementById('menu-container');
+        const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
         const openPanel = document.getElementById('menu-openGuide')
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');

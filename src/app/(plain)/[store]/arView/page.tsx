@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import MenuContainer from '@/components/Menu/MenuContainer';
+import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import '../App.css';
 import ARStartPanel from "@/components/StartPanel/ARStartPanel";
@@ -22,6 +23,7 @@ export default function ARViewPage() {
     const nowStore = catchParentPathName();
     const storeMenu = getStoreMenu(nowStore);
     const storeInfo = findStoreBySlug(nowStore);
+    const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
     const [loading, setLoading] = useState(false);
     const [start, setStart] = useState(false);
@@ -64,7 +66,11 @@ export default function ARViewPage() {
         {start &&
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={storeInfo} />
-                <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                {menuDisplayMode === 'compact' ? (
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                ) : (
+                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                )}
             </ModelChangeContext.Provider>
         }
         </>

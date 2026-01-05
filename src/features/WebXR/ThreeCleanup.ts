@@ -20,7 +20,7 @@ export function handleSessionEndCleanup(
     const arUI = document.getElementById('ar-ui');
     const exitButton = document.getElementById('exit-button');
     const clearObjects = document.getElementById('clear-objects');
-    const menuContainer = document.getElementById('menu-container');
+    const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
     const openPanel = document.getElementById('menu-openGuide')
     const startOverlay = document.getElementById('start-overlay');
 
