@@ -3,6 +3,7 @@
 import '../App.css';
 import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
+import DendenMenuContainer from '@/components/Menu/DendenMenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import LoadingPanel from '@/components/Common/LoadingPanel';
 import GuideQRCode from '@/components/ARjs/GuideQRCode';
@@ -53,12 +54,14 @@ export default function ARjsPage() {
     // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
     useEffect(() => {
         if (isInitialModelLoaded && isMarkerFound) {
-            const openPanel = document.getElementById('menu-openGuide');
+            // 店舗に応じたガイドIDを選択
+            const guideId = nowStore === 'denden' ? 'denden-menu-openGuide' : 'menu-openGuide';
+            const openPanel = document.getElementById(guideId);
             if (openPanel) {
                 openPanel.style.display = 'flex';
             }
         }
-    }, [isInitialModelLoaded, isMarkerFound]);
+    }, [isInitialModelLoaded, isMarkerFound, nowStore]);
 
     // ローディングパネルの表示条件:
     // 1. カメラ準備中 (!isCameraReady)
@@ -77,7 +80,11 @@ export default function ARjsPage() {
                     onInitialModelLoaded={handleInitialModelLoaded}
                     storeInfo={storeInfo}
                 />
-                <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                {nowStore === 'denden' ? (
+                    <DendenMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                ) : (
+                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                )}
             </ModelChangeContext.Provider>
         </>
     );

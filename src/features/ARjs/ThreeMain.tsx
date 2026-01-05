@@ -69,8 +69,9 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
         setCtx(threeContext);
         const clickHandler = handleClick(threeContext);
-        const menuContainer = document.getElementById('menu-container');
-        if (menuContainer) {menuContainer.style.display = 'block'};
+        // メニューコンテナを表示（通常版またはでんでん版）
+        const menuContainer = document.getElementById('menu-container') || document.getElementById('denden-menu-container');
+        if (menuContainer) {menuContainer.style.display = 'flex'};
         threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
 
         (async () => {
