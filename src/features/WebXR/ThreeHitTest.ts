@@ -70,7 +70,7 @@ export async function handleFirstHit(
     timestamp: DOMHighResTimeStamp,
     reticleShowTimeRef: RefObject<DOMHighResTimeStamp | null>,
     viewNumRef: RefObject<number>,
-    firstModelInfo?: ModelInfo
+    firstModelInfo?: ModelInfo,
 ) {
     if (viewNumRef.current !== 0) {
         return;
@@ -81,7 +81,7 @@ export async function handleFirstHit(
     if (isVisible) {
         const scanningOverlay = document.getElementById('scanning-overlay');
         const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
-        const openPanel = document.getElementById('menu-openGuide')
+        const openPanel = document.getElementById('menu-openGuide') || document.getElementById('compact-menu-openGuide');
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
         const clearObjects = document.getElementById('clear-objects');

@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 type Props = { visible?: boolean };
 
-export default function GuideScanPlane({ visible = true }: Props) {
+export default function GuideScanPlane({}: Props) {
     return (
-        <MyGuidePlane data-show={visible ? "1" : "0"}>
+        <MyGuidePlane>
         <div id="scanning-overlay" className="scanning-overlay">
             <div className="scanning-icon"></div>
             <div className="scanning-text">平面を検出中...</div>
@@ -65,9 +65,6 @@ const MyGuidePlane = styled.div`
         box-sizing: border-box;
         user-select: none;
         -webkit-user-select: none;
-    }
-    &[data-show="1"] .scanning-overlay {
-        display: flex;
     }
     .scanning-icon {
         width: 80px;

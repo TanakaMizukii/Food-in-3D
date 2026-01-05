@@ -287,7 +287,7 @@ const bounce = keyframes`
 `;
 
 const GuideHint = styled.div<{ $expanded: boolean }>`
-    display: flex;
+    display: none;
     position: fixed;
     bottom: ${({ $expanded }) => ($expanded ? 'calc(75vh + 20px)' : '130px')};
     transition: bottom 0.3s ease-out;

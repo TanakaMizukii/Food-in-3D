@@ -12,10 +12,10 @@ export default function ARResetPanel({ onRestart }: ARResetPanelProps) {
             <div className="reset-content">
                 <div className="reset-icon" onClick={onRestart}></div>
                 <p className="reset-message-main">
-                    平面の認識をリセットしました
+                    平面の認識をリセットします
                 </p>
                 <p className="reset-message-sub">
-                    下のボタンから<br />もう一度平面認識を開始できます。
+                    ボタンから<br />もう一度平面認識を開始してください
                 </p>
                 <RestartButton onClick={onRestart}>
                     平面認識を再実行
@@ -103,7 +103,7 @@ const ResetPanelWrapper = styled.div`
 const RestartButton = styled.button`
     padding: 14px 28px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #333;
     background-color: #ffffff;
     border: none;
