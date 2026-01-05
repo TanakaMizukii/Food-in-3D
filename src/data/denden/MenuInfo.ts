@@ -65,6 +65,23 @@ export const productModels: ProductModelsProps = [
     // === 鶏丼系 ===
     {
         id: 1,
+        name: '2種の鶏唐コンビ丼（通常）',
+        shortName: '鶏唐コンビ丼 通常',
+        category: '鶏丼系',
+        price: '850',
+        minPrice: '772',
+        description: '2種類の鶏唐揚げが楽しめるコンビ丼です。',
+        image: '/images/denden/chicken_combo_normal.jpg',
+        model: '/models/denden/chicken_combo_normal_comp.glb',
+        serving: '通常',
+        part: '鶏肉',
+        recPeople: '2種類の唐揚げを\n食べ比べたい方',
+        origin: null,
+        recommended: 'そのまま',
+        tags: ['鶏唐揚げ', 'コンビ', '人気']
+    },
+    {
+        id: 2,
         name: '2種の鶏唐コンビ丼（特盛）',
         shortName: '鶏唐コンビ丼 特盛',
         category: '鶏丼系',
@@ -79,23 +96,6 @@ export const productModels: ProductModelsProps = [
         origin: null,
         recommended: 'そのまま',
         tags: ['鶏唐揚げ', 'コンビ', '特盛']
-    },
-    {
-        id: 2,
-        name: '2種の鶏唐コンビ丼（通常）',
-        shortName: '鶏唐コンビ丼',
-        category: '鶏丼系',
-        price: '850',
-        minPrice: '772',
-        description: '2種類の鶏唐揚げが楽しめるコンビ丼です。',
-        image: '/images/denden/chicken_combo_normal.jpg',
-        model: '/models/denden/chicken_combo_normal_comp.glb',
-        serving: '通常',
-        part: '鶏肉',
-        recPeople: '2種類の唐揚げを\n食べ比べたい方',
-        origin: null,
-        recommended: 'そのまま',
-        tags: ['鶏唐揚げ', 'コンビ', '人気']
     },
     {
         id: 3,
@@ -117,7 +117,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 4,
         name: '松本山賊焼き丼（通常）',
-        shortName: '山賊焼き丼',
+        shortName: '山賊焼き丼 通常',
         category: '鶏丼系',
         price: '950',
         minPrice: '863',
@@ -168,7 +168,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 7,
         name: '炙りチーズチキントマトソース丼（通常）',
-        shortName: 'チーズチキン丼',
+        shortName: 'チーズチキン丼 通常',
         category: '鶏丼系',
         price: '950',
         minPrice: '863',
@@ -204,7 +204,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 9,
         name: '松本山賊カレー（通常）',
-        shortName: '山賊カレー',
+        shortName: '山賊カレー 通常',
         category: 'カレー',
         price: '1080',
         minPrice: '961',
@@ -255,7 +255,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 12,
         name: '目玉焼きカレー（通常）',
-        shortName: '目玉焼きカレー',
+        shortName: '目玉焼きカレー 通常',
         category: 'カレー',
         price: '800',
         minPrice: '727',
@@ -274,7 +274,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 13,
         name: '豚バラ焼肉丼（通常）',
-        shortName: '豚バラ焼肉丼',
+        shortName: '豚バラ焼肉丼 通常',
         category: '丼ぶり',
         price: '850',
         minPrice: '772',
@@ -310,7 +310,7 @@ export const productModels: ProductModelsProps = [
     {
         id: 15,
         name: '豚の生姜焼き&鶏から丼（通常）',
-        shortName: '生姜焼き&鶏から丼',
+        shortName: '生姜焼き&鶏から丼 通常',
         category: '鶏系&豚系丼',
         price: '850',
         minPrice: '772',
@@ -396,8 +396,8 @@ export const productModels: ProductModelsProps = [
     // },
     {
         id: 20,
-        name: 'ロコモコ丼',
-        shortName: 'ロコモコ丼',
+        name: 'ハンバーグロコモコ丼',
+        shortName: 'ハンバーグロコモコ丼',
         category: 'その他',
         price: '980',
         minPrice: '891',

@@ -28,7 +28,15 @@ export default function ViewerPage() {
     const storeMenu = getStoreMenu(nowStore);
     const storeInfo = findStoreBySlug(nowStore);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
+    // Find initial index based on storeInfo's default model
+    const getInitialIndex = () => {
+        if (!storeInfo?.firstEnvironment?.defaultModel) return 0;
+        const defaultModelName = storeInfo.firstEnvironment.defaultModel.name;
+        const index = storeMenu.productModels.findIndex(p => p.name === defaultModelName);
+        return index >= 0 ? index : 0;
+    };
+
+    const [currentIndex, setCurrentIndex] = useState(getInitialIndex());
     const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
