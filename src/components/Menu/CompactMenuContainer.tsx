@@ -2,14 +2,14 @@ import styled, { createGlobalStyle } from "styled-components";
 import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
 import TabNavigation from "./TabNavigation";
-import { MyDendenContent } from "./DendenMenuContent";
+import { MyCompactContent } from "./CompactMenuContent";
 import type { ProductModelsProps } from "@/data/types";
 
 import React, { useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 
 // 型エイリアスの作成
-type DendenMenuContainerProps = {
+type CompactMenuContainerProps = {
     className?: string;
     productCategory: string[];
     productModels: ProductModelsProps;
@@ -18,7 +18,7 @@ type MyContainerProps = {
     $expanded: boolean;
 };
 
-export default function DendenMenuContainer({ className, productCategory, productModels }: DendenMenuContainerProps) {
+export default function CompactMenuContainer({ className, productCategory, productModels }: CompactMenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
 
@@ -27,7 +27,7 @@ export default function DendenMenuContainer({ className, productCategory, produc
     };
 
     const dismissGuide = () => {
-        const openPanel = document.getElementById('denden-menu-openGuide');
+        const openPanel = document.getElementById('compact-menu-openGuide');
         if (openPanel) { openPanel.style.display = 'none'; }
     };
 
@@ -99,10 +99,10 @@ export default function DendenMenuContainer({ className, productCategory, produc
     return (
         <div>
             <GuideHintOverride />
-            <GuideHint id="denden-menu-openGuide">
+            <GuideHint id="compact-menu-openGuide">
                 タップまたは上スワイプ<br />でメニューを開けます
             </GuideHint>
-            <MyContainer id='denden-menu-container' className={className} $expanded={toggle}>
+            <MyContainer id='compact-menu-container' className={className} $expanded={toggle}>
                 <div className="menu-header">
                     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                         <MenuToggle onUpdate={t_update} toggle={toggle} />
@@ -111,7 +111,7 @@ export default function DendenMenuContainer({ className, productCategory, produc
                 </div>
                 <div className="menu-body">
                     <ToggleChangeContext.Provider value={toggleConfig}>
-                        <MyDendenContent nowCategory={category} models={productModels} />
+                        <MyCompactContent nowCategory={category} models={productModels} />
                     </ToggleChangeContext.Provider>
                 </div>
             </MyContainer>
@@ -182,7 +182,7 @@ export const MyContainer = styled.div<MyContainerProps>`
 // Hide GuideHint on desktop and landscape regardless of inline styles
 const GuideHintOverride = createGlobalStyle`
     @media (min-width: 1024px), (orientation: landscape) {
-        #denden-menu-openGuide { display: none !important; }
+        #compact-menu-openGuide { display: none !important; }
     }
 `;
 

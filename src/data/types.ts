@@ -52,6 +52,9 @@ export type FirstEnvironment = {
     lightIntensity?: number;                      // ライトの強さ
 };
 
+// メニュー表示モード
+export type MenuDisplayMode = 'standard' | 'compact';
+
 export type StoreInfo = {
     id: number,
     use_name: string,
@@ -60,4 +63,5 @@ export type StoreInfo = {
     right_top?: string | null,
     left_bottom?: string | null,
     firstEnvironment?: FirstEnvironment,
+    menuDisplayMode?: MenuDisplayMode,  // メニュー表示モード（デフォルト: 'standard'）
 }

@@ -13,11 +13,11 @@ export type GroupedProduct = {
     variants: ProductModel[];   // サイズ違いの商品一覧
 };
 
-type DendenMenuItemProps = {
+type CompactMenuItemProps = {
     groupedProduct: GroupedProduct;
 };
 
-export default function DendenMenuItem({ groupedProduct }: DendenMenuItemProps) {
+export default function CompactMenuItem({ groupedProduct }: CompactMenuItemProps) {
     const { changeModel } = useContext(ModelChangeContext);
     const { toggleChange } = useContext(ToggleChangeContext);
     const [selectedVariant, setSelectedVariant] = useState<ProductModel | null>(null);
@@ -64,24 +64,24 @@ export default function DendenMenuItem({ groupedProduct }: DendenMenuItemProps) 
     const priceDisplay = minPrice === maxPrice ? `${minPrice}円` : `${minPrice}円〜${maxPrice}円`;
 
     return (
-        <MyDendenItem>
-            <div className="denden-item" onClick={handlePanelClick}>
+        <MyCompactItem>
+            <div className="compact-item" onClick={handlePanelClick}>
                 {/* 左半分：画像 */}
-                <div className="denden-item-image-wrapper">
+                <div className="compact-item-image-wrapper">
                     <img
                         src={groupedProduct.image}
                         alt={groupedProduct.baseName}
-                        className="denden-item-image"
+                        className="compact-item-image"
                     />
                 </div>
                 {/* 右半分：商品情報とサイズボタン */}
-                <div className="denden-item-right">
-                    <div className="denden-item-info">
-                        <div className="denden-item-title">{groupedProduct.baseName}</div>
-                        <div className="denden-item-description">{groupedProduct.description}</div>
-                        <div className="denden-item-price">{priceDisplay}</div>
+                <div className="compact-item-right">
+                    <div className="compact-item-info">
+                        <div className="compact-item-title">{groupedProduct.baseName}</div>
+                        <div className="compact-item-description">{groupedProduct.description}</div>
+                        <div className="compact-item-price">{priceDisplay}</div>
                     </div>
-                    <div className="denden-item-sizes">
+                    <div className="compact-item-sizes">
                         {groupedProduct.variants.map((variant) => (
                             <button
                                 key={variant.id}
@@ -95,12 +95,12 @@ export default function DendenMenuItem({ groupedProduct }: DendenMenuItemProps) 
                     </div>
                 </div>
             </div>
-        </MyDendenItem>
+        </MyCompactItem>
     );
 }
 
-const MyDendenItem = styled.div`
-.denden-item {
+const MyCompactItem = styled.div`
+.compact-item {
     display: flex;
     background-color: #fff;
     border-radius: 12px;
@@ -111,17 +111,17 @@ const MyDendenItem = styled.div`
     transition: box-shadow 0.2s;
 }
 
-.denden-item:hover {
+.compact-item:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* 左半分：画像 */
-.denden-item-image-wrapper {
+.compact-item-image-wrapper {
     flex: 0 0 50%;
     aspect-ratio: 4 / 3;
 }
 
-.denden-item-image {
+.compact-item-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -129,20 +129,20 @@ const MyDendenItem = styled.div`
 }
 
 /* 右半分：情報とボタン */
-.denden-item-right {
+.compact-item-right {
     flex: 0 0 50%;
     display: flex;
     flex-direction: column;
     padding: 10px;
 }
 
-.denden-item-info {
+.compact-item-info {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.denden-item-title {
+.compact-item-title {
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 4px;
@@ -150,7 +150,7 @@ const MyDendenItem = styled.div`
     line-height: 1.3;
 }
 
-.denden-item-description {
+.compact-item-description {
     font-size: 10px;
     color: #666;
     margin-bottom: 6px;
@@ -161,14 +161,14 @@ const MyDendenItem = styled.div`
     overflow: hidden;
 }
 
-.denden-item-price {
+.compact-item-price {
     font-size: 13px;
     font-weight: bold;
     color: #e67e22;
 }
 
 /* サイズボタンエリア */
-.denden-item-sizes {
+.compact-item-sizes {
     display: flex;
     gap: 4px;
     margin-top: auto;

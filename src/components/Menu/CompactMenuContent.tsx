@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import MenuCategory from "./MenuCategory";
-import DendenMenuItem, { type GroupedProduct } from "./DendenMenuItem";
+import CompactMenuItem, { type GroupedProduct } from "./CompactMenuItem";
 import type { ProductModelsProps, ProductModel } from "@/data/types";
 import React from "react";
 
-type DendenMenuContentProps = {
+type CompactMenuContentProps = {
     className?: string;
     nowCategory: string;
     models: ProductModelsProps;
@@ -47,7 +47,7 @@ function groupProductsByBaseName(products: ProductModel[]): GroupedProduct[] {
     return Array.from(groupMap.values());
 }
 
-export default function DendenMenuContent({ className, nowCategory, models }: DendenMenuContentProps) {
+export default function CompactMenuContent({ className, nowCategory, models }: CompactMenuContentProps) {
     // modelsからユニークなカテゴリを取得（出現順を維持）
     const allCategories = [...new Set(models.map(m => m.category))];
 
@@ -77,7 +77,7 @@ export default function DendenMenuContent({ className, nowCategory, models }: De
                     <React.Fragment key={cat}>
                         <MenuCategory category={cat} />
                         {groupedProducts.map((group) => (
-                            <DendenMenuItem key={group.baseName} groupedProduct={group} />
+                            <CompactMenuItem key={group.baseName} groupedProduct={group} />
                         ))}
                     </React.Fragment>
                 );
@@ -86,7 +86,7 @@ export default function DendenMenuContent({ className, nowCategory, models }: De
     );
 }
 
-export const MyDendenContent = styled(DendenMenuContent)`
+export const MyCompactContent = styled(CompactMenuContent)`
     padding: 5px 15px 15px;
     display: flex;
     flex-direction: column;

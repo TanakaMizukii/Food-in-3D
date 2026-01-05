@@ -3,7 +3,7 @@
 import '../App.css';
 import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
-import DendenMenuContainer from '@/components/Menu/DendenMenuContainer';
+import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
 import LoadingPanel from '@/components/Common/LoadingPanel';
 import GuideQRCode from '@/components/ARjs/GuideQRCode';
@@ -19,6 +19,7 @@ export default function ARjsPage() {
     const nowStore = catchParentPathName();
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getStoreMenu(nowStore);
+    const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -54,14 +55,14 @@ export default function ARjsPage() {
     // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
     useEffect(() => {
         if (isInitialModelLoaded && isMarkerFound) {
-            // 店舗に応じたガイドIDを選択
-            const guideId = nowStore === 'denden' ? 'denden-menu-openGuide' : 'menu-openGuide';
+            // メニュー表示モードに応じたガイドIDを選択
+            const guideId = menuDisplayMode === 'compact' ? 'compact-menu-openGuide' : 'menu-openGuide';
             const openPanel = document.getElementById(guideId);
             if (openPanel) {
                 openPanel.style.display = 'flex';
             }
         }
-    }, [isInitialModelLoaded, isMarkerFound, nowStore]);
+    }, [isInitialModelLoaded, isMarkerFound, menuDisplayMode]);
 
     // ローディングパネルの表示条件:
     // 1. カメラ準備中 (!isCameraReady)
@@ -80,8 +81,8 @@ export default function ARjsPage() {
                     onInitialModelLoaded={handleInitialModelLoaded}
                     storeInfo={storeInfo}
                 />
-                {nowStore === 'denden' ? (
-                    <DendenMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                {menuDisplayMode === 'compact' ? (
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
                 ) : (
                     <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
                 )}

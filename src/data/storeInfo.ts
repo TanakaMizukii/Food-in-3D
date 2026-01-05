@@ -8,6 +8,7 @@ const storeInfo: StoreInfo[] = [
         logo: '海州ロゴ.png',
         right_top: 'ファミリーセット切り抜き.png',
         left_bottom: 'カルビ盛り切り抜き.png',
+        menuDisplayMode: 'standard',
         firstEnvironment: {
             hdrPath: '/hdr/kaishu/',
             hdrFile: 'kaisyu_73_small.hdr',
@@ -36,6 +37,7 @@ const storeInfo: StoreInfo[] = [
         logo: 'でんでんロゴ.png',
         right_top: null,
         left_bottom: null,
+        menuDisplayMode: 'compact',
         firstEnvironment: {
             hdrPath: '/hdr/denden/',
             hdrFile: 'dndn_2.1_small.hdr',
