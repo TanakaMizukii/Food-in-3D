@@ -82,6 +82,9 @@ export default function CompactMenuContent({ className, nowCategory, models }: C
                     </React.Fragment>
                 );
             })}
+            <SizeNotice>
+                ※ここに表示されているサイズは撮影を行った商品のみになります。表示がなくても特盛や超大盛りのご注文は可能です！
+            </SizeNotice>
         </div>
     );
 }
@@ -93,4 +96,13 @@ export const MyCompactContent = styled(CompactMenuContent)`
     gap: 12px;
     height: ${({ viewer }) => (viewer ? '100dvh' : '70dvh')};
     overflow-y: auto;
+`;
+
+// サイズに関する注意書き
+const SizeNotice = styled.div`
+    padding: 16px 20px;
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    line-height: 1.5;
 `;
