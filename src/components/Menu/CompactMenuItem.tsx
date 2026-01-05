@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useContext, useState } from 'react';
 import { ModelChangeContext } from "@/contexts/ModelChangeContext";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
+import { SelectedProductContext } from "@/contexts/SelectedProductContext";
 import type { ProductModel } from "@/data/types";
 
 // グループ化された商品の型
@@ -20,6 +21,7 @@ type CompactMenuItemProps = {
 export default function CompactMenuItem({ groupedProduct }: CompactMenuItemProps) {
     const { changeModel } = useContext(ModelChangeContext);
     const { toggleChange } = useContext(ToggleChangeContext);
+    const { setSelectedProduct } = useContext(SelectedProductContext);
     const [selectedVariant, setSelectedVariant] = useState<ProductModel | null>(null);
 
     // 通常サイズ（最初のバリアント＝価格が一番安いもの）を取得
@@ -35,6 +37,11 @@ export default function CompactMenuItem({ groupedProduct }: CompactMenuItemProps
                 modelPrice: normalVariant.price
             });
         }
+        // 選択した商品情報を親に通知
+        setSelectedProduct({
+            groupedProduct,
+            selectedVariant: normalVariant
+        });
         if (typeof toggleChange === 'function') {
             toggleChange();
         }
@@ -52,6 +59,11 @@ export default function CompactMenuItem({ groupedProduct }: CompactMenuItemProps
                 modelPrice: variant.price
             });
         }
+        // 選択した商品情報を親に通知
+        setSelectedProduct({
+            groupedProduct,
+            selectedVariant: variant
+        });
         if (typeof toggleChange === 'function') {
             toggleChange();
         }
@@ -82,16 +94,24 @@ export default function CompactMenuItem({ groupedProduct }: CompactMenuItemProps
                         <div className="compact-item-price">{priceDisplay}</div>
                     </div>
                     <div className="compact-item-sizes">
-                        {groupedProduct.variants.map((variant) => (
-                            <button
-                                key={variant.id}
-                                className={`size-btn ${selectedVariant?.id === variant.id ? 'selected' : ''}`}
-                                onClick={(e) => handleSizeClick(e, variant)}
-                            >
-                                <span className="size-name">{variant.serving}</span>
-                                <span className="size-price">{variant.price}円</span>
-                            </button>
-                        ))}
+                        {/* 3つのスロットを常に確保 */}
+                        {[0, 1, 2].map((index) => {
+                            const variant = groupedProduct.variants[index];
+                            if (variant) {
+                                return (
+                                    <button
+                                        key={variant.id}
+                                        className={`size-btn ${selectedVariant?.id === variant.id ? 'selected' : ''}`}
+                                        onClick={(e) => handleSizeClick(e, variant)}
+                                    >
+                                        <span className="size-name">{variant.serving}</span>
+                                        <span className="size-price">{variant.price}円</span>
+                                    </button>
+                                );
+                            } else {
+                                return <div key={`empty-${index}`} className="size-btn-placeholder" />;
+                            }
+                        })}
                     </div>
                 </div>
             </div>
@@ -214,5 +234,11 @@ const MyCompactItem = styled.div`
 .size-price {
     font-size: 9px;
     color: #666;
+}
+
+/* 空のスロット用プレースホルダー */
+.size-btn-placeholder {
+    flex: 1;
+    visibility: hidden;
 }
 `;

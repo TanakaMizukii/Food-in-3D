@@ -4,8 +4,10 @@ import MenuToggle from "./MenuToggle";
 import TabNavigation from "./TabNavigation";
 import { MyCompactContent } from "./CompactMenuContent";
 import type { ProductModelsProps } from "@/data/types";
+import { SelectedProductContext, type SelectedProductInfo } from "@/contexts/SelectedProductContext";
+import { ModelChangeContext } from "@/contexts/ModelChangeContext";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 
 // 型エイリアスの作成
@@ -21,9 +23,17 @@ type MyContainerProps = {
 export default function CompactMenuContainer({ className, productCategory, productModels }: CompactMenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
+    // 選択された商品情報（nullの場合は初期状態＝ガイド表示）
+    const [selectedProduct, setSelectedProduct] = useState<SelectedProductInfo | null>(null);
+
+    const { changeModel } = useContext(ModelChangeContext);
 
     const toggleConfig = {
         toggleChange: () => setToggle(t => !t)
+    };
+
+    const selectedProductConfig = {
+        setSelectedProduct: (info: SelectedProductInfo) => setSelectedProduct(info)
     };
 
     const dismissGuide = () => {
@@ -96,12 +106,57 @@ export default function CompactMenuContainer({ className, productCategory, produ
         }
     }, [isDesktop]);
 
+    // サイズボタンクリック時の処理
+    const handleSizeButtonClick = (variant: typeof selectedProduct extends null ? never : NonNullable<typeof selectedProduct>['groupedProduct']['variants'][number]) => {
+        if (typeof changeModel === 'function') {
+            changeModel({
+                modelName: variant.name,
+                modelPath: variant.model,
+                modelDetail: variant.description,
+                modelPrice: variant.price
+            });
+        }
+        // 選択中のバリアントを更新
+        if (selectedProduct) {
+            setSelectedProduct({
+                ...selectedProduct,
+                selectedVariant: variant
+            });
+        }
+    };
+
     return (
         <div>
             <GuideHintOverride />
-            <GuideHint id="compact-menu-openGuide">
-                タップまたは上スワイプ<br />でメニューを開けます
-            </GuideHint>
+            {/* 初期状態（商品未選択）はガイドヒント、選択後はサイズボタンを表示（パネル展開中は非表示） */}
+            {selectedProduct === null ? (
+                <GuideHint id="compact-menu-openGuide" $expanded={toggle}>
+                    タップまたは上スワイプ<br />でメニューを開けます
+                </GuideHint>
+            ) : !toggle && (
+                <SizeButtonPanel id="compact-size-panel">
+                    <div className="size-panel-title">{selectedProduct.groupedProduct.baseName}</div>
+                    <div className="size-buttons">
+                        {/* 3つのスロットを常に確保 */}
+                        {[0, 1, 2].map((index) => {
+                            const variant = selectedProduct.groupedProduct.variants[index];
+                            if (variant) {
+                                return (
+                                    <button
+                                        key={variant.id}
+                                        className={`size-btn ${selectedProduct.selectedVariant.id === variant.id ? 'selected' : ''}`}
+                                        onClick={() => handleSizeButtonClick(variant)}
+                                    >
+                                        <span className="size-name">{variant.serving}</span>
+                                    </button>
+                                );
+                            } else {
+                                return <div key={`empty-${index}`} className="size-btn-placeholder" />;
+                            }
+                        })}
+                    </div>
+                </SizeButtonPanel>
+            )}
             <MyContainer id='compact-menu-container' className={className} $expanded={toggle}>
                 <div className="menu-header">
                     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -111,7 +166,9 @@ export default function CompactMenuContainer({ className, productCategory, produ
                 </div>
                 <div className="menu-body">
                     <ToggleChangeContext.Provider value={toggleConfig}>
-                        <MyCompactContent nowCategory={category} models={productModels} />
+                        <SelectedProductContext.Provider value={selectedProductConfig}>
+                            <MyCompactContent nowCategory={category} models={productModels} />
+                        </SelectedProductContext.Provider>
                     </ToggleChangeContext.Provider>
                 </div>
             </MyContainer>
@@ -179,10 +236,11 @@ export const MyContainer = styled.div<MyContainerProps>`
     }
 `;
 
-// Hide GuideHint on desktop and landscape regardless of inline styles
+// Hide GuideHint and SizeButtonPanel on desktop and landscape regardless of inline styles
 const GuideHintOverride = createGlobalStyle`
     @media (min-width: 1024px), (orientation: landscape) {
         #compact-menu-openGuide { display: none !important; }
+        #compact-size-panel { display: none !important; }
     }
 `;
 
@@ -228,10 +286,11 @@ const bounce = keyframes`
     }
 `;
 
-const GuideHint = styled.div`
-    display: none;
+const GuideHint = styled.div<{ $expanded: boolean }>`
+    display: flex;
     position: fixed;
-    bottom: 130px;
+    bottom: ${({ $expanded }) => ($expanded ? 'calc(75vh + 20px)' : '130px')};
+    transition: bottom 0.3s ease-out;
     left: 0;
     width: 100%;
     flex-direction: column;
@@ -254,5 +313,90 @@ const GuideHint = styled.div`
         margin-top: 8px;
         transform: rotate(-90deg);
         animation: ${bounce} 1.5s ease-in-out infinite;
+    }
+`;
+
+// サイズボタンパネル（商品選択後に表示、パネル展開中は非表示）
+const SizeButtonPanel = styled.div`
+    display: flex;
+    position: fixed;
+    bottom: 130px;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 110;
+    pointer-events: auto;
+    animation: ${fadeInUp} 0.3s ease-out forwards;
+
+    .size-panel-title {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .size-buttons {
+        display: flex;
+        gap: 8px;
+        padding: 0 20px;
+        max-width: 100%;
+    }
+
+    .size-btn {
+        flex: 1;
+        min-width: 80px;
+        max-width: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 8px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 2px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .size-btn:hover {
+        background-color: #f0f0f0;
+        border-color: #bbb;
+        transform: translateY(-2px);
+    }
+
+    .size-btn.selected {
+        background-color: #333;
+        border-color: #333;
+        color: #fff;
+    }
+
+    .size-btn.selected .size-name,
+    .size-btn.selected .size-price {
+        color: #fff;
+    }
+
+    .size-name {
+        font-size: 12px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 2px;
+    }
+
+    .size-price {
+        font-size: 11px;
+        color: #666;
+    }
+
+    /* 空のスロット用プレースホルダー */
+    .size-btn-placeholder {
+        flex: 1;
+        min-width: 80px;
+        max-width: 120px;
+        visibility: hidden;
     }
 `;
