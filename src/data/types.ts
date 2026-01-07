@@ -5,6 +5,32 @@ export interface Category {
     description: string;
 }
 
+// 商品翻訳用の型
+export type ProductTranslation = {
+    name: string;
+    shortName: string;
+    description: string;
+    minDetail?: string;
+    serving: string;
+    part: string | null;
+    origin: string | null;
+    recPeople?: string | null;
+    recommended: string;
+    tags: string[];
+};
+
+// カテゴリ翻訳用の型
+export type CategoryTranslation = {
+    name: string;
+    description: string;
+};
+
+// 店舗翻訳データの型
+export type StoreTranslations = {
+    categories: Record<number, CategoryTranslation>;
+    products: Record<number, ProductTranslation>;
+};
+
 export type ProductModel = {
     id: number;
     name: string;

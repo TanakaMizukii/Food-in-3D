@@ -9,16 +9,17 @@ import LoadingPanel from '@/components/Common/LoadingPanel';
 import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
-import { catchParentPathName } from '@/lib/catchPathname';
-import { getStoreMenu } from '@/data/storeMenus';
+import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
+import { getLocalizedStoreMenu } from '@/data/storeMenus';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ARjsPage() {
     const nowStore = catchParentPathName();
+    const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
-    const storeMenu = getStoreMenu(nowStore);
+    const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {

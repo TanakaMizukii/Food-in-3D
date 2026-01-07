@@ -12,7 +12,7 @@ import ARStartPanel from "@/components/StartPanel/ARStartPanel";
 import ARResetPanel from "@/components/AR/ARResetPanel";
 import ThreeMain from '@/features/WebXR/ThreeMain';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { useTranslations } from 'next-intl';
 
@@ -23,7 +23,7 @@ export default function ARViewPage() {
     const router = useRouter();
     const nowStore = catchParentPathName();
     const locale = catchLocale();
-    const storeMenu = getStoreMenu(nowStore);
+    const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('ar');
