@@ -1,5 +1,7 @@
+'use client';
 import styled from "styled-components";
 import { getThumbSrc } from "@/lib/thumbSrc";
+import { useTranslations } from 'next-intl';
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -15,6 +17,7 @@ type OptionalImgProps = {
 };
 
 export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
+    const t = useTranslations('startPanel');
     const handleClick = () => {
         onUpdate();
     };
@@ -48,9 +51,13 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                     id="start-left-bottom"
                     className="startSideImg leftBottomImg"
                 />
-                <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
+                <div id="status-text" className={'startText'}>
+                    {t('message').split('\n').map((line, i) => (
+                        <span key={i}>{line}<br /></span>
+                    ))}
+                </div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
-                        {loading ? '3D空間準備中' : '商品の立体表示を開始'}
+                        {loading ? t('loading') : t('startButton')}
                     </button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>

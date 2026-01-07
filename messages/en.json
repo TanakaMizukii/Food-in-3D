@@ -1,0 +1,47 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "start": "Start",
+    "close": "Close"
+  },
+  "home": {
+    "title": "Food in 3D",
+    "description": "View restaurant menus in 3D for a clearer dining experience.",
+    "selectStore": "Click on a restaurant to explore."
+  },
+  "tutorial": {
+    "title": "Viewer Guide",
+    "modelControl": "Model Control:",
+    "modelControlDesc": "Drag to rotate, pinch to zoom.",
+    "arMode": "AR Mode:",
+    "arModeDesc": "Tap the AR button to view products in real space!",
+    "menu": "Menu:",
+    "menuDesc": "Tap the top-right icon to browse products",
+    "details": "Details:",
+    "detailsDesc": "Drag the bottom sheet to view product details."
+  },
+  "ar": {
+    "title": "AR (Augmented Reality)",
+    "description": "Launch the camera to see products at actual size",
+    "startButton": "Start AR",
+    "checking": "Checking...",
+    "desktopAlert": "AR is not available on desktop. Please use a smartphone."
+  },
+  "scan": {
+    "detecting": "Detecting surface...",
+    "instruction": "Hold your phone at eye level\nand move it around to\nscan the surface"
+  },
+  "startPanel": {
+    "message": "View products in 3D\nto reduce order mismatches",
+    "startButton": "Start 3D View",
+    "loading": "Preparing 3D space"
+  },
+  "product": {
+    "serving": "Serving",
+    "part": "Cut",
+    "category": "Category",
+    "origin": "Origin",
+    "recommendedFor": "Recommended for",
+    "recommended": "Recommended"
+  }
+}

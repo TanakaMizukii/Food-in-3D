@@ -1,13 +1,17 @@
+'use client';
 import styled from "styled-components";
+import { useTranslations } from 'next-intl';
 
 type Props = { visible?: boolean };
 
 export default function GuideScanPlane({}: Props) {
+    const t = useTranslations('scan');
+
     return (
         <MyGuidePlane>
         <div id="scanning-overlay" className="scanning-overlay">
             <div className="scanning-icon"></div>
-            <div className="scanning-text">平面を検出中...</div>
+            <div className="scanning-text">{t('detecting')}</div>
 
             {/* ▼ 机＋スマホの簡易イラスト */}
             <div className="scan-visual">
@@ -39,9 +43,9 @@ export default function GuideScanPlane({}: Props) {
             </div>
 
             <div className="scanning-instruction">
-                スマホを目の高さで持ち<br />
-                上下左右に動かして平面を<br />
-                スキャンしてください
+                {t('instruction').split('\n').map((line, i) => (
+                    <span key={i}>{line}<br /></span>
+                ))}
             </div>
         </div>
         </MyGuidePlane>

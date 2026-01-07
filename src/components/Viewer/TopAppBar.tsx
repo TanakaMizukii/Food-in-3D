@@ -1,7 +1,9 @@
+'use client';
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { catchParentPathName } from "@/lib/catchPathname";
+import { catchParentPathName, catchLocale } from "@/lib/catchPathname";
 import { HiOutlineArrowLeft, HiOutlineMenu } from "react-icons/hi";
+import LanguageSelector from "@/components/Common/LanguageSelector";
 
 type TopAppBarProps = {
     menuOpen: boolean;
@@ -12,14 +14,18 @@ type TopAppBarProps = {
 export default function TopAppBar({ menuOpen, setMenuOpen, storeName }: TopAppBarProps) {
     const router = useRouter();
     const store = catchParentPathName();
+    const locale = catchLocale();
 
     return(
         <MyTopBar>
             {/* Top App Bar */}
             <div className="top-app-bar">
-                <button onClick={() => router.push(`/${store}`)}><HiOutlineArrowLeft /></button>
+                <button onClick={() => router.push(`/${locale}/${store}`)}><HiOutlineArrowLeft /></button>
                 <h1>{storeName ?? '商品 3Dビュワー'}</h1>
-                <button onClick={() => setMenuOpen(!menuOpen)}><HiOutlineMenu /></button>
+                <div className="top-app-bar-right">
+                    <LanguageSelector />
+                    <button onClick={() => setMenuOpen(!menuOpen)}><HiOutlineMenu /></button>
+                </div>
             </div>
         </MyTopBar>
     )
@@ -73,5 +79,11 @@ const MyTopBar = styled.div`
         flex: 1;
         text-align: center;
         margin: 0 12px;
+    }
+
+    .top-app-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 `

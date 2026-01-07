@@ -1,0 +1,47 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "start": "开始",
+    "close": "关闭"
+  },
+  "home": {
+    "title": "食品3D展示",
+    "description": "以3D形式展示餐厅菜单，带来更清晰的用餐体验。",
+    "selectStore": "点击选择您感兴趣的餐厅。"
+  },
+  "tutorial": {
+    "title": "查看器操作指南",
+    "modelControl": "模型操作：",
+    "modelControlDesc": "拖动旋转，双指缩放。",
+    "arMode": "AR模式：",
+    "arModeDesc": "点击AR按钮，在现实空间中查看商品！",
+    "menu": "菜单：",
+    "menuDesc": "点击右上角图标打开菜单，选择商品",
+    "details": "详细信息：",
+    "detailsDesc": "向上拖动底部面板查看商品详情。"
+  },
+  "ar": {
+    "title": "AR（增强现实）",
+    "description": "启动相机，以实际尺寸查看商品",
+    "startButton": "启动AR",
+    "checking": "确认中...",
+    "desktopAlert": "桌面端不支持AR显示，请使用智能手机。"
+  },
+  "scan": {
+    "detecting": "正在检测平面...",
+    "instruction": "将手机保持在眼睛高度\n上下左右移动\n扫描平面"
+  },
+  "startPanel": {
+    "message": "以3D形式展示商品\n减少点餐误解",
+    "startButton": "开始3D展示",
+    "loading": "准备3D空间中"
+  },
+  "product": {
+    "serving": "份量",
+    "part": "部位",
+    "category": "类别",
+    "origin": "产地",
+    "recommendedFor": "推荐人群",
+    "recommended": "推荐"
+  }
+}
