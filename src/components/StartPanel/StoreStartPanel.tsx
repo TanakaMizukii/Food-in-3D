@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import { getThumbSrc } from "@/lib/thumbSrc";
 import { useTranslations } from 'next-intl';
+import LanguageSelector from "@/components/Common/LanguageSelector";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -33,6 +34,9 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
         // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
+                <div className="languageSelectorWrapper">
+                    <LanguageSelector />
+                </div>
                 <OptionalImg
                     src={thumbSrc("right_top")}
                     alt="右上商品イメージ"
@@ -184,6 +188,13 @@ const MyStart = styled.div`
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 20px auto;
+}
+
+.languageSelectorWrapper {
+    position: absolute;
+    top: 20px;
+    left: 35px;
+    z-index: 10;
 }
 
 @keyframes spin {

@@ -83,7 +83,7 @@ const SelectorButton = styled.button`
 const Dropdown = styled.div`
     position: absolute;
     top: 100%;
-    right: 0;
+    right: -50%;
     margin-top: 4px;
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(20px);
