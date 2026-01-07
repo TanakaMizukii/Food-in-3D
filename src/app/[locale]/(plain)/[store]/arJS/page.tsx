@@ -11,6 +11,7 @@ import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
 import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { useTranslations } from 'next-intl';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
@@ -21,6 +22,7 @@ export default function ARjsPage() {
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
+    const t = useTranslations('arjs');
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -29,7 +31,7 @@ export default function ARjsPage() {
     const [isGuideVisible, setIsGuideVisible] = useState(false);
     const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
     const [isMarkerFound, setIsMarkerFound] = useState(false);
-    const [guideText, setGuideText] = useState("カメラを準備しています...\n少々お待ちください。\n\n案内が出たら「許可」を押してください");
+    const [guideText, setGuideText] = useState(t('cameraLoading'));
 
     const handleCameraReady = useCallback(() => {
         setIsCameraReady(true);
@@ -43,7 +45,7 @@ export default function ARjsPage() {
     const handleGuideDismiss = useCallback(() => {
         setIsGuideVisible(false);
         setIsMarkerFound(true);
-        setGuideText("モデルを読み込み中です...\n少々お待ちください");
+        setGuideText(t('modelLoading'));
         // arUIとexitButtonはマーカー検知時に表示
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
@@ -51,7 +53,7 @@ export default function ARjsPage() {
             arUI.style.display = 'block';
             exitButton.style.display = 'block';
         }
-    }, []);
+    }, [t]);
 
     // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
     useEffect(() => {

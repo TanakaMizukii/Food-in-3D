@@ -1,6 +1,10 @@
+'use client';
+
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import { getThumbSrc } from "@/lib/thumbSrc";
+import { useTranslations } from 'next-intl';
+import { catchLocale } from "@/lib/catchPathname";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -10,12 +14,14 @@ type StartPanelProps = {
 
 export default function ARStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const router = useRouter();
+    const locale = catchLocale();
+    const t = useTranslations('webXR');
 
     const handleClick = () => {
         onUpdate();
     };
     const backClick = () => {
-        router.push(`/${store}/viewer`);
+        router.push(`/${locale}/${store}/viewer`);
     }
 
     const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
@@ -25,11 +31,11 @@ export default function ARStartPanel({ onUpdate, loading, store }: StartPanelPro
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
                 <img src={thumbSrc("logo")} alt="メインイメージ" id="start-image" className={"startImage"} />
-                <div id="status-text" className={'startText'}>ARエクスペリエンスを開始</div>
+                <div id="status-text" className={'startText'}>{t('startTitle')}</div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
-                        {loading ? '判定中…' : 'AR体験を始める'}
+                        {loading ? t('checking') : t('startAR')}
                     </button>
-                    <button id="back-button" className={'backButton'} onClick={backClick}>3Dビュワーへ</button>
+                    <button id="back-button" className={'backButton'} onClick={backClick}>{t('backToViewer')}</button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>

@@ -1,9 +1,12 @@
+'use client';
+
 import styled, { createGlobalStyle } from "styled-components";
 import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
 import TabNavigation from "./TabNavigation";
 import { MyContent } from "./MenuContent";
 import type { ProductModelsProps } from "@/data/types";
+import { useTranslations } from 'next-intl';
 
 import React, { useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
@@ -21,6 +24,7 @@ type MyContainerProps = {
 export default function MenuContainer({ className, productCategory, productModels } : MenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
+    const t = useTranslations('menu');
 
     const toggleConfig = {
         toggleChange: () => setToggle(t => !t)
@@ -102,7 +106,9 @@ export default function MenuContainer({ className, productCategory, productModel
         <div >
             <GuideHintOverride />
             <GuideHint id="menu-openGuide" >
-                タップまたは上スワイプ<br/>でメニューを開けます
+                {t('openHint').split('\n').map((line, i) => (
+                    <span key={i}>{line}{i === 0 && <br />}</span>
+                ))}
             </GuideHint>
             <MyContainer id='menu-container' className={className} $expanded={toggle}>
                 <div className="menu-header">
@@ -122,7 +128,7 @@ export default function MenuContainer({ className, productCategory, productModel
                 onClick={() => { setToggle(true); dismissGuide(); }}
                 $show={!toggle}
             >
-                メニューを開く
+                {t('openMenu')}
             </OpenMenuButton>
         </div>
     );

@@ -1,3 +1,5 @@
+'use client';
+
 import styled, { createGlobalStyle } from "styled-components";
 import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
@@ -6,6 +8,7 @@ import { MyCompactContent } from "./CompactMenuContent";
 import type { ProductModelsProps } from "@/data/types";
 import { SelectedProductContext, type SelectedProductInfo } from "@/contexts/SelectedProductContext";
 import { ModelChangeContext } from "@/contexts/ModelChangeContext";
+import { useTranslations } from 'next-intl';
 
 import React, { useContext, useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
@@ -25,6 +28,7 @@ export default function CompactMenuContainer({ className, productCategory, produ
     const [isDesktop, setIsDesktop] = useState(false);
     // 選択された商品情報（nullの場合は初期状態＝ガイド表示）
     const [selectedProduct, setSelectedProduct] = useState<SelectedProductInfo | null>(null);
+    const t = useTranslations('menu');
 
     const { changeModel } = useContext(ModelChangeContext);
 
@@ -131,7 +135,9 @@ export default function CompactMenuContainer({ className, productCategory, produ
             {/* 初期状態（商品未選択）はガイドヒント、選択後はサイズボタンを表示（パネル展開中は非表示） */}
             {selectedProduct === null ? (
                 <GuideHint id="compact-menu-openGuide" $expanded={toggle}>
-                    タップまたは上スワイプ<br />でメニューを開けます
+                    {t('openHint').split('\n').map((line, i) => (
+                        <span key={i}>{line}{i === 0 && <br />}</span>
+                    ))}
                 </GuideHint>
             ) : !toggle && (
                 <SizeButtonPanel id="compact-size-panel">
@@ -177,7 +183,7 @@ export default function CompactMenuContainer({ className, productCategory, produ
                 onClick={() => { setToggle(true); dismissGuide(); }}
                 $show={!toggle}
             >
-                メニューを開く
+                {t('openMenu')}
             </OpenMenuButton>
         </div>
     );

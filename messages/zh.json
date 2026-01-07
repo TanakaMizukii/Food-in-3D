@@ -27,6 +27,13 @@
     "checking": "确认中...",
     "desktopAlert": "桌面端不支持AR显示，请使用智能手机。"
   },
+  "arjs": {
+    "cameraLoading": "正在准备相机...\n请稍候。\n\n出现提示时请点击「允许」",
+    "modelLoading": "正在加载模型...\n请稍候",
+    "guideText1": "将QR码周围的黑色边框",
+    "guideText2": "对准上方的框架",
+    "guideText3": "即将开始显示商品！"
+  },
   "scan": {
     "detecting": "正在检测平面...",
     "instruction": "将手机保持在眼睛高度\n上下左右移动\n扫描平面"
@@ -43,5 +50,25 @@
     "origin": "产地",
     "recommendedFor": "推荐人群",
     "recommended": "推荐"
+  },
+  "webXR": {
+    "startTitle": "开始AR体验",
+    "checking": "检测中...",
+    "startAR": "开始AR体验",
+    "backToViewer": "返回3D查看器",
+    "resetTitle": "重置平面检测",
+    "resetInstruction": "请点击按钮\n重新开始平面检测",
+    "restartScan": "重新检测平面"
+  },
+  "arHelper": {
+    "arModeActive": "AR模式运行中",
+    "selectProduct": "可选择商品",
+    "backToViewer": "返回3D查看器",
+    "clearModel": "清除模型",
+    "resetPlane": "重置平面"
+  },
+  "menu": {
+    "openHint": "点击或向上滑动\n打开菜单",
+    "openMenu": "打开菜单"
   }
 }

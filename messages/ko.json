@@ -27,6 +27,13 @@
     "checking": "확인 중...",
     "desktopAlert": "데스크톱에서는 AR 표시가 불가능합니다. 스마트폰으로 이용해 주세요."
   },
+  "arjs": {
+    "cameraLoading": "카메라를 준비하고 있습니다...\n잠시만 기다려 주세요.\n\n안내가 나타나면 「허용」을 눌러주세요",
+    "modelLoading": "모델을 불러오는 중입니다...\n잠시만 기다려 주세요",
+    "guideText1": "QR코드 주위의 검은 테두리를",
+    "guideText2": "위의 프레임에 맞춰주세요",
+    "guideText3": "상품 표시를 시작합니다!"
+  },
   "scan": {
     "detecting": "평면 감지 중...",
     "instruction": "스마트폰을 눈높이에서 들고\n상하좌우로 움직여\n평면을 스캔하세요"
@@ -43,5 +50,25 @@
     "origin": "원산지",
     "recommendedFor": "추천 대상",
     "recommended": "추천"
+  },
+  "webXR": {
+    "startTitle": "AR 체험 시작",
+    "checking": "확인 중...",
+    "startAR": "AR 체험 시작",
+    "backToViewer": "3D 뷰어로 돌아가기",
+    "resetTitle": "평면 인식 초기화",
+    "resetInstruction": "버튼을 눌러\n평면 인식을 다시 시작하세요",
+    "restartScan": "평면 인식 재실행"
+  },
+  "arHelper": {
+    "arModeActive": "AR 모드 활성화",
+    "selectProduct": "상품 선택 가능",
+    "backToViewer": "3D 뷰어로 돌아가기",
+    "clearModel": "모델 초기화",
+    "resetPlane": "평면 초기화"
+  },
+  "menu": {
+    "openHint": "탭 또는 위로 스와이프하여\n메뉴를 열 수 있습니다",
+    "openMenu": "메뉴 열기"
   }
 }

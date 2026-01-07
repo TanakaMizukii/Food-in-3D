@@ -27,6 +27,13 @@
     "checking": "Checking...",
     "desktopAlert": "AR is not available on desktop. Please use a smartphone."
   },
+  "arjs": {
+    "cameraLoading": "Preparing camera...\nPlease wait.\n\nTap \"Allow\" when prompted",
+    "modelLoading": "Loading model...\nPlease wait",
+    "guideText1": "Align the black border around",
+    "guideText2": "the QR code with the frame above",
+    "guideText3": "Starting product display!"
+  },
   "scan": {
     "detecting": "Detecting surface...",
     "instruction": "Hold your phone at eye level\nand move it around to\nscan the surface"
@@ -43,5 +50,25 @@
     "origin": "Origin",
     "recommendedFor": "Recommended for",
     "recommended": "Recommended"
+  },
+  "webXR": {
+    "startTitle": "Start AR Experience",
+    "checking": "Checking...",
+    "startAR": "Start AR",
+    "backToViewer": "Back to 3D Viewer",
+    "resetTitle": "Reset Surface Detection",
+    "resetInstruction": "Press the button to\nrestart surface detection",
+    "restartScan": "Restart Surface Scan"
+  },
+  "arHelper": {
+    "arModeActive": "AR Mode Active",
+    "selectProduct": "Select a product",
+    "backToViewer": "Back to 3D Viewer",
+    "clearModel": "Clear Model",
+    "resetPlane": "Reset Plane"
+  },
+  "menu": {
+    "openHint": "Tap or swipe up\nto open the menu",
+    "openMenu": "Open Menu"
   }
 }
