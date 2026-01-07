@@ -35,8 +35,8 @@ export const categories: Category[] = [
 
 export const productCategory: string[] = [
     'メインメニュー',
-    '盛り合わせ',
     'カルビ',
+    '盛り合わせ',
     'ホルモン',
     '締めの一品',
 ];
