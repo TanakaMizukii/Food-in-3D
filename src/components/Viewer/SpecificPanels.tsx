@@ -11,25 +11,10 @@ type SpecificProps = {
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
     categories: Category[];
     productModels: ProductModelsProps;
+    productCategory: string[]; // 日本語のカテゴリ名リスト（商品のcategoryフィールドとマッチング用）
 }
 
-export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels }: SpecificProps) {
-    // カテゴリーごとの表示設定（店舗のcategoriesに基づいて動的に生成）
-    const selectCategory: {[index: string] : string[]}  = {};
-
-    // メインメニューは全カテゴリーを表示（メインメニュー自体を除く）
-    const allCategoryNames = categories.map(c => c.name).filter(name => name !== 'メインメニュー');
-    selectCategory['メインメニュー'] = allCategoryNames;
-
-    // 各カテゴリーは自身のみを表示
-    categories.forEach(cat => {
-        if (cat.name !== 'メインメニュー') {
-            selectCategory[cat.name] = [cat.name];
-        }
-    });
-    // まず今回配置する配列を取り出しておく
-    const nowCategory = categories[currentCategory].name;
-    const viewCategories = selectCategory[nowCategory] ?? [];
+export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels, productCategory }: SpecificProps) {
 
     const currentProduct: ProductModel = productModels[currentIndex]
 
@@ -37,11 +22,22 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
     const handleVariantChange = (index: number, model: ProductModel) => {
         setCurrentIndex(index);
         changeModel({modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price});
-        console.log(viewCategories);
     };
 
+    // 現在のカテゴリIDに対応する日本語カテゴリ名を取得
+    // categories配列のインデックスとcategory.idは異なる可能性があるため、findを使用
+    const currentCategoryIndex = categories.findIndex(c => c.id === currentCategory);
+    const currentJapaneseCategoryName = productCategory[currentCategoryIndex];
+
     const variants = productModels.map((m, i) => ({model: m, i}))
-        .filter(({ model }) => viewCategories.includes(model.category));
+        .filter(({ model }) => {
+            // メインメニュー（id === 1、通常はインデックス0）の場合は全商品を表示
+            if (currentCategory === 1) {
+                return true;
+            }
+            // 商品のカテゴリ（日本語）が現在選択されているカテゴリ（日本語）と一致するかチェック
+            return model.category === currentJapaneseCategoryName;
+        });
 
     return(
         // 名前の変更は未完了
