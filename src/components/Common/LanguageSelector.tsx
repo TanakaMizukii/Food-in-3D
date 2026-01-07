@@ -6,10 +6,10 @@ import { HiOutlineGlobe } from "react-icons/hi";
 import { locales, type Locale } from "@/i18n/routing";
 
 const languages: { code: Locale; label: string }[] = [
-  { code: 'ja', label: '日本語' },
-  { code: 'en', label: 'English' },
-  { code: 'zh', label: '中文' },
-  { code: 'ko', label: '한국어' },
+    { code: 'ja', label: '日本語' },
+    { code: 'en', label: 'English' },
+    { code: 'zh', label: '中文' },
+    { code: 'ko', label: '한국어' },
 ];
 
 export default function LanguageSelector() {
@@ -34,7 +34,7 @@ export default function LanguageSelector() {
         <SelectorContainer>
             <SelectorButton onClick={() => setIsOpen(!isOpen)}>
                 <HiOutlineGlobe />
-                <span>{currentLanguage?.label}</span>
+                <span>{currentLanguage?.code}</span>
             </SelectorButton>
             {isOpen && (
                 <Dropdown>
