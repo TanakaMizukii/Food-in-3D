@@ -69,6 +69,9 @@
   },
   "menu": {
     "openHint": "Tap or swipe up\nto open the menu",
-    "openMenu": "Open Menu"
+    "openMenu": "Open Menu",
+    "closeMenu": "Close Menu",
+    "viewProduct": "View Product",
+    "yen": "JPY"
   }
 }

@@ -1,16 +1,15 @@
 import styled from "styled-components";
-import { useState } from "react";
 
 type categoryProps = {
     pdtLists: string[];
-    onUpdate: (elem: string) => void;
+    onUpdate: (index: number) => void;
     toggleCheck: () => void;
+    currentIndex: number;
 };
 
-export default function TabNavigation({pdtLists, onUpdate, toggleCheck} : categoryProps) {
-    const [tab, setTab] = useState(0);
-    const handleClick = (elem:string) => {
-        onUpdate(elem);
+export default function TabNavigation({pdtLists, onUpdate, toggleCheck, currentIndex} : categoryProps) {
+    const handleClick = (index: number) => {
+        onUpdate(index);
         toggleCheck();
     }
     return(
@@ -19,8 +18,8 @@ export default function TabNavigation({pdtLists, onUpdate, toggleCheck} : catego
                 {
                 pdtLists.map((elem, index) => (
                     <button key={index}
-                            className={`tab-btn ${index === tab ? 'active': ''}`}
-                            onClick={() => {setTab(index); handleClick(elem);}}
+                            className={`tab-btn ${index === currentIndex ? 'active': ''}`}
+                            onClick={() => handleClick(index)}
                     >
                         {elem}
                     </button>

@@ -6,8 +6,10 @@ import React from "react";
 
 type CompactMenuContentProps = {
     className?: string;
-    nowCategory: string;
+    nowCategoryIndex: number;
     models: ProductModelsProps;
+    jaCategories: string[]; // 日本語のカテゴリ名（フィルタリング用）
+    translatedCategories: string[]; // 翻訳されたカテゴリ名（表示用）
     viewer?: boolean;
 };
 
@@ -47,35 +49,41 @@ function groupProductsByBaseName(products: ProductModel[]): GroupedProduct[] {
     return Array.from(groupMap.values());
 }
 
-export default function CompactMenuContent({ className, nowCategory, models }: CompactMenuContentProps) {
+export default function CompactMenuContent({ className, nowCategoryIndex, models, jaCategories, translatedCategories }: CompactMenuContentProps) {
     // modelsからユニークなカテゴリを取得（出現順を維持）
-    const allCategories = [...new Set(models.map(m => m.category))];
+    const allJaCategories = [...new Set(models.map(m => m.category))];
 
-    // カテゴリーごとの表示設定を動的に生成
-    const selectCategory: { [index: string]: string[] } = {};
-
-    // メインメニューは全カテゴリーを表示
-    selectCategory['メインメニュー'] = allCategories;
-
-    // 各カテゴリーは自身のみを表示
-    allCategories.forEach(cat => {
-        selectCategory[cat] = [cat];
-    });
-
-    // まず配列を取り出しておく
-    const categories = selectCategory[nowCategory] ?? [];
+    // 表示するカテゴリを決定（インデックス0は全カテゴリ、それ以外は該当カテゴリのみ）
+    // jaCategoriesのインデックスとtranslatedCategoriesのインデックスを使用
+    let categoriesToShow: { ja: string; translated: string }[];
+    if (nowCategoryIndex === 0) {
+        // メインメニュー（最初のタブ）は全カテゴリを表示
+        // allJaCategoriesの順序に合わせて翻訳名を取得
+        categoriesToShow = allJaCategories.map(jaCat => {
+            const idx = jaCategories.indexOf(jaCat);
+            return {
+                ja: jaCat,
+                translated: idx !== -1 ? translatedCategories[idx] : jaCat
+            };
+        });
+    } else {
+        // 日本語のカテゴリ名を使用してフィルタリング
+        const targetJaCategory = jaCategories[nowCategoryIndex];
+        const targetTranslatedCategory = translatedCategories[nowCategoryIndex];
+        categoriesToShow = targetJaCategory ? [{ ja: targetJaCategory, translated: targetTranslatedCategory || targetJaCategory }] : [];
+    }
 
     return (
         <div className={className}>
-            {categories.map((cat) => {
+            {categoriesToShow.map((cat) => {
                 // カテゴリに属する商品を取得
-                const categoryProducts = models.filter(m => m.category === cat);
+                const categoryProducts = models.filter(m => m.category === cat.ja);
                 // 商品をグループ化
                 const groupedProducts = groupProductsByBaseName(categoryProducts);
 
                 return (
-                    <React.Fragment key={cat}>
-                        <MenuCategory category={cat} />
+                    <React.Fragment key={cat.ja}>
+                        <MenuCategory category={cat.translated} />
                         {groupedProducts.map((group) => (
                             <CompactMenuItem key={group.baseName} groupedProduct={group} />
                         ))}

@@ -85,9 +85,9 @@ export default function ARjsPage() {
                     storeInfo={storeInfo}
                 />
                 {menuDisplayMode === 'compact' ? (
-                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 ) : (
-                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <MenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 )}
             </ModelChangeContext.Provider>
         </>

@@ -70,9 +70,9 @@ export default function ARViewPage() {
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={storeInfo} />
                 {menuDisplayMode === 'compact' ? (
-                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 ) : (
-                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <MenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 )}
             </ModelChangeContext.Provider>
         }

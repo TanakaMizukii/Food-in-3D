@@ -13,14 +13,15 @@ import dendenTranslations from './denden/translations';
 export type StoreMenu = {
     productModels: ProductModelsProps;
     productCategory: string[];
+    jaProductCategory: string[]; // 日本語のカテゴリ名（フィルタリング用）
     categories: Category[];
 };
 
 // 店舗ごとのメニューマッピング
 // 新しい店舗を追加する場合はここにエントリを追加してください
 export const storeMenuMap: Record<string, StoreMenu> = {
-    denden: { productModels: dendenModels, productCategory: dendenCategory, categories: dendenCategories },
-    kaishu: { productModels: kaishuModels, productCategory: kaishuCategory, categories: kaishuCategories },
+    denden: { productModels: dendenModels, productCategory: dendenCategory, jaProductCategory: dendenCategory, categories: dendenCategories },
+    kaishu: { productModels: kaishuModels, productCategory: kaishuCategory, jaProductCategory: kaishuCategory, categories: kaishuCategories },
 };
 
 // 店舗ごとの翻訳マッピング
@@ -47,10 +48,12 @@ export function getLocalizedStoreMenu(store: string, locale: Locale): StoreMenu 
     }
 
     const translations = storeTranslationsMap[store]?.[locale];
+    const localizedCategories = getLocalizedCategoriesSync(baseMenu.categories, translations, locale);
 
     return {
         productModels: getLocalizedProductsSync(baseMenu.productModels, translations, locale),
-        productCategory: baseMenu.productCategory, // カテゴリ名の配列は別途対応が必要
-        categories: getLocalizedCategoriesSync(baseMenu.categories, translations, locale),
+        productCategory: localizedCategories.map(c => c.name), // カテゴリ名を翻訳済みのcategoriesから取得
+        jaProductCategory: baseMenu.jaProductCategory, // 日本語のカテゴリ名はそのまま保持
+        categories: localizedCategories,
     };
 }

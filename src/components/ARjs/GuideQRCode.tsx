@@ -47,7 +47,7 @@ const MyGuideQR = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 150;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;

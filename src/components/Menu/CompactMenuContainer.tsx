@@ -17,13 +17,14 @@ import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 type CompactMenuContainerProps = {
     className?: string;
     productCategory: string[];
+    jaCategories: string[]; // 日本語のカテゴリ名（フィルタリング用）
     productModels: ProductModelsProps;
 };
 type MyContainerProps = {
     $expanded: boolean;
 };
 
-export default function CompactMenuContainer({ className, productCategory, productModels }: CompactMenuContainerProps) {
+export default function CompactMenuContainer({ className, productCategory, jaCategories, productModels }: CompactMenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
     // 選択された商品情報（nullの場合は初期状態＝ガイド表示）
@@ -76,9 +77,9 @@ export default function CompactMenuContainer({ className, productCategory, produ
         touchEndY.current = null;
     };
 
-    // タブ情報伝達用State
-    const [category, setCategory] = useState<string>('メインメニュー');
-    const c_update = (elem: string) => setCategory(elem);
+    // タブ情報伝達用State（インデックスベース）
+    const [categoryIndex, setCategoryIndex] = useState<number>(0);
+    const c_update = (index: number) => setCategoryIndex(index);
     const toggleCheck = () => {
         if (!toggle) {
             setToggle(true);
@@ -168,12 +169,12 @@ export default function CompactMenuContainer({ className, productCategory, produ
                     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                         <MenuToggle onUpdate={t_update} toggle={toggle} />
                     </div>
-                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck} />
+                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck} currentIndex={categoryIndex} />
                 </div>
                 <div className="menu-body">
                     <ToggleChangeContext.Provider value={toggleConfig}>
                         <SelectedProductContext.Provider value={selectedProductConfig}>
-                            <MyCompactContent nowCategory={category} models={productModels} />
+                            <MyCompactContent nowCategoryIndex={categoryIndex} models={productModels} jaCategories={jaCategories} translatedCategories={productCategory} />
                         </SelectedProductContext.Provider>
                     </ToggleChangeContext.Provider>
                 </div>
