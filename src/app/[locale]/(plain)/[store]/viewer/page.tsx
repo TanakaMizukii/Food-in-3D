@@ -78,7 +78,7 @@ export default function ViewerPage() {
                 </TopLayer>
 
                 <BottomLayer>
-                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} menuDisplayMode={menuDisplayMode}/>
+                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
                     <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
                     <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>

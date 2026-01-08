@@ -7,10 +7,12 @@ type SideSlidePanelProps = {
     menuOpen: boolean;
     setMenuOpen: (open: boolean) => void;
     productModels: ProductModelsProps;
+    jaCategories: string[];
+    translatedCategories: string[];
     menuDisplayMode?: MenuDisplayMode;
 };
 
-export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels, menuDisplayMode = 'standard' }: SideSlidePanelProps) {
+export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels, jaCategories, translatedCategories, menuDisplayMode = 'standard' }: SideSlidePanelProps) {
     return(
         <MySideSlide>
             {/* Overlay */}
@@ -19,9 +21,9 @@ export default function SideSlidePanel({ menuOpen, setMenuOpen, productModels, m
             {/* Side Slide Bar */}
             <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
                 {menuDisplayMode === 'compact' ? (
-                    <MyCompactContent nowCategory="メインメニュー" models={productModels} viewer={true} />
+                    <MyCompactContent nowCategoryIndex={0} models={productModels} jaCategories={jaCategories} translatedCategories={translatedCategories} viewer={true} />
                 ) : (
-                    <MyContent nowCategory="メインメニュー" models={productModels} viewer={true} />
+                    <MyContent nowCategoryIndex={0} models={productModels} jaCategories={jaCategories} translatedCategories={translatedCategories} viewer={true} />
                 )}
             </div>
         </MySideSlide>
