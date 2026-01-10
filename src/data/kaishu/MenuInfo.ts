@@ -101,7 +101,7 @@ export const productModels: ProductModelsProps = [
         id: 4,
         name: '上タン塩（1人前）',
         shortName: '上タン塩',
-        category: 'タン',
+        category: 'ホルモン',
         price: '1000 (税込 1,100)',
         minPrice: '1000',
         description: 'タンの中でも上質な部分。レモンで食べると程よい油が口の中に広がります。',
