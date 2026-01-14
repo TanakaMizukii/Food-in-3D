@@ -1,6 +1,6 @@
 'use client'
 
-import '../App.css';
+// import '../App.css';
 import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
@@ -18,7 +18,28 @@ import styled from "styled-components"
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
+// ページ遷移で来た場合のみリロードする（AR.jsのレイアウト問題を回避）
+const ARJS_RELOAD_KEY = 'arjs-reloaded';
+
 export default function ARjsPage() {
+    // i18nによるAR.jsのカメラ映像の位置ずれへの対処用コード
+    // 本質的な根本原因は未解決
+    const [isReady, setIsReady] = useState(false);
+    useEffect(() => {
+        const alreadyReloaded = sessionStorage.getItem(ARJS_RELOAD_KEY);
+        if (!alreadyReloaded) {
+            sessionStorage.setItem(ARJS_RELOAD_KEY, 'true');
+            window.location.reload();
+            return;
+        }
+        // 再読み込み完了時コンテンツ表示
+        setIsReady(true);
+        // ページ離脱時にクリア
+        return () => {
+            sessionStorage.removeItem(ARJS_RELOAD_KEY);
+        };
+    }, []);
+
     const nowStore = catchParentPathName();
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
@@ -74,6 +95,11 @@ export default function ARjsPage() {
     // 2. マーカー検知後、まだ初期モデルがロードされていない (isMarkerFound && !isInitialModelLoaded)
     const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
 
+    // リロード待機中は何も表示しない
+    if (!isReady) {
+        return <LoadingPanel isVisible={true} text={guideText} />;
+    }
+
     return (
         <MyarJS>
             <LoadingPanel isVisible={showLoading} text={guideText} />
@@ -111,5 +137,4 @@ html, body {
     width: 100vw;
     height: 100dvh; /* 100vhより安定な端末が多い */
 }
-
 `

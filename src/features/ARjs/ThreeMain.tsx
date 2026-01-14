@@ -57,94 +57,61 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     useEffect(() => {
         if (!containerRef.current || !canvasRef.current) return;
 
-        // i18n Provider導入後、レイアウトが完全に確定するまで待つ
-        // 二重RAFでDOMレイアウトが完全に確定しペイントされることを保証
-        const initId = requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                const canvasElement = canvasRef.current;
-                if (!canvasElement || !containerRef.current) return;
+        const canvasElement = canvasRef.current;
+        const firstEnvironment = storeInfo?.firstEnvironment;
+        const rendererOptions = {
+            pixelRatioCap: 2,
+            alpha: true,
+            antialias: true,
+            hdrPath: firstEnvironment?.hdrPath,
+            hdrFile: firstEnvironment?.hdrFile,
+            lightIntensity: firstEnvironment?.lightIntensity,
+        };
+        const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
+        setCtx(threeContext);
+        const clickHandler = handleClick(threeContext);
+        // メニューコンテナを表示（通常版またはコンパクト版）
+        const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
+        if (menuContainer) {menuContainer.style.display = 'flex'};
+        threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
 
-                const firstEnvironment = storeInfo?.firstEnvironment;
-                const rendererOptions = {
-                    pixelRatioCap: 2,
-                    alpha: true,
-                    antialias: true,
-                    hdrPath: firstEnvironment?.hdrPath,
-                    hdrFile: firstEnvironment?.hdrFile,
-                    lightIntensity: firstEnvironment?.lightIntensity,
-                };
-                const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
-                setCtx(threeContext);
-                const clickHandler = handleClick(threeContext);
-                // メニューコンテナを表示（通常版またはコンパクト版）
-                const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
-                if (menuContainer) {menuContainer.style.display = 'flex'};
-                threeContext.labelRenderer.domElement.addEventListener('click', clickHandler);
+        (async () => {
+            if (!firstEnvironment) return;
 
-                (async () => {
-                    if (!firstEnvironment) return;
+            const firstModel = firstEnvironment.defaultModel;
 
-                    const firstModel = firstEnvironment.defaultModel;
+            if(threeContext){
+                const nowModel = await loadModel({
+                    modelName: firstModel.name,
+                    modelPath: firstModel.path,
+                    modelDetail: firstModel.detail,
+                    modelPrice: firstModel.price,
+                    displaySettings: firstEnvironment.modelDisplaySettings,
+                }, threeContext, null);
+                nowModelRef.current = nowModel;
+                onInitialModelLoaded();
+            }
+        })();
 
-                    if(threeContext){
-                        const nowModel = await loadModel({
-                            modelName: firstModel.name,
-                            modelPath: firstModel.path,
-                            modelDetail: firstModel.detail,
-                            modelPrice: firstModel.price,
-                            displaySettings: firstEnvironment.modelDisplaySettings,
-                        }, threeContext, null);
-                        nowModelRef.current = nowModel;
-                        onInitialModelLoaded();
-                    }
-                })();
+        const detach = attachResizeHandlers(threeContext, containerRef.current);
 
-                const detach = attachResizeHandlers(threeContext, containerRef.current);
-
-                // AR.jsのリサイズを強制実行してカメラ映像を正しい位置に配置
-                // カメラが完全に準備できてから実行するためさらにRAFで遅延
-                requestAnimationFrame(() => {
-                    if (threeContext.arToolkitSource && threeContext.arToolkitSource.domElement) {
-                        threeContext.arToolkitSource.onResizeElement();
-                        threeContext.arToolkitSource.copyElementSizeTo(canvasElement);
-                        if (threeContext.arToolkitContext?.arController) {
-                            threeContext.arToolkitSource.copyElementSizeTo(
-                                threeContext.arToolkitContext.arController.canvas
-                            );
-                        }
-                    }
-                });
-
-                function animate() {
-                    if (threeContext.arToolkitSource.ready) {
-                        threeContext.arToolkitContext.update(threeContext.arToolkitSource.domElement);
-                    }
-                    threeContext.smoothedControls.update(threeContext.markerRoot);
-                    threeContext.renderer.render(threeContext.scene, threeContext.camera);
-                    threeContext.labelRenderer.render(threeContext.scene, threeContext.camera);
-                    requestAnimationFrame(animate)
-                }
-                animate();
-
-                // クリーンアップ関数を設定
-                // このクリーンアップは親のuseEffectのreturnで呼び出される
-                (window as any).__arjsCleanup = () => {
-                    threeContext.labelRenderer.domElement.removeEventListener('click', clickHandler);
-                    detach();
-                    threeContext.dispose();
-                };
-            });
-        });
+        function animate() {
+            if (threeContext.arToolkitSource.ready) {
+                threeContext.arToolkitContext.update(threeContext.arToolkitSource.domElement);
+            }
+            threeContext.smoothedControls.update(threeContext.markerRoot);
+            threeContext.renderer.render(threeContext.scene, threeContext.camera);
+            threeContext.labelRenderer.render(threeContext.scene, threeContext.camera);
+            requestAnimationFrame(animate)
+        }
+        animate();
 
         return () => {
-            cancelAnimationFrame(initId);
-            // RAF内で設定されたクリーンアップがあれば実行
-            if ((window as any).__arjsCleanup) {
-                (window as any).__arjsCleanup();
-                delete (window as any).__arjsCleanup;
-            }
+            threeContext.labelRenderer.domElement.removeEventListener('click', clickHandler);
+            detach();
+            threeContext.dispose();
         };
-    }, [onCameraReady, onGuideDismiss, onInitialModelLoaded, storeInfo]);
+    }, [onCameraReady, onGuideDismiss, storeInfo]);
 
     const handleExit = () => {
         router.push(`/${locale}/${nowStore}/viewer`);
@@ -160,5 +127,3 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
         </>
     );
 }
-
-
