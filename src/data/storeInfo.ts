@@ -59,11 +59,6 @@ const storeInfo: StoreInfo[] = [
             lightIntensity: 2,
         }
     },
-    {
-        id: 3,
-        use_name: 'demo',
-        true_name: 'テスト用店舗名',
-    },
 ];
 
 export default storeInfo;

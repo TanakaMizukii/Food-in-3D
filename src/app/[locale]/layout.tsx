@@ -8,6 +8,8 @@ import enMessages from '../../../messages/en.json';
 import zhMessages from '../../../messages/zh.json';
 import koMessages from '../../../messages/ko.json';
 
+// Record<K, V>とは[キーが K、値が V のオブジェクト]という意味
+// typeof jaMessages を使うとen,zh,koもja と同じキー構造を持たないとエラーになるため利用
 const messagesMap: Record<Locale, typeof jaMessages> = {
   ja: jaMessages,
   en: enMessages,
@@ -27,6 +29,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  console.log(locale);
 
   if (!routing.locales.includes(locale as Locale)) {
     notFound();

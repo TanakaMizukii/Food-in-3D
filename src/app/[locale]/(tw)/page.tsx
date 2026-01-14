@@ -1,3 +1,5 @@
+'use client'
+
 import storeNames from "@/data/storeInfo";
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -9,7 +11,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-gray-100 font-sans relative">
       {/* Language Selector */}
-      <div className="absolute top-5 left-8.75">
+      <div className="absolute top-8 left-8">
         <LanguageSelector />
       </div>
 

@@ -192,8 +192,8 @@ const MyStart = styled.div`
 
 .languageSelectorWrapper {
     position: absolute;
-    top: 20px;
-    left: 35px;
+    top: 32px;
+    left: 32px;
     z-index: 10;
 }
 
