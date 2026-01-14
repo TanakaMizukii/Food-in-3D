@@ -42,7 +42,15 @@ export const UseARToolkit = ({ domElement, camera, cameraParaDatURL, markerPatte
             getSourceOrientation();
         });
         onCameraReady?.();
-        arResize();
+
+        // i18n Provider導入後、レイアウトが確定するまで待ってからリサイズ
+        // 二重RAFでDOMレイアウトとペイントの完了を保証
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                arResize();
+            });
+        });
+
         window.arToolkitContext = arToolkitContext;
     }
 

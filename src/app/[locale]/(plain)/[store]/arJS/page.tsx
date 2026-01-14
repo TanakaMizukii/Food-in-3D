@@ -13,6 +13,8 @@ import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
 import { getLocalizedStoreMenu } from '@/data/storeMenus';
 import { useTranslations } from 'next-intl';
 
+import styled from "styled-components"
+
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
@@ -73,7 +75,7 @@ export default function ARjsPage() {
     const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
 
     return (
-        <>
+        <MyarJS>
             <LoadingPanel isVisible={showLoading} text={guideText} />
             <GuideQRCode isVisible={isGuideVisible} />
             <ModelChangeContext.Provider value={{ changeModel }}>
@@ -90,6 +92,24 @@ export default function ARjsPage() {
                     <MenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 )}
             </ModelChangeContext.Provider>
-        </>
+        </MyarJS>
     );
 }
+
+const MyarJS = styled.div`
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#wrapper{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh; /* 100vhより安定な端末が多い */
+}
+
+`
