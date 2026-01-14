@@ -3,7 +3,7 @@ import type { StoreTranslations } from '../../types';
 export const zh: StoreTranslations = {
     categories: {
         1: { name: '主菜单', description: '电电自豪的盖饭菜单' },
-        2: { name: '�的肉盖饭系列', description: '多汁鸡肉盖饭' },
+        2: { name: '鸡肉盖饭系列', description: '多汁鸡肉盖饭' },
         3: { name: '咖喱', description: '电电特制咖喱' },
         4: { name: '盖饭', description: '量足的猪肉盖饭' },
         5: { name: '鸡肉&猪肉盖饭', description: '同时享用鸡肉和猪肉的盖饭' },

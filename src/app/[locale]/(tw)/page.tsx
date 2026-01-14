@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-gray-100 font-sans relative">
       {/* Language Selector */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-5 left-8.75">
         <LanguageSelector />
       </div>
 
