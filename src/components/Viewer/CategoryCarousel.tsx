@@ -49,7 +49,7 @@ export default function CategoryCarousel({setCurrentCategory, categories}: Categ
 
             setCategoryStates(newStates);
             if (centerIndex !== -1 && categories[centerIndex]) {
-                setCurrentCategory(centerIndex);
+                setCurrentCategory(categories[centerIndex].id);
             }
         };
 

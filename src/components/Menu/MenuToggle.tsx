@@ -1,4 +1,7 @@
+'use client';
+
 import styled from "styled-components";
+import { useTranslations } from 'next-intl';
 
 type MenuToggleProps = {
     onUpdate: () => void;
@@ -6,12 +9,13 @@ type MenuToggleProps = {
 };
 
 export default function MenuToggle({onUpdate, toggle}: MenuToggleProps) {
+    const t = useTranslations('menu');
     const handleClick = () => onUpdate();
 
     return(
         <MyPanel >
             <div id="menuToggle" className="menu-toggle" onClick={handleClick}>
-                <span id="toggleText">{toggle ? 'メニューを閉じる':'メニューを開く'}</span>
+                <span id="toggleText">{toggle ? t('closeMenu') : t('openMenu')}</span>
             </div>
         </MyPanel>
     )

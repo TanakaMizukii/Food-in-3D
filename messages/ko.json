@@ -1,0 +1,77 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "start": "시작",
+    "close": "닫기"
+  },
+  "home": {
+    "title": "음식을 3D로",
+    "description": "레스토랑 메뉴를 3D로 표시하여 더 명확한 식사 경험을 제공합니다.",
+    "selectStore": "관심 있는 가게를 클릭하세요."
+  },
+  "tutorial": {
+    "title": "뷰어 조작 가이드",
+    "modelControl": "모델 조작:",
+    "modelControlDesc": "드래그로 회전, 핀치로 확대/축소가 가능합니다.",
+    "arMode": "AR 모드:",
+    "arModeDesc": "AR 버튼을 눌러 현실 공간에서 상품을 확인하세요!",
+    "menu": "메뉴:",
+    "menuDesc": "오른쪽 상단 아이콘으로 메뉴를 열어 상품을 선택하세요",
+    "details": "상세 정보:",
+    "detailsDesc": "하단 시트를 드래그하여 상품 상세 정보를 확인하세요."
+  },
+  "ar": {
+    "title": "AR (증강현실)",
+    "description": "카메라를 실행하여 실제 크기로 상품을 확인할 수 있습니다",
+    "startButton": "AR 시작",
+    "checking": "확인 중...",
+    "desktopAlert": "데스크톱에서는 AR 표시가 불가능합니다. 스마트폰으로 이용해 주세요."
+  },
+  "arjs": {
+    "cameraLoading": "카메라를 준비하고 있습니다...\n잠시만 기다려 주세요.\n\n안내가 나타나면 「허용」을 눌러주세요",
+    "modelLoading": "모델을 불러오는 중입니다...\n잠시만 기다려 주세요",
+    "guideText1": "QR코드 주위의 검은 테두리를",
+    "guideText2": "위의 프레임에 맞춰주세요",
+    "guideText3": "상품 표시를 시작합니다!"
+  },
+  "scan": {
+    "detecting": "평면 감지 중...",
+    "instruction": "스마트폰을 눈높이에서 들고\n상하좌우로 움직여\n평면을 스캔하세요"
+  },
+  "startPanel": {
+    "message": "상품을 3D로 표시하여\n주문 오류를 줄입니다",
+    "startButton": "3D 표시 시작",
+    "loading": "3D 공간 준비 중"
+  },
+  "product": {
+    "serving": "분량",
+    "part": "부위",
+    "category": "카테고리",
+    "origin": "원산지",
+    "recommendedFor": "추천 대상",
+    "recommended": "추천"
+  },
+  "webXR": {
+    "startTitle": "AR 체험 시작",
+    "checking": "확인 중...",
+    "startAR": "AR 체험 시작",
+    "backToViewer": "3D 뷰어로 돌아가기",
+    "resetTitle": "평면 인식 초기화",
+    "resetInstruction": "버튼을 눌러\n평면 인식을 다시 시작하세요",
+    "restartScan": "평면 인식 재실행"
+  },
+  "arHelper": {
+    "arModeActive": "AR 모드 활성화",
+    "selectProduct": "상품 선택 가능",
+    "backToViewer": "3D 뷰어로 돌아가기",
+    "clearModel": "모델 초기화",
+    "resetPlane": "평면 초기화"
+  },
+  "menu": {
+    "openHint": "탭 또는 위로 스와이프하여\n메뉴를 열 수 있습니다",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "viewProduct": "상품 보기",
+    "yen": "엔"
+  }
+}

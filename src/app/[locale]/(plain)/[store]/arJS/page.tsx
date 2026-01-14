@@ -1,6 +1,6 @@
 'use client'
 
-import '../App.css';
+// import '../App.css';
 import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
@@ -9,17 +9,43 @@ import LoadingPanel from '@/components/Common/LoadingPanel';
 import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
-import { catchParentPathName } from '@/lib/catchPathname';
-import { getStoreMenu } from '@/data/storeMenus';
+import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
+import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { useTranslations } from 'next-intl';
+
+import styled from "styled-components"
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
+// ページ遷移で来た場合のみリロードする（AR.jsのレイアウト問題を回避）
+const ARJS_RELOAD_KEY = 'arjs-reloaded';
+
 export default function ARjsPage() {
+    // i18nによるAR.jsのカメラ映像の位置ずれへの対処用コード
+    // 本質的な根本原因は未解決
+    const [isReady, setIsReady] = useState(false);
+    useEffect(() => {
+        const alreadyReloaded = sessionStorage.getItem(ARJS_RELOAD_KEY);
+        if (!alreadyReloaded) {
+            sessionStorage.setItem(ARJS_RELOAD_KEY, 'true');
+            window.location.reload();
+            return;
+        }
+        // 再読み込み完了時コンテンツ表示
+        setIsReady(true);
+        // ページ離脱時にクリア
+        return () => {
+            sessionStorage.removeItem(ARJS_RELOAD_KEY);
+        };
+    }, []);
+
     const nowStore = catchParentPathName();
+    const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
-    const storeMenu = getStoreMenu(nowStore);
+    const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
+    const t = useTranslations('arjs');
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -28,7 +54,7 @@ export default function ARjsPage() {
     const [isGuideVisible, setIsGuideVisible] = useState(false);
     const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
     const [isMarkerFound, setIsMarkerFound] = useState(false);
-    const [guideText, setGuideText] = useState("カメラを準備しています...\n少々お待ちください。\n\n案内が出たら「許可」を押してください");
+    const [guideText, setGuideText] = useState(t('cameraLoading'));
 
     const handleCameraReady = useCallback(() => {
         setIsCameraReady(true);
@@ -42,7 +68,7 @@ export default function ARjsPage() {
     const handleGuideDismiss = useCallback(() => {
         setIsGuideVisible(false);
         setIsMarkerFound(true);
-        setGuideText("モデルを読み込み中です...\n少々お待ちください");
+        setGuideText(t('modelLoading'));
         // arUIとexitButtonはマーカー検知時に表示
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
@@ -50,7 +76,7 @@ export default function ARjsPage() {
             arUI.style.display = 'block';
             exitButton.style.display = 'block';
         }
-    }, []);
+    }, [t]);
 
     // 初期モデルロード完了 かつ マーカー検知完了 のときにopenPanelを表示
     useEffect(() => {
@@ -69,8 +95,13 @@ export default function ARjsPage() {
     // 2. マーカー検知後、まだ初期モデルがロードされていない (isMarkerFound && !isInitialModelLoaded)
     const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
 
+    // リロード待機中は何も表示しない
+    if (!isReady) {
+        return <LoadingPanel isVisible={true} text={guideText} />;
+    }
+
     return (
-        <>
+        <MyarJS>
             <LoadingPanel isVisible={showLoading} text={guideText} />
             <GuideQRCode isVisible={isGuideVisible} />
             <ModelChangeContext.Provider value={{ changeModel }}>
@@ -82,11 +113,28 @@ export default function ARjsPage() {
                     storeInfo={storeInfo}
                 />
                 {menuDisplayMode === 'compact' ? (
-                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 ) : (
-                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <MenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 )}
             </ModelChangeContext.Provider>
-        </>
+        </MyarJS>
     );
 }
+
+const MyarJS = styled.div`
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#wrapper{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh; /* 100vhより安定な端末が多い */
+}
+`

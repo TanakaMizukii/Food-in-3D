@@ -1,0 +1,77 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "start": "始める",
+    "close": "閉じる"
+  },
+  "home": {
+    "title": "「食品」を立体で",
+    "description": "飲食店のメニューを立体で表示し、よりクリアな世界を目指します。",
+    "selectStore": "気になるお店をクリックしてください。"
+  },
+  "tutorial": {
+    "title": "ビューアー操作ガイド",
+    "modelControl": "モデル操作:",
+    "modelControlDesc": "ドラッグで回転、ピンチでズームが可能です。",
+    "arMode": "ARモード:",
+    "arModeDesc": "ARボタンから商品を現実空間に表示可能です！",
+    "menu": "メニュー:",
+    "menuDesc": "右上のアイコンで開閉し、商品を選択可能です",
+    "details": "詳細情報:",
+    "detailsDesc": "下部のシートをドラッグで開いて商品詳細を確認。"
+  },
+  "ar": {
+    "title": "AR（拡張現実）",
+    "description": "カメラを起動することで、商品を実際の大きさで確認できます",
+    "startButton": "ARを開始",
+    "checking": "確認中...",
+    "desktopAlert": "デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。"
+  },
+  "arjs": {
+    "cameraLoading": "カメラを準備しています...\n少々お待ちください。\n\n案内が出たら「許可」を押してください",
+    "modelLoading": "モデルを読み込み中です...\n少々お待ちください",
+    "guideText1": "QRコードの周りにある黒い縁を",
+    "guideText2": "上の枠に合わせてください",
+    "guideText3": "商品の表示を開始します！"
+  },
+  "scan": {
+    "detecting": "平面を検出中...",
+    "instruction": "スマホを目の高さで持ち\n上下左右に動かして平面を\nスキャンしてください"
+  },
+  "startPanel": {
+    "message": "商品を立体的に表示し\nミスマッチの解消を目指します",
+    "startButton": "商品の立体表示を開始",
+    "loading": "3D空間準備中"
+  },
+  "product": {
+    "serving": "分量",
+    "part": "部位",
+    "category": "カテゴリー",
+    "origin": "産地",
+    "recommendedFor": "おすすめの方",
+    "recommended": "おすすめ"
+  },
+  "webXR": {
+    "startTitle": "ARエクスペリエンスを開始",
+    "checking": "判定中…",
+    "startAR": "AR体験を始める",
+    "backToViewer": "3Dビュワーへ",
+    "resetTitle": "平面の認識をリセットします",
+    "resetInstruction": "ボタンから\nもう一度平面認識を開始してください",
+    "restartScan": "平面認識を再実行"
+  },
+  "arHelper": {
+    "arModeActive": "ARモード動作中",
+    "selectProduct": "商品の選択可能",
+    "backToViewer": "3Dビュワーへ",
+    "clearModel": "モデルクリア",
+    "resetPlane": "平面リセット"
+  },
+  "menu": {
+    "openHint": "タップまたは上スワイプ\nでメニューを開けます",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "viewProduct": "商品を表示",
+    "yen": "円"
+  }
+}

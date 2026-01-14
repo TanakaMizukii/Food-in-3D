@@ -1,24 +1,29 @@
 'use client';
 
 import styled, { keyframes } from 'styled-components';
+import { useTranslations } from 'next-intl';
 
 type ARResetPanelProps = {
     onRestart: () => void;
 };
 
 export default function ARResetPanel({ onRestart }: ARResetPanelProps) {
+    const t = useTranslations('webXR');
+
     return (
         <ResetPanelWrapper id='reset-overlay'>
             <div className="reset-content">
                 <div className="reset-icon" onClick={onRestart}></div>
                 <p className="reset-message-main">
-                    平面の認識をリセットします
+                    {t('resetTitle')}
                 </p>
                 <p className="reset-message-sub">
-                    ボタンから<br />もう一度平面認識を開始してください
+                    {t('resetInstruction').split('\n').map((line, i) => (
+                        <span key={i}>{line}{i === 0 && <br />}</span>
+                    ))}
                 </p>
                 <RestartButton onClick={onRestart}>
-                    平面認識を再実行
+                    {t('restartScan')}
                 </RestartButton>
             </div>
         </ResetPanelWrapper>

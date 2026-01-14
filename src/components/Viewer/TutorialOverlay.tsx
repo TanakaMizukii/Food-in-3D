@@ -1,6 +1,8 @@
+'use client';
 import styled from "styled-components";
 import { HiOutlineCursorClick, HiOutlineMenu } from "react-icons/hi";
 import { HiCubeTransparent, HiChevronDown } from "react-icons/hi2";
+import { useTranslations } from 'next-intl';
 
 type TutorialOverlayProps = {
     isVisible: boolean;
@@ -8,32 +10,35 @@ type TutorialOverlayProps = {
 };
 
 export default function TutorialOverlay({ isVisible, onClose }: TutorialOverlayProps) {
+    const t = useTranslations('tutorial');
+    const tCommon = useTranslations('common');
+
     return(
         <MyTutorialOverlay>
             {/* Tutorial Overlay */}
             <div className={`tutorial-overlay ${isVisible ? 'show' : ''}`}>
                 <div className="tutorial-content">
-                    <h3>ビューアー操作ガイド</h3>
+                    <h3>{t('title')}</h3>
                     <div className="tutorial-gestures">
                         <div className="gesture-item">
                             <div className="gesture-icon"><HiOutlineCursorClick /></div>
-                            <div className="gesture-text"><strong>モデル操作:</strong> ドラッグで回転、ピンチでズームが可能です。</div>
+                            <div className="gesture-text"><strong>{t('modelControl')}</strong> {t('modelControlDesc')}</div>
                         </div>
                         <div className="gesture-item">
                             <div className="gesture-icon"><HiCubeTransparent /></div>
-                            <div className="gesture-text"><strong>ARモード:<span className="col-red">ARボタンから商品を現実空間に表示可能です！</span></strong></div>
+                            <div className="gesture-text"><strong>{t('arMode')}<span className="col-red">{t('arModeDesc')}</span></strong></div>
                         </div>
                         <div className="gesture-item">
                             <div className="gesture-icon"><HiOutlineMenu /></div>
-                            <div className="gesture-text">メニュー:右上のアイコンで開閉し、商品を選択可能です</div>
+                            <div className="gesture-text">{t('menu')}{t('menuDesc')}</div>
                         </div>
                         <div className="gesture-item">
                             <div className="gesture-icon"><HiChevronDown /></div>
-                            <div className="gesture-text">詳細情報: 下部のシートをドラッグで開いて商品詳細を確認。</div>
+                            <div className="gesture-text">{t('details')} {t('detailsDesc')}</div>
                         </div>
                     </div>
                     <button className="tutorial-button" onClick={onClose}>
-                        始める
+                        {tCommon('start')}
                     </button>
                 </div>
             </div>

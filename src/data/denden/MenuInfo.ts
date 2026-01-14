@@ -53,8 +53,8 @@ export const categories: Category[] = [
 
 export const productCategory: string[] = [
     'メインメニュー',
-    '鶏丼系',
     'カレー',
+    '鶏丼系',
     '丼ぶり',
     '鶏系&豚系丼',
     'その他',

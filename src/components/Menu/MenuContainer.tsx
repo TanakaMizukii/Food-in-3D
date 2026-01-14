@@ -1,9 +1,12 @@
+'use client';
+
 import styled, { createGlobalStyle } from "styled-components";
 import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
 import TabNavigation from "./TabNavigation";
 import { MyContent } from "./MenuContent";
 import type { ProductModelsProps } from "@/data/types";
+import { useTranslations } from 'next-intl';
 
 import React, { useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
@@ -12,15 +15,17 @@ import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 type MenuContainerProps = {
     className?: string;
     productCategory: string[];
+    jaCategories: string[]; // 日本語のカテゴリ名（フィルタリング用）
     productModels: ProductModelsProps;
 };
 type MyContainerProps = {
     $expanded: boolean;
 }
 
-export default function MenuContainer({ className, productCategory, productModels } : MenuContainerProps) {
+export default function MenuContainer({ className, productCategory, jaCategories, productModels } : MenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
+    const t = useTranslations('menu');
 
     const toggleConfig = {
         toggleChange: () => setToggle(t => !t)
@@ -63,9 +68,9 @@ export default function MenuContainer({ className, productCategory, productModel
         touchEndY.current = null;
     };
 
-    // タブ情報伝達用State
-    const [category, setCategory] = useState<string>('メインメニュー');
-    const c_update = (elem:string) => setCategory(elem);
+    // タブ情報伝達用State（インデックスベース）
+    const [categoryIndex, setCategoryIndex] = useState<number>(0);
+    const c_update = (index: number) => setCategoryIndex(index);
     const toggleCheck = () => {
         if (!toggle) {
             setToggle(true);
@@ -102,18 +107,20 @@ export default function MenuContainer({ className, productCategory, productModel
         <div >
             <GuideHintOverride />
             <GuideHint id="menu-openGuide" >
-                タップまたは上スワイプ<br/>でメニューを開けます
+                {t('openHint').split('\n').map((line, i) => (
+                    <span key={i}>{line}{i === 0 && <br />}</span>
+                ))}
             </GuideHint>
             <MyContainer id='menu-container' className={className} $expanded={toggle}>
                 <div className="menu-header">
                     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                         <MenuToggle onUpdate={t_update} toggle={toggle}/>
                     </div>
-                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck}/>
+                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck} currentIndex={categoryIndex}/>
                 </div>
                 <div className="menu-body">
                     <ToggleChangeContext.Provider value={toggleConfig}>
-                        <MyContent nowCategory={category} models={productModels} />
+                        <MyContent nowCategoryIndex={categoryIndex} models={productModels} jaCategories={jaCategories} translatedCategories={productCategory} />
                     </ToggleChangeContext.Provider>
                 </div>
             </MyContainer>
@@ -122,7 +129,7 @@ export default function MenuContainer({ className, productCategory, productModel
                 onClick={() => { setToggle(true); dismissGuide(); }}
                 $show={!toggle}
             >
-                メニューを開く
+                {t('openMenu')}
             </OpenMenuButton>
         </div>
     );

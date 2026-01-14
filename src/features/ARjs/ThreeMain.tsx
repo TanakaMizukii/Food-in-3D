@@ -6,7 +6,7 @@ import { handleClick } from "@/features/ARjs/ThreeClick";
 import LoadingPanel from "@/components/Common/LoadingPanel";
 import ARHelper from "@/components/AR/ARHelper";
 import { useRouter } from "next/navigation";
-import { catchParentPathName } from '@/lib/catchPathname';
+import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
 
 import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
@@ -27,6 +27,7 @@ type ThreeMainProps = {
 export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, storeInfo }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
+    const locale = catchLocale();
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -113,7 +114,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss, storeInfo]);
 
     const handleExit = () => {
-        router.push(`/${nowStore}/viewer`);
+        router.push(`/${locale}/${nowStore}/viewer`);
     };
 
     return (

@@ -5,9 +5,18 @@
  */
 
 import storeNames from "@/data/storeInfo";
+import { locales } from "@/i18n/routing";
 
 const stores = storeNames.map((store) => store.use_name);
 
+// store のみ
 export async function generateStoreStaticParams() {
   return stores.map((store) => ({ store }));
+}
+
+// locale + store
+export async function generateLocaleStoreStaticParams() {
+  return locales.flatMap((locale) =>
+    stores.map((store) => ({ locale, store }))
+  );
 }

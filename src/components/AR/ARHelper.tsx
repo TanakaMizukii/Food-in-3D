@@ -1,4 +1,7 @@
+'use client';
+
 import styled from "styled-components"
+import { useTranslations } from 'next-intl';
 
 interface ARHelperProps {
     onExit: () => void;
@@ -9,26 +12,27 @@ interface ARHelperProps {
 }
 
 export default function ARHelper({ onExit, onClear, onReset, showClearObjects, showResetHit }: ARHelperProps) {
+    const t = useTranslations('arHelper');
+
     return(
         // <!-- AR中のUI -->
         <MyHelper>
             <div id="ar-ui" className="ar-ui">
-                <div>AR Mode Active</div>
-                <div>商品の選択可能</div>
+                <div>{t('arModeActive')}</div>
+                <div>{t('selectProduct')}</div>
             </div>
 
-            {/* <button id="exit-button" className="exit-button" onClick={onExit}>AR終了</button> */}
-            <button id="exit-button" className="send-viewer-button" onClick={onExit}>3Dビュワーへ</button>
+            <button id="exit-button" className="send-viewer-button" onClick={onExit}>{t('backToViewer')}</button>
             {showClearObjects && (
                 <div id="clear-objects" className="clear-objects">
                     <button id="clear-button" className="clear-button" onClick={onClear}>♻️</button>
-                    <div id="clear-text" className="clear-text">モデルクリア</div>
+                    <div id="clear-text" className="clear-text">{t('clearModel')}</div>
                 </div>
             )}
             {showResetHit && (
                 <div id="reset-hit" className="reset-hit">
                     <button id="reset-button" className="reset-button" onClick={onReset}>🔎</button>
-                    <div id="reset-text" className="reset-text">平面リセット</div>
+                    <div id="reset-text" className="reset-text">{t('resetPlane')}</div>
                 </div>
             )}
         </MyHelper>
@@ -141,7 +145,7 @@ const MyHelper = styled.div`
     color: white;
     font-size: 14px;
     text-align: center;
-    z-index: 1;
+    z-index: 100;
 }
 
 .reset-hit {
@@ -190,6 +194,6 @@ const MyHelper = styled.div`
     color: white;
     font-size: 14px;
     text-align: center;
-    z-index: 1;
+    z-index: 100;
 }
 `

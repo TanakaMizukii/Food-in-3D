@@ -1,20 +1,29 @@
-import Link from "next/link";
 import storeNames from "@/data/storeInfo";
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import LanguageSelector from "@/components/Common/LanguageSelector";
 
 export default function Home() {
+  const t = useTranslations('home');
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-gray-100 font-sans">
+    <div className="flex min-h-screen items-center justify-center bg-black text-gray-100 font-sans relative">
+      {/* Language Selector */}
+      <div className="absolute top-5 left-8.75">
+        <LanguageSelector />
+      </div>
+
       <main className="flex flex-col items-center justify-center text-center w-full max-w-4xl p-6 md:p-12 gap-8 md:gap-12">
         <div className="animate-fade-in-up">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter">
-            「食品」を立体で
+            {t('title')}
           </h1>
         </div>
         <div className="animate-fade-in-up animation-delay-300">
           <p className="max-w-2xl text-lg md:text-xl text-gray-400">
-            飲食店のメニューを立体で表示し、よりクリアな世界を目指します。
+            {t('description')}
             <br />
-            気になるお店をクリックしてください。
+            {t('selectStore')}
           </p>
         </div>
         <div className="w-full max-w-sm animate-fade-in-up animation-delay-600">

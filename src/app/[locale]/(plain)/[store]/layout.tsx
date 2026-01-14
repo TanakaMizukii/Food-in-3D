@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { generateStoreStaticParams } from '@/lib/storeParams';
+import { generateLocaleStoreStaticParams } from '@/lib/storeParams';
 import storeNames from "@/data/storeInfo";
 
 // 静的エクスポート（output: 'export'）では動的ルート配下の全ページにgenerateStaticParamsが必要
 // layout.tsxに記述することで配下の全ページに適用される
-export const generateStaticParams = generateStoreStaticParams;
+export const generateStaticParams = generateLocaleStoreStaticParams;
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ store: string }> }
+  { params }: { params: Promise<{ locale: string; store: string }> }
 ): Promise<Metadata> {
   const { store } = await params;
   const nowStoreInfo = storeNames.find((s) => {
@@ -21,14 +21,10 @@ export async function generateMetadata(
   };
 }
 
-export default function RootLayout({
+export default function StoreLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="ja">
-      <body>
-        {children}
-      </body>
-    </html>
-  );
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return <>{children}</>;
 }

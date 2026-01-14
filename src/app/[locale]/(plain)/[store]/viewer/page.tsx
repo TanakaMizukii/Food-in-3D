@@ -16,8 +16,8 @@ import type { ProductModel } from '@/data/types';
 import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/Viewer/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
-import { catchParentPathName } from '@/lib/catchPathname';
-import { getStoreMenu } from '@/data/storeMenus';
+import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
+import { getLocalizedStoreMenu } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
@@ -25,7 +25,8 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
 export default function ViewerPage() {
     const nowStore = catchParentPathName();
-    const storeMenu = getStoreMenu(nowStore);
+    const locale = catchLocale();
+    const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
@@ -77,9 +78,9 @@ export default function ViewerPage() {
                 </TopLayer>
 
                 <BottomLayer>
-                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} menuDisplayMode={menuDisplayMode}/>
+                    <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
                     <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>
                 </BottomLayer>
             </Root>

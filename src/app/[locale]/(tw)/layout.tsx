@@ -17,18 +17,14 @@ export const metadata: Metadata = {
   description: "食品を立体で表現し、よりクリアな世界を目指します。",
 };
 
-export default function RootLayout({
+export default function TwLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      {children}
+    </div>
   );
 }

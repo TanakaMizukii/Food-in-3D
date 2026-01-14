@@ -1,14 +1,17 @@
+'use client';
 import styled from "styled-components";
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
+import { useTranslations } from 'next-intl';
 
 export default function PrimaryFab() {
     const router = useRouter();
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const t = useTranslations('ar');
 
     const handleARStart = async () => {
         setIsLoading(true);
@@ -26,7 +29,7 @@ export default function PrimaryFab() {
             router.push(xr === "supported" ? `${base}/arView` : `${base}/arJS`);
         } else {
             router.push(`${base}/viewer`);
-            alert("デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。");
+            alert(t('desktopAlert'));
         }
 
         setIsLoading(false);
@@ -40,10 +43,10 @@ export default function PrimaryFab() {
         <MyFabContainer>
             {/* Expanded content */}
             <div className={`expanded-content ${isExpanded ? 'visible' : ''}`}>
-                <h6 className="explanation-title">AR（拡張現実）</h6>
-                <p className="explanation-text">カメラを起動することで、商品を実際の大きさで確認できます</p>
+                <h6 className="explanation-title">{t('title')}</h6>
+                <p className="explanation-text">{t('description')}</p>
                 <button className="ar-start-button" onClick={handleARStart} disabled={isLoading}>
-                    {isLoading ? '確認中...' : 'ARを開始'}
+                    {isLoading ? t('checking') : t('startButton')}
                 </button>
             </div>
 

@@ -11,9 +11,10 @@ import '../App.css';
 import ARStartPanel from "@/components/StartPanel/ARStartPanel";
 import ARResetPanel from "@/components/AR/ARResetPanel";
 import ThreeMain from '@/features/WebXR/ThreeMain';
-import { catchParentPathName } from '@/lib/catchPathname';
-import { getStoreMenu } from '@/data/storeMenus';
+import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
+import { getLocalizedStoreMenu } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
+import { useTranslations } from 'next-intl';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
@@ -21,9 +22,11 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 export default function ARViewPage() {
     const router = useRouter();
     const nowStore = catchParentPathName();
-    const storeMenu = getStoreMenu(nowStore);
+    const locale = catchLocale();
+    const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
+    const t = useTranslations('ar');
 
     const [loading, setLoading] = useState(false);
     const [start, setStart] = useState(false);
@@ -38,13 +41,13 @@ export default function ARViewPage() {
         const xr = await checkImmersiveARSupport();
 
         if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? `/${nowStore}/arView` : `/${nowStore}/arJS`);
+            router.push(xr === 'supported' ? `/${locale}/${nowStore}/arView` : `/${locale}/${nowStore}/arJS`);
             if (xr === 'supported') {setStart(true)}
         } else {
-            router.push(`/${nowStore}/viewer`);
-            alert('デスクトップではAR表示はできません。スマートフォンにて起動をお願いします。')
+            router.push(`/${locale}/${nowStore}/viewer`);
+            alert(t('desktopAlert'));
         }
-    }, [router, nowStore]);
+    }, [router, nowStore, locale, t]);
 
     const handleSessionEnd = () => {
         setStart(false);
@@ -67,9 +70,9 @@ export default function ARViewPage() {
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={storeInfo} />
                 {menuDisplayMode === 'compact' ? (
-                    <CompactMenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 ) : (
-                    <MenuContainer productCategory={storeMenu.productCategory} productModels={storeMenu.productModels} />
+                    <MenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 )}
             </ModelChangeContext.Provider>
         }

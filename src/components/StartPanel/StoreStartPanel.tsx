@@ -1,5 +1,8 @@
+'use client';
 import styled from "styled-components";
 import { getThumbSrc } from "@/lib/thumbSrc";
+import { useTranslations } from 'next-intl';
+import LanguageSelector from "@/components/Common/LanguageSelector";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -15,6 +18,7 @@ type OptionalImgProps = {
 };
 
 export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
+    const t = useTranslations('startPanel');
     const handleClick = () => {
         onUpdate();
     };
@@ -30,6 +34,9 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
         // <!-- 店舗スタートパネル -->
         <MyStart>
             <div id="start-overlay" className={'startOverlay'}>
+                <div className="languageSelectorWrapper">
+                    <LanguageSelector />
+                </div>
                 <OptionalImg
                     src={thumbSrc("right_top")}
                     alt="右上商品イメージ"
@@ -48,9 +55,13 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                     id="start-left-bottom"
                     className="startSideImg leftBottomImg"
                 />
-                <div id="status-text" className={'startText'}>商品を立体的に表示し<br></br>ミスマッチの解消を目指します</div>
+                <div id="status-text" className={'startText'}>
+                    {t('message').split('\n').map((line, i) => (
+                        <span key={i}>{line}<br /></span>
+                    ))}
+                </div>
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
-                        {loading ? '3D空間準備中' : '商品の立体表示を開始'}
+                        {loading ? t('loading') : t('startButton')}
                     </button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
@@ -177,6 +188,13 @@ const MyStart = styled.div`
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 20px auto;
+}
+
+.languageSelectorWrapper {
+    position: absolute;
+    top: 20px;
+    left: 35px;
+    z-index: 10;
 }
 
 @keyframes spin {

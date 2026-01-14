@@ -1,8 +1,10 @@
+'use client';
+
 import styled from "styled-components";
-// import Image from "next/image";
 import { useContext } from 'react';
 import { ModelChangeContext } from "@/contexts/ModelChangeContext";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
+import { useTranslations } from 'next-intl';
 
 export type modelProps = {
     name: string;
@@ -22,6 +24,7 @@ type modelItemProps = {
 export default function MenuItem({model}: modelItemProps) {
     const { changeModel } = useContext(ModelChangeContext);
     const { toggleChange } = useContext(ToggleChangeContext);
+    const t = useTranslations('menu');
 
     const handleItemClick = () => {
         if (typeof changeModel === 'function') {
@@ -41,8 +44,8 @@ export default function MenuItem({model}: modelItemProps) {
                 <div className="menu-item-info">
                     <div className="menu-item-title">{model.name}</div>
                     <div className="menu-item-description">{model.minDetail}</div>
-                    <div className="menu-item-price">{model.price}円</div>
-                    <button className="view-item-btn">商品を表示</button>
+                    <div className="menu-item-price">{model.price}{t('yen')}</div>
+                    <button className="view-item-btn">{t('viewProduct')}</button>
                 </div>
             </div>
         </MyItem>

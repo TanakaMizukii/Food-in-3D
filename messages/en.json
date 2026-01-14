@@ -1,0 +1,77 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "start": "Start",
+    "close": "Close"
+  },
+  "home": {
+    "title": "Food in 3D",
+    "description": "View restaurant menus in 3D for a clearer dining experience.",
+    "selectStore": "Click on a restaurant to explore."
+  },
+  "tutorial": {
+    "title": "Viewer Guide",
+    "modelControl": "Model Control:",
+    "modelControlDesc": "Drag to rotate, pinch to zoom.",
+    "arMode": "AR Mode:",
+    "arModeDesc": "Tap the AR button to view products in real space!",
+    "menu": "Menu:",
+    "menuDesc": "Tap the top-right icon to browse products",
+    "details": "Details:",
+    "detailsDesc": "Drag the bottom sheet to view product details."
+  },
+  "ar": {
+    "title": "AR (Augmented Reality)",
+    "description": "Launch the camera to see products at actual size",
+    "startButton": "Start AR",
+    "checking": "Checking...",
+    "desktopAlert": "AR is not available on desktop. Please use a smartphone."
+  },
+  "arjs": {
+    "cameraLoading": "Preparing camera...\nPlease wait.\n\nTap \"Allow\" when prompted",
+    "modelLoading": "Loading model...\nPlease wait",
+    "guideText1": "Align the black border around",
+    "guideText2": "the QR code with the frame above",
+    "guideText3": "Starting product display!"
+  },
+  "scan": {
+    "detecting": "Detecting surface...",
+    "instruction": "Hold your phone at eye level\nand move it around to\nscan the surface"
+  },
+  "startPanel": {
+    "message": "View products in 3D\nto reduce order mismatches",
+    "startButton": "Start 3D View",
+    "loading": "Preparing 3D space"
+  },
+  "product": {
+    "serving": "Serving",
+    "part": "Cut",
+    "category": "Category",
+    "origin": "Origin",
+    "recommendedFor": "Recommended for",
+    "recommended": "Recommended"
+  },
+  "webXR": {
+    "startTitle": "Start AR Experience",
+    "checking": "Checking...",
+    "startAR": "Start AR",
+    "backToViewer": "Back to 3D Viewer",
+    "resetTitle": "Reset Surface Detection",
+    "resetInstruction": "Press the button to\nrestart surface detection",
+    "restartScan": "Restart Surface Scan"
+  },
+  "arHelper": {
+    "arModeActive": "AR Mode Active",
+    "selectProduct": "Select a product",
+    "backToViewer": "Back to 3D Viewer",
+    "clearModel": "Clear Model",
+    "resetPlane": "Reset Plane"
+  },
+  "menu": {
+    "openHint": "Tap or swipe up\nto open the menu",
+    "openMenu": "Open Menu",
+    "closeMenu": "Close Menu",
+    "viewProduct": "View Product",
+    "yen": "JPY"
+  }
+}

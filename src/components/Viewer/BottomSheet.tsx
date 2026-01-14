@@ -1,7 +1,9 @@
+'use client';
 import styled from "styled-components";
 
 import React from "react";
 import type { ProductModel } from "@/data/types";
+import { useTranslations } from 'next-intl';
 
 type BottomProps = {
     currentProduct: ProductModel;
@@ -11,6 +13,7 @@ type BottomProps = {
 
 export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpanded}: BottomProps) {
     const contentRef = React.useRef<HTMLDivElement | null>(null);
+    const t = useTranslations('product');
 
     // スワイプ用state
     // numberまたはnullのみを格納できるref
@@ -57,35 +60,35 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
 
                         <div className="sheet-specs">
                             <div className="spec-card">
-                                <div className="spec-label">分量</div>
+                                <div className="spec-label">{t('serving')}</div>
                                 <div className="spec-value">{currentProduct.serving}</div>
                             </div>
                             {currentProduct.part ?(
                                     <div className="spec-card">
-                                        <div className="spec-label">部位</div>
+                                        <div className="spec-label">{t('part')}</div>
                                         <div className="spec-value">{currentProduct.part}</div>
                                     </div>
                                 ): (
                                     <div className="spec-card">
-                                        <div className="spec-label">カテゴリー</div>
+                                        <div className="spec-label">{t('category')}</div>
                                         <div className="spec-value">{currentProduct.category}</div>
                                     </div>
                                 )
                             }
                             {currentProduct.origin ?(
                                     <div className="spec-card">
-                                        <div className="spec-label">産地</div>
+                                        <div className="spec-label">{t('origin')}</div>
                                         <div className="spec-value">{currentProduct.origin}</div>
                                     </div>
                                 ): (
                                     <div className="spec-card">
-                                        <div className="spec-label">おすすめの方</div>
+                                        <div className="spec-label">{t('recommendedFor')}</div>
                                         <div className="spec-value">{currentProduct.recPeople}</div>
                                     </div>
                                 )
                             }
                             <div className="spec-card">
-                                <div className="spec-label">おすすめ</div>
+                                <div className="spec-label">{t('recommended')}</div>
                                 <div className="spec-value">{currentProduct.recommended}</div>
                             </div>
                         </div>

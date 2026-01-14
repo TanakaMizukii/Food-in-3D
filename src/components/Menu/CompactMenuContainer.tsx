@@ -1,3 +1,5 @@
+'use client';
+
 import styled, { createGlobalStyle } from "styled-components";
 import { keyframes } from "styled-components";
 import MenuToggle from "./MenuToggle";
@@ -6,6 +8,7 @@ import { MyCompactContent } from "./CompactMenuContent";
 import type { ProductModelsProps } from "@/data/types";
 import { SelectedProductContext, type SelectedProductInfo } from "@/contexts/SelectedProductContext";
 import { ModelChangeContext } from "@/contexts/ModelChangeContext";
+import { useTranslations } from 'next-intl';
 
 import React, { useContext, useEffect, useState } from "react";
 import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
@@ -14,17 +17,19 @@ import { ToggleChangeContext } from "@/contexts/ToggleChangeContext";
 type CompactMenuContainerProps = {
     className?: string;
     productCategory: string[];
+    jaCategories: string[]; // 日本語のカテゴリ名（フィルタリング用）
     productModels: ProductModelsProps;
 };
 type MyContainerProps = {
     $expanded: boolean;
 };
 
-export default function CompactMenuContainer({ className, productCategory, productModels }: CompactMenuContainerProps) {
+export default function CompactMenuContainer({ className, productCategory, jaCategories, productModels }: CompactMenuContainerProps) {
     const [toggle, setToggle] = useState(false);
     const [isDesktop, setIsDesktop] = useState(false);
     // 選択された商品情報（nullの場合は初期状態＝ガイド表示）
     const [selectedProduct, setSelectedProduct] = useState<SelectedProductInfo | null>(null);
+    const t = useTranslations('menu');
 
     const { changeModel } = useContext(ModelChangeContext);
 
@@ -72,9 +77,9 @@ export default function CompactMenuContainer({ className, productCategory, produ
         touchEndY.current = null;
     };
 
-    // タブ情報伝達用State
-    const [category, setCategory] = useState<string>('メインメニュー');
-    const c_update = (elem: string) => setCategory(elem);
+    // タブ情報伝達用State（インデックスベース）
+    const [categoryIndex, setCategoryIndex] = useState<number>(0);
+    const c_update = (index: number) => setCategoryIndex(index);
     const toggleCheck = () => {
         if (!toggle) {
             setToggle(true);
@@ -131,7 +136,9 @@ export default function CompactMenuContainer({ className, productCategory, produ
             {/* 初期状態（商品未選択）はガイドヒント、選択後はサイズボタンを表示（パネル展開中は非表示） */}
             {selectedProduct === null ? (
                 <GuideHint id="compact-menu-openGuide" $expanded={toggle}>
-                    タップまたは上スワイプ<br />でメニューを開けます
+                    {t('openHint').split('\n').map((line, i) => (
+                        <span key={i}>{line}{i === 0 && <br />}</span>
+                    ))}
                 </GuideHint>
             ) : !toggle && (
                 <SizeButtonPanel id="compact-size-panel">
@@ -162,12 +169,12 @@ export default function CompactMenuContainer({ className, productCategory, produ
                     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                         <MenuToggle onUpdate={t_update} toggle={toggle} />
                     </div>
-                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck} />
+                    <TabNavigation pdtLists={productCategory} onUpdate={c_update} toggleCheck={toggleCheck} currentIndex={categoryIndex} />
                 </div>
                 <div className="menu-body">
                     <ToggleChangeContext.Provider value={toggleConfig}>
                         <SelectedProductContext.Provider value={selectedProductConfig}>
-                            <MyCompactContent nowCategory={category} models={productModels} />
+                            <MyCompactContent nowCategoryIndex={categoryIndex} models={productModels} jaCategories={jaCategories} translatedCategories={productCategory} />
                         </SelectedProductContext.Provider>
                     </ToggleChangeContext.Provider>
                 </div>
@@ -177,7 +184,7 @@ export default function CompactMenuContainer({ className, productCategory, produ
                 onClick={() => { setToggle(true); dismissGuide(); }}
                 $show={!toggle}
             >
-                メニューを開く
+                {t('openMenu')}
             </OpenMenuButton>
         </div>
     );

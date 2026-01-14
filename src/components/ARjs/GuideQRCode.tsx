@@ -1,10 +1,15 @@
+'use client';
+
 import styled from "styled-components"
+import { useTranslations } from 'next-intl';
 
 type Props = {
     isVisible: boolean;
 }
 
 export default function GuideQRCode({ isVisible }: Props) {
+    const t = useTranslations('arjs');
+
     return(
         // <!-- ガイド用インジケーター -->
         <MyGuideQR>
@@ -22,11 +27,11 @@ export default function GuideQRCode({ isVisible }: Props) {
                 </svg>
                 <div className="guide-frame"></div>
                 <div className="guide-text">
-                    QRコードの周りにある黒い縁を<br />
-                    上の枠に合わせてください
+                    {t('guideText1')}<br />
+                    {t('guideText2')}
                 </div>
                 <div className="guide-text">
-                    商品の表示を開始します！
+                    {t('guideText3')}
                 </div>
             </div>
         </MyGuideQR>
@@ -42,7 +47,7 @@ const MyGuideQR = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 150;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;

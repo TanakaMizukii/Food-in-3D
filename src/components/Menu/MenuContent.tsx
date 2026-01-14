@@ -6,35 +6,44 @@ import React from "react";
 
 type MenuContentProps = {
     className?: string;
-    nowCategory: string;
+    nowCategoryIndex: number;
     models: ProductModelsProps;
+    jaCategories: string[]; // 日本語のカテゴリ名（フィルタリング用）
+    translatedCategories: string[]; // 翻訳されたカテゴリ名（表示用）
     viewer?: boolean;
 }
 
-export default function MenuContent({className, nowCategory, models}: MenuContentProps) {
+export default function MenuContent({className, nowCategoryIndex, models, jaCategories, translatedCategories}: MenuContentProps) {
     // modelsからユニークなカテゴリを取得（出現順を維持）
-    const allCategories = [...new Set(models.map(m => m.category))];
+    const allJaCategories = [...new Set(models.map(m => m.category))];
 
-    // カテゴリーごとの表示設定を動的に生成
-    const selectCategory: {[index: string] : string[]}  = {};
+    // 表示するカテゴリを決定（インデックス0は全カテゴリ、それ以外は該当カテゴリのみ）
+    // jaCategoriesのインデックスとtranslatedCategoriesのインデックスを使用
+    let categoriesToShow: { ja: string; translated: string }[];
+    if (nowCategoryIndex === 0) {
+        // メインメニュー（最初のタブ）は全カテゴリを表示
+        // allJaCategoriesの順序に合わせて翻訳名を取得
+        categoriesToShow = allJaCategories.map(jaCat => {
+            const idx = jaCategories.indexOf(jaCat);
+            return {
+                ja: jaCat,
+                translated: idx !== -1 ? translatedCategories[idx] : jaCat
+            };
+        });
+    } else {
+        // 日本語のカテゴリ名を使用してフィルタリング
+        const targetJaCategory = jaCategories[nowCategoryIndex];
+        const targetTranslatedCategory = translatedCategories[nowCategoryIndex];
+        categoriesToShow = targetJaCategory ? [{ ja: targetJaCategory, translated: targetTranslatedCategory || targetJaCategory }] : [];
+    }
 
-    // メインメニューは全カテゴリーを表示
-    selectCategory['メインメニュー'] = allCategories;
-
-    // 各カテゴリーは自身のみを表示
-    allCategories.forEach(cat => {
-        selectCategory[cat] = [cat];
-    });
-
-    // まず配列を取り出しておく
-    const categories = selectCategory[nowCategory] ?? [];
     return(
         <div className={className}>
-            {categories.map((cat) => (
+            {categoriesToShow.map((cat) => (
                 // それぞれのmapにキーを付けて配置
-                <React.Fragment key={cat}>
-                    <MenuCategory category={cat} />
-                    {models.filter(m => m.category === cat)
+                <React.Fragment key={cat.ja}>
+                    <MenuCategory category={cat.translated} />
+                    {models.filter(m => m.category === cat.ja)
                         .map((model, idx) => (
                             <MenuItem key={model.name ?? idx} model={model} />
                         ))
