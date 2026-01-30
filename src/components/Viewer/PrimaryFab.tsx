@@ -1,6 +1,6 @@
 'use client';
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
@@ -11,7 +11,14 @@ export default function PrimaryFab() {
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isIOS, setIsIOS] = useState(false);
     const t = useTranslations('ar');
+
+    useEffect(() => {
+        if (getMobileOS() === 'ios') {
+            setIsIOS(true);
+        }
+    }, []);
 
     const handleARStart = async () => {
         setIsLoading(true);
@@ -39,6 +46,9 @@ export default function PrimaryFab() {
         setIsExpanded(!isExpanded);
     }
 
+    const pathParts = pathname.split('/');
+    const store = pathParts.length > 2 ? pathParts[pathParts.length - 2] : '';
+
     return(
         <MyFabContainer>
             {/* Expanded content */}
@@ -48,6 +58,15 @@ export default function PrimaryFab() {
                 <button className="ar-start-button" onClick={handleARStart} disabled={isLoading}>
                     {isLoading ? t('checking') : t('startButton')}
                 </button>
+                {isIOS && (
+                    <BetaButton
+                        href={`https://www.in3d.world/?=${store}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        AR(β版)で開始
+                    </BetaButton>
+                )}
             </div>
 
             {/* Primary FAB */}
@@ -57,6 +76,34 @@ export default function PrimaryFab() {
         </MyFabContainer>
     )
 };
+
+const BetaButton = styled.a`
+    background: linear-gradient(135deg, #ff4d4d, #cc0000);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.20s ease;
+    width: 80%;
+    box-shadow: 0 6px 18px rgba(255, 77, 77, 0.35);
+    text-decoration: none;
+    text-align: center;
+    margin-top: 8px;
+
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #ff5f5f, #dd1111);
+        box-shadow: 0 8px 22px rgba(255, 77, 77, 0.45);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: scale(0.98);
+        box-shadow: 0 6px 20px rgba(255, 77, 77, 0.35);
+    }
+`;
 
 const MyFabContainer = styled.div`
     position: absolute;
