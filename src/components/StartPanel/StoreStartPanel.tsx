@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { getThumbSrc } from "@/lib/thumbSrc";
 import { useTranslations } from 'next-intl';
 import LanguageSelector from "@/components/Common/LanguageSelector";
+import { useState, useEffect } from "react";
+import { getMobileOS } from "@/lib/detectOS";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -19,6 +21,13 @@ type OptionalImgProps = {
 
 export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
     const t = useTranslations('startPanel');
+    const [isIOS, setIsIOS] = useState(false);
+
+    useEffect(() => {
+        if (getMobileOS() === 'ios') {
+            setIsIOS(true);
+        }
+    }, []);
     const handleClick = () => {
         onUpdate();
     };
@@ -63,11 +72,51 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? t('loading') : t('startButton')}
                     </button>
+                    {isIOS && (
+                        <BetaButton
+                            href={`https://www.in3d.world/?=${store}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            β版で開始
+                        </BetaButton>
+                    )}
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>
     )
 }
+
+const BetaButton = styled.a`
+    background: linear-gradient(145deg, rgba(34,178,34,0.5), rgba(0,128,0,0.5));
+    color: white;
+    padding: 18px 45px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
+    border: 1px solid #22b222;
+    cursor: pointer;
+    min-width: 200px;
+    text-align: center;
+    transition: all 0.2s ease-out;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 15px;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
+        background: linear-gradient(145deg, rgba(50, 205, 50, 0.7), rgba(0, 100, 0, 0.7));
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
+    }
+`;
 
 const MyStart = styled.div`
 .startOverlay {
