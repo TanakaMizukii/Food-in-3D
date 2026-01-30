@@ -1,6 +1,6 @@
 'use client'
 
-// import '../App.css';
+import '../App.css';
 import { useState, useCallback, useEffect } from 'react';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
