@@ -59,11 +59,7 @@ export default function PrimaryFab() {
                     {isLoading ? t('checking') : t('startButton')}
                 </button>
                 {isIOS && (
-                    <BetaButton
-                        href={`https://www.in3d.world/?=${store}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <BetaButton href={`https://www.in3d.world/?=${store}`}>
                         AR(β版)で開始
                     </BetaButton>
                 )}

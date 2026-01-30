@@ -73,11 +73,7 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                         {loading ? t('loading') : t('startButton')}
                     </button>
                     {isIOS && (
-                        <BetaButton
-                            href={`https://www.in3d.world/?=${store}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
+                        <BetaButton href={`https://www.in3d.world/?=${store}`}>
                             β版で開始
                         </BetaButton>
                     )}
@@ -105,6 +101,7 @@ const BetaButton = styled.a`
     text-decoration: none;
     display: inline-block;
     margin-top: 15px;
+    z-index: 1000;
 
     &:hover {
         transform: translateY(-3px);
