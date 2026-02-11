@@ -40,7 +40,36 @@ const storeInfo: StoreInfo[] = [
         menuDisplayMode: 'compact',
         firstEnvironment: {
             hdrPath: '/hdr/denden/',
-            hdrFile: 'dndn_2.1_small.hdr',
+            hdrFile: 'denden_2.1_small.hdr',
+            defaultModel: {
+                name: '2種の鶏唐コンビ丼（特盛）',
+                path: '/models/denden/chicken_combo_large_comp.glb',
+                detail: '2種類の鶏唐揚げが通常盛りの倍の量で楽しめます！。',
+                price: '税込み:1250',
+            },
+            modelDisplaySettings: {
+                scale: 1,
+                scaleARjs: 7,
+                scaleWebXR: 0.7,
+                scale3DViewer: 1,
+                detailPosition: [0, 0.22, -0.24],
+                detailCenter: [0, 0.08],
+            },
+            cameraPosition: [0.34, 0.77, 0.49],
+            lightIntensity: 2,
+        }
+    },
+    {
+        id: 3,
+        use_name: 'theSourceDiner',
+        true_name: 'The Source Diner',
+        logo: 'theSourceDiner.png',
+        right_top: null,
+        left_bottom: null,
+        menuDisplayMode: 'compact',
+        firstEnvironment: {
+            hdrPath: '/hdr/theSourceDiner/',
+            hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
                 name: '2種の鶏唐コンビ丼（特盛）',
                 path: '/models/denden/chicken_combo_large_comp.glb',
