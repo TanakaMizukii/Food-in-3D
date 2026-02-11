@@ -17,12 +17,6 @@ export default function Home() {
     }
   }, []);
 
-  const betaButtonStyle: React.CSSProperties = {
-    background: 'linear-gradient(145deg, #22b222, #008000)',
-    borderColor: '#22b222',
-    marginTop: '10px'
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-gray-100 font-sans relative">
       {/* Language Selector */}
