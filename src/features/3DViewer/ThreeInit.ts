@@ -1,15 +1,16 @@
 import * as THREE from 'three';
+import { WebGPURenderer } from 'three/webgpu';
+import { PMREMGenerator } from 'three/webgpu';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
-import { PMREMGenerator } from 'three';
 import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 await MeshoptDecoder.ready;
 
 export type ThreeCtx = {
-    renderer: THREE.WebGLRenderer;
+    renderer: WebGPURenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     controls?: OrbitControls;
@@ -34,7 +35,7 @@ export type InitOptions = {
 };
 
 /** Three.js 初期化（canvas必須） */
-export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): ThreeCtx {
+export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Promise<ThreeCtx> {
     // デフォルト値を分割代入にて設定(もし値がなかった時自動的に入る)
     const {
         pixelRatioCap = 2,
@@ -47,12 +48,14 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         lightIntensity = 2,
     } = opts;
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGPURenderer({
         canvas,
         antialias,
         alpha, // 透過
         powerPreference: "high-performance",
     });
+    // WebGPU非対応ブラウザでは自動的にWebGLバックエンドにフォールバックする
+    await renderer.init();
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xaaaaaa);
@@ -76,9 +79,9 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     let controls: OrbitControls | undefined;
     if (useControls) {
         controls = new OrbitControls(camera, labelRenderer.domElement);
-        controls.autoRotate = true;
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.2;
+        // controls.autoRotate = true;
+        // controls.enableDamping = true;
+        // controls.dampingFactor = 0.2;
         controls.target.set(0, 0, 0);
     }
 
@@ -86,9 +89,6 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     // KTX2を準備
     const ktx2 = new KTX2Loader();
     ktx2.setTranscoderPath('/basis/');
-    // WebGPUは非同期で初期化されるため、KTX2Loaderの設定前にレンダラーの初期化を待つ必要がある。
-    // rendererを初期化
-    // await renderer.init();
     ktx2.detectSupport(renderer);
     const loader = new GLTFLoader();
     loader.setKTX2Loader(ktx2);
@@ -121,7 +121,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     };
 
     const pmrem = new PMREMGenerator(renderer);
-    pmrem.compileCubemapShader();
+    await pmrem.compileCubemapShader();
     new HDRLoader()
     .setPath(hdrPath)
     .load(hdrFile, (hdr) => {
@@ -161,7 +161,7 @@ export function attachResizeHandlers(ctx: ThreeCtx, container: HTMLElement, opts
 }
 
 /** DPRを再適用（回転等でDPRが変わる端末対策用） */
-export function refreshPixelRatio(renderer: THREE.WebGLRenderer, cap = 2) {
+export function refreshPixelRatio(renderer: WebGPURenderer, cap = 2) {
     const dpr = Math.min(window.devicePixelRatio || 1, cap);
     renderer.setPixelRatio(dpr);
 }
