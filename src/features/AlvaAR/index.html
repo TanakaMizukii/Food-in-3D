@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport"/>
+        <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+        <title>Food Model AlvaAR View</title>
+        <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+        <link rel="stylesheet" href="./style.css">
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+                    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+                }
+            }
+        </script>
+        <script type="module" src="./ui.js"></script>
+    </head>
+    <body>
+        <div id="container"></div>
+        <div id="overlay">
+            <button id="start_button">Start</button>
+            <div id="splash"></div>
+            <script type="module" src="./index.js"></script>
+        </div>
+
+    <!-- AR中のUI -->
+    <div id="ar-ui" class="ar-ui hidden">
+        <div>ARモード動作中</div>
+        <div>商品の選択可能</div>
+    </div>
+
+    <button id="exit-button" class="send-viewer-button hidden" onclick="onExit()">3Dビュワーへ</button>
+    <div id="clear-objects" class="clear-objects hidden">
+        <button id="clear-button" class="clear-button" onclick="onClear()">♻️</button>
+        <div id="clear-text" class="clear-text">モデルクリア</div>
+    </div>
+
+    <!-- メニューコンテナー -->
+    <div class="menu-container collapsed hidden" id="menuContainer">
+        <div class="menu-toggle" id="menuToggle">
+            <span id="toggleText">メニューを開く</span>
+        </div>
+
+        <div class="tab-navigation" id="tabNavigation">
+            <!-- タブはui.jsにて動的に生成 -->
+        </div>
+
+        <div class="menu-content" id="menuContent">
+            <!-- メニュー項目はui.jsにて動的に生成 -->
+        </div>
+    </div>
+
+    <!-- デスクトップ用のメニュートグルボタン -->
+    <div class="menu-toggle-desktop hidden" id="menuToggleDesktop">
+        <span id="toggleText">メニューを開く</span>
+    </div>
+
+    <!-- ローディングインジケーター -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">モデルを読み込み中...</div>
+    </div>
+
+    <!-- ガイド用インジケーター -->
+    <div id="guideMarker" class="guide-overlay">
+        <div class="guide-spinner"></div>
+        <div class="guide-text">QRコードにかざしてください…<br>商品を表示します</div>
+    </div>
+    </body>
+</html>
