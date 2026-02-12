@@ -40,12 +40,10 @@ export default function Home() {
         <div className="w-full max-w-sm animate-fade-in-up animation-delay-600">
           <div className="grid grid-cols-1 gap-4">
             {storeNames.map((storeName) => (
-              <div key={storeName.id}>
-                <Link href={`/${storeName.use_name}`}
+                <Link key={storeName.id} href={`/${storeName.use_name}`}
                   className="flex items-center justify-center w-full h-16 px-6 rounded-lg bg-gray-900 border border-gray-800 text-lg font-medium text-gray-100 transition-all duration-200 ease-in-out hover:bg-gray-800 hover:border-gray-700 hover:-translate-y-0.5 cursor-pointer">
                     {storeName.true_name}
                 </Link>
-              </div>
             ))}
           </div>
         </div>

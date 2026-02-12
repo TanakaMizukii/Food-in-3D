@@ -1,5 +1,6 @@
 'use client';
 import styled from "styled-components";
+import { useRouter, usePathname } from "next/navigation";
 import { getThumbSrc } from "@/lib/thumbSrc";
 import { useTranslations } from 'next-intl';
 import LanguageSelector from "@/components/Common/LanguageSelector";
@@ -20,6 +21,8 @@ type OptionalImgProps = {
 };
 
 export default function StoreStartPanel({ onUpdate, loading, store }: StartPanelProps) {
+    const router = useRouter();
+    const pathname = usePathname();
     const t = useTranslations('startPanel');
     const [isIOS, setIsIOS] = useState(false);
 
@@ -37,6 +40,14 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
     function OptionalImg({ src, alt, id, className }: OptionalImgProps) {
         if (!src) return null;
         return <img src={src} alt={alt} id={id} className={className} />;
+    }
+
+    const handleBetaStart = async () => {
+        // 末尾 / を消してから現在のパスを計算
+        const current = pathname.replace(/\/$/, "");
+        // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
+        const base = current === "/" ? "" : current;
+        router.push(`${base}/alvaAR`);
     }
 
     return(
@@ -73,7 +84,7 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                         {loading ? t('loading') : t('startButton')}
                     </button>
                     {isIOS && (
-                        <BetaButton href={`https://www.in3d.world/?=${store}`}>
+                        <BetaButton onClick={handleBetaStart}>
                             β版で開始
                         </BetaButton>
                     )}
@@ -83,7 +94,7 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
     )
 }
 
-const BetaButton = styled.a`
+const BetaButton = styled.button`
     background: linear-gradient(145deg, rgba(34,178,34,0.5), rgba(0,128,0,0.5));
     color: white;
     padding: 18px 45px;

@@ -107,17 +107,17 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
 
     // クリーンナップ関数
     const dispose = () => {
-        renderer.dispose();
         controls?.dispose();
         scene.traverse((obj) => {
             const mesh = obj as THREE.Mesh;
             mesh.geometry?.dispose?.();
             const mat = mesh.material;
             if (mat) {
-            if (Array.isArray(mat)) mat.forEach((m) => m.dispose?.());
-            else mat.dispose?.();
+                if (Array.isArray(mat)) mat.forEach((m) => m.dispose?.());
+                else mat.dispose?.();
             }
         });
+        renderer.dispose();
     };
 
     const pmrem = new PMREMGenerator(renderer);
