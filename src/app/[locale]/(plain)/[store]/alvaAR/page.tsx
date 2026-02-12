@@ -57,6 +57,8 @@ export default function AlvaARPage() {
         const exitButton = document.getElementById('exit-button');
         if (arUI) arUI.style.display = 'block';
         if (exitButton) exitButton.style.display = 'block';
+        const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
+        if (menuContainer) {menuContainer.style.display = 'flex'};
     }, [t]);
 
     const handleInitialModelLoaded = useCallback(() => {

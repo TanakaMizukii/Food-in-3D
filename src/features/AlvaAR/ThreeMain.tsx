@@ -2,6 +2,8 @@
  * AlvaAR メインReactコンポーネント
  * ARjsのThreeMain.tsx + 既存index.jsのSLAMループロジックをベースに統合
  */
+import * as THREE from 'three';
+import styled from "styled-components"
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { initThree, attachResizeHandlers } from '@/features/AlvaAR/ThreeInit';
 import { loadModel, disposeModel } from '@/features/AlvaAR/ThreeLoad';
@@ -271,21 +273,38 @@ export default function ThreeMain({
                 showClearObjects={true}
                 showResetHit={true}
             />
-            <div
-                id="wrapper"
+            <MyAlvaAR
+                id="container"
                 ref={containerRef}
-                style={{
-                    position: 'fixed',
-                    inset: 0,
-                    width: '100vw',
-                    height: '100dvh',
-                    overflow: 'hidden',
-                    background: '#000',
-                }}
             />
         </>
     );
 }
 
-// Three.jsの型をインポートしておく（applyPlaneMatrixで使うため）
-import * as THREE from 'three';
+const MyAlvaAR = styled.div`
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    background: #000;
+
+    & > * {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    canvas {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    & > video {
+        object-fit: cover;
+        object-position: 50% 50%;
+    }
+`;
