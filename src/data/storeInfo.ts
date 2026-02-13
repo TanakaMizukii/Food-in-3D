@@ -80,14 +80,14 @@ const storeInfo: StoreInfo[] = [
             },
             modelDisplaySettings: {
                 scale: 1,
-                scaleARjs: 0.09,
-                scaleAlvaAR: 0.5,
-                scaleWebXR: 0.0085,
+                scaleARjs: 7,
+                scaleAlvaAR: 30,
+                scaleWebXR: 0.7,
                 scale3DViewer: 1,
                 detailPosition: [0, 0.22, -0.24],
                 detailCenter: [0, 0.08],
             },
-            cameraPosition: [17, 42, 36],
+            cameraPosition: [42, 41, 34],
             lightIntensity: 1,
         }
     },
