@@ -39,7 +39,7 @@ export const productModels: ProductModelsProps = [
         description: 'スパイシーなチョリソーととろけるモッツァレラチーズが絶妙にマッチしたエスニック風バーガー。\nピリ辛のチョリソーの旨味と、クリーミーなモッツァレラのハーモニーをお楽しみください！',
         minDetail: 'スパイシー×チーズの絶妙コンビ!',
         image: '/images/theSourceDiner/2月マンスリーバーガー (4).jpg',
-        model: '/models/theSourceDiner/burger_monthly_feb_set_std_video_raw_comp.glb',
+        model: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp2.glb',
         serving: '1人前',
         part: 'チョリソー・モッツァレラチーズ',
         recPeople: 'スパイシーな料理が\n好きな方',

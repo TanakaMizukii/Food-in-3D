@@ -57,6 +57,11 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
     // WebGPU非対応ブラウザでは自動的にWebGLバックエンドにフォールバックする
     await renderer.init();
 
+    // Blenderの見え方と合わせるための設定
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xaaaaaa);
 

@@ -53,7 +53,10 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
         antialias,
         alpha,
     });
-    renderer.outputColorSpace = THREE.SRGBColorSpace
+    // Blenderの見え方と合わせるための設定
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera();

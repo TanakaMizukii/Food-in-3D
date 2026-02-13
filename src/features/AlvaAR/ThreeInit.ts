@@ -64,7 +64,10 @@ export function initThree(
     const dpr = Math.min(window.devicePixelRatio || 1, pixelRatioCap);
     renderer.setPixelRatio(dpr);
     renderer.setSize(canvasWidth, canvasHeight);
+    // Blenderの見え方と合わせるための設定
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
