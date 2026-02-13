@@ -53,6 +53,7 @@ export default function ARViewPage() {
         setStart(false);
         setShowARResetPanel(false);
         setLoading(false);
+        router.push(`/${locale}/${nowStore}/viewer`);
     };
 
     const handleSessionReset = () => {
