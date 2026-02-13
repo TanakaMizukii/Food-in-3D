@@ -24,7 +24,7 @@ export const productCategory: string[] = [
 export const productModels: ProductModelsProps = [
     {
         id: 1,
-        name: 'チョリソーとモッツァレラのエスニックバーガー',
+        name: 'チョリソーとモッツァレラの エスニックバーガー',
         shortName: '２月のマンスリーバーガー',
         category: 'マンスリーメニュー',
         price: '2,150',
@@ -42,7 +42,7 @@ export const productModels: ProductModelsProps = [
     },
     {
         id: 2,
-        name: 'ミートボールサンデーソースフィットチーネ',
+        name: 'ミートボールサンデーソース フィットチーネ',
         shortName: '２月のマンスリーパスタ',
         category: 'マンスリーメニュー',
         price: '1,760',

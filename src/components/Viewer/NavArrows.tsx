@@ -63,7 +63,7 @@ const MyNavArrows = styled.div`
         /* Detail Button */
         .detail-button {
             position: absolute;
-            bottom: calc(env(safe-area-inset-bottom) + 250px);
+            bottom: calc(env(safe-area-inset-bottom) + 180px);
             right: 12px;
             width: 44px;
             height: 44px;
@@ -99,7 +99,7 @@ const MyNavArrows = styled.div`
         /* Navigation Arrows */
         .nav-arrows {
             position: absolute;
-            bottom: 50vh;
+            bottom: 40vh;
             left: 0;
             right: 0;
             display: flex;

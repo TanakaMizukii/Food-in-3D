@@ -9,11 +9,28 @@ type BottomProps = {
     currentProduct: ProductModel;
     sheetExpanded: boolean;
     setSheetExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+    onPeekHeightChange?: (height: number) => void;
 }
 
-export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpanded}: BottomProps) {
+export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpanded, onPeekHeightChange}: BottomProps) {
     const contentRef = React.useRef<HTMLDivElement | null>(null);
+    const peekRef = React.useRef<HTMLDivElement | null>(null);
+    const [peekHeight, setPeekHeight] = React.useState(0);
     const t = useTranslations('product');
+
+    // peekコンテンツの高さを計測し、親に通知
+    React.useEffect(() => {
+        if (!peekRef.current) return;
+        const observer = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                const height = entry.contentRect.height;
+                setPeekHeight(height);
+                onPeekHeightChange?.(height);
+            }
+        });
+        observer.observe(peekRef.current);
+        return () => observer.disconnect();
+    }, [onPeekHeightChange]);
 
     // スワイプ用state
     // numberまたはnullのみを格納できるref
@@ -46,12 +63,21 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
     return(
         <MyTopBar>
             {/* Bottom Sheet */}
-            <div className={`bottom-sheet ${sheetExpanded ? 'expanded' : 'peek'}`} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-                <div className="sheet-handle-area" onClick={() => setSheetExpanded(!sheetExpanded)}>
-                    <div className="sheet-handle" />
+            <div
+                className={`bottom-sheet ${sheetExpanded ? 'expanded' : 'peek'}`}
+                style={!sheetExpanded && peekHeight > 0 ? { transform: `translateY(calc(100% - ${peekHeight}px))` } : undefined}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+            >
+                <div ref={peekRef}>
+                    <div className="sheet-handle-area" onClick={() => setSheetExpanded(!sheetExpanded)}>
+                        <div className="sheet-handle" />
+                    </div>
+                    <div className="sheet-peek-content" onClick={() => setSheetExpanded(!sheetExpanded)}>
+                        <h2 className="sheet-title">{currentProduct.name}</h2>
+                    </div>
                 </div>
                 <div className="sheet-content" onClick={() => setSheetExpanded(!sheetExpanded)}>
-                    <h2 className="sheet-title">{currentProduct.name}</h2>
                     <div className="sheet-price">¥{currentProduct.price.toLocaleString()}</div>
                 </div>
                 {sheetExpanded && (
@@ -137,7 +163,7 @@ const MyTopBar = styled.div`
     }
 
     .bottom-sheet.peek {
-        transform: translateY(60%);
+        /* transform is set dynamically via inline style */
     }
 
     .bottom-sheet.expanded {
@@ -158,9 +184,14 @@ const MyTopBar = styled.div`
         border-radius: 2px;
     }
 
+    .sheet-peek-content {
+        padding: 0 24px 8px;
+        flex-shrink: 0;
+    }
+
     .sheet-content {
         padding: 0 24px 8px;
-        flex-shrink: 0; /* Prevent this from shrinking */
+        flex-shrink: 0;
     }
 
     .sheet-expanded-content {
@@ -176,6 +207,8 @@ const MyTopBar = styled.div`
         color: #1a1a1a;
         margin-bottom: 16px;
         text-align: center;
+        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .sheet-price {

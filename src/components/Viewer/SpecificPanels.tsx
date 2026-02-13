@@ -12,9 +12,10 @@ type SpecificProps = {
     categories: Category[];
     productModels: ProductModelsProps;
     productCategory: string[]; // 日本語のカテゴリ名リスト（商品のcategoryフィールドとマッチング用）
+    peekHeight?: number;
 }
 
-export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels, productCategory }: SpecificProps) {
+export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels, productCategory, peekHeight }: SpecificProps) {
 
     const currentProduct: ProductModel = productModels[currentIndex]
 
@@ -43,7 +44,7 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
         // 名前の変更は未完了
         <MySpecific>
             {/* Specific Panels */}
-            <div className="variant-chips">
+            <div className="variant-chips" style={peekHeight ? { bottom: `${peekHeight + 8}px` } : undefined}>
                 <div className="variant-chips-inner">
                     {variants.map(({ model, i }) => (
                         // それぞれのmapにキーを付けて配置
