@@ -120,6 +120,10 @@ const MyFabContainer = styled.div`
     flex-direction: row;
     align-items: center;
 
+    @media (min-width: 768px) {
+        right: 20vw;
+    }
+
     /* Expanded Content */
     .expanded-content {
         display: flex;

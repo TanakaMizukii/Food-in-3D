@@ -62,6 +62,8 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
 
     return(
         <MyTopBar>
+            {/* オーバーレイ: 展開時にパネル外タップで閉じる */}
+            {sheetExpanded && <div className="sheet-overlay" onClick={() => setSheetExpanded(false)} />}
             {/* Bottom Sheet */}
             <div
                 className={`bottom-sheet ${sheetExpanded ? 'expanded' : 'peek'}`}
@@ -77,11 +79,9 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
                         <h2 className="sheet-title">{currentProduct.name}</h2>
                     </div>
                 </div>
-                <div className="sheet-content" onClick={() => setSheetExpanded(!sheetExpanded)}>
-                    <div className="sheet-price">¥{currentProduct.price.toLocaleString()}</div>
-                </div>
                 {sheetExpanded && (
                     <div className="sheet-expanded-content" ref={contentRef}>
+                        <div className="sheet-price">¥{currentProduct.price.toLocaleString()}</div>
                         <p className="sheet-description">{currentProduct.description}</p>
 
                         <div className="sheet-specs">
@@ -125,9 +125,9 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
                             ))}
                         </div>
 
-                        {/* <div className="sheet-image-wrapper">
+                        <div className="sheet-image-wrapper">
                             <img src={currentProduct.image} alt={currentProduct.name} className="sheet-image" />
-                        </div> */}
+                        </div>
                     </div>
                 )}
 
@@ -146,6 +146,16 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
 };
 
 const MyTopBar = styled.div`
+    /* オーバーレイ */
+    .sheet-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 98;
+    }
+
     /* Bottom Sheet */
     .bottom-sheet {
         position: absolute;
@@ -157,9 +167,13 @@ const MyTopBar = styled.div`
         border-radius: 24px 24px 0 0;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 99;
-        max-height: 70vh;
+        max-height: 45vh;
         display: flex;
         flex-direction: column;
+
+        @media (min-width: 768px) {
+            max-height: 60vh;
+        }
     }
 
     .bottom-sheet.peek {
@@ -187,11 +201,11 @@ const MyTopBar = styled.div`
     .sheet-peek-content {
         padding: 0 24px 8px;
         flex-shrink: 0;
-    }
 
-    .sheet-content {
-        padding: 0 24px 8px;
-        flex-shrink: 0;
+        @media (min-width: 768px) {
+            max-width: 50vw;
+            margin: 0 auto;
+        }
     }
 
     .sheet-expanded-content {
@@ -199,6 +213,12 @@ const MyTopBar = styled.div`
         overflow-y: auto;
         flex: 1 1 auto;
         -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+
+        @media (min-width: 768px) {
+            max-width: 50vw;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
     }
 
     .sheet-title {
@@ -209,6 +229,10 @@ const MyTopBar = styled.div`
         text-align: center;
         word-break: keep-all;
         overflow-wrap: break-word;
+
+        @media (min-width: 768px) {
+            font-size: 24px;
+        }
     }
 
     .sheet-price {
@@ -219,6 +243,10 @@ const MyTopBar = styled.div`
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 16px;
+
+        @media (min-width: 768px) {
+            font-size: 32px;
+        }
     }
 
     .sheet-description {
@@ -226,6 +254,10 @@ const MyTopBar = styled.div`
         color: #666;
         line-height: 1.6;
         margin-bottom: 20px;
+
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     .sheet-specs {
@@ -251,6 +283,10 @@ const MyTopBar = styled.div`
         font-size: 15px;
         font-weight: 600;
         color: #333;
+
+        @media (min-width: 768px) {
+            font-size: 16px;
+        }
     }
 
     .sheet-tags {

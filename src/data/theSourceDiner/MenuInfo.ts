@@ -3,12 +3,18 @@ import type { Category, ProductModelsProps } from '../types';
 export const categories: Category[] = [
     {
         id: 1,
-        name: 'マンスリーメニュー',
+        name: 'セレクトメニュー',
         count: 2,
         description: '今月しか楽しめない商品をご覧ください！'
     },
     {
         id: 2,
+        name: 'マンスリーメニュー',
+        count: 2,
+        description: '今月しか楽しめない商品をご覧ください！'
+    },
+    {
+        id: 3,
         name: '店主のおすすめ',
         count: 2,
         description: 'おすすめの一品をご覧ください！'
@@ -16,6 +22,7 @@ export const categories: Category[] = [
 ];
 
 export const productCategory: string[] = [
+    'セレクトメニュー',
     'マンスリーメニュー',
     '店主のおすすめ',
 ];

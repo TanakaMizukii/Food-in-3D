@@ -19,7 +19,7 @@ export default function LandingPage() {
     const os = getMobileOS();
     const xr = await checkImmersiveARSupport();
     if (os === 'android' || os === 'ios') {
-      router.push(xr === 'supported' ? `/${locale}/${currentStore}/arView` : `/${locale}/${currentStore}/arJS`);
+      router.push(xr === 'supported' ? `/${locale}/${currentStore}/arView` : `/${locale}/${currentStore}/viewer`);
     } else {
       router.push(`/${locale}/${currentStore}/viewer`);
     }

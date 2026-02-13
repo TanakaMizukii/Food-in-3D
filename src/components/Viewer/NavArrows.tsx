@@ -65,6 +65,10 @@ const MyNavArrows = styled.div`
             position: absolute;
             bottom: calc(env(safe-area-inset-bottom) + 180px);
             right: 12px;
+
+            @media (min-width: 768px) {
+                right: 10vw;
+            }
             width: 44px;
             height: 44px;
             background: rgba(0,0,0,0.5);
@@ -107,6 +111,10 @@ const MyNavArrows = styled.div`
             padding: 0 12px;
             pointer-events: none;
             z-index: 85;
+
+            @media (min-width: 768px) {
+                padding: 0 10vw;
+            }
         }
 
         .nav-arrow {
