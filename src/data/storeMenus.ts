@@ -5,6 +5,7 @@ import { getLocalizedProductsSync, getLocalizedCategoriesSync } from '@/lib/getL
 // 店舗ごとのMenuInfo
 import { productModels as dendenModels, productCategory as dendenCategory, categories as dendenCategories } from './denden/MenuInfo';
 import { productModels as kaishuModels, productCategory as kaishuCategory, categories as kaishuCategories } from './kaishu/MenuInfo';
+import { productModels as theSourceDinerModels, productCategory as theSourceDinerCategory, categories as theSourceDinerCategories } from './theSourceDiner/MenuInfo';
 
 // 店舗ごとの翻訳データ
 import kaishuTranslations from './kaishu/translations';
@@ -22,6 +23,7 @@ export type StoreMenu = {
 export const storeMenuMap: Record<string, StoreMenu> = {
     denden: { productModels: dendenModels, productCategory: dendenCategory, jaProductCategory: dendenCategory, categories: dendenCategories },
     kaishu: { productModels: kaishuModels, productCategory: kaishuCategory, jaProductCategory: kaishuCategory, categories: kaishuCategories },
+    theSourceDiner: { productModels: theSourceDinerModels, productCategory: theSourceDinerCategory, jaProductCategory: theSourceDinerCategory, categories: theSourceDinerCategories },
 };
 
 // 店舗ごとの翻訳マッピング

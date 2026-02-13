@@ -25,7 +25,10 @@
     "description": "启动相机，以实际尺寸查看商品",
     "startButton": "启动AR",
     "checking": "确认中...",
-    "desktopAlert": "桌面端不支持AR显示，请使用智能手机。"
+    "desktopAlert": "桌面端不支持AR显示，请使用智能手机。",
+    "cameraLoading": "正在准备相机...\n请稍等。\n\n出现提示时请点击\"允许\"",
+    "scanning": "正在检测平面...",
+    "modelLoading": "正在加载模型...\n请稍等"
   },
   "arjs": {
     "cameraLoading": "正在准备相机...\n请稍候。\n\n出现提示时请点击「允许」",

@@ -21,6 +21,7 @@ const storeInfo: StoreInfo[] = [
             modelDisplaySettings: {
                 scale: 1,
                 scaleARjs: 0.09,
+                scaleAlvaAR: 0.5,
                 scaleWebXR: 0.0085,
                 scale3DViewer: 1,
                 detailPosition: [2, 6, -7],
@@ -40,7 +41,7 @@ const storeInfo: StoreInfo[] = [
         menuDisplayMode: 'compact',
         firstEnvironment: {
             hdrPath: '/hdr/denden/',
-            hdrFile: 'dndn_2.1_small.hdr',
+            hdrFile: 'denden_2.1_small.hdr',
             defaultModel: {
                 name: '2種の鶏唐コンビ丼（特盛）',
                 path: '/models/denden/chicken_combo_large_comp.glb',
@@ -50,6 +51,7 @@ const storeInfo: StoreInfo[] = [
             modelDisplaySettings: {
                 scale: 1,
                 scaleARjs: 7,
+                scaleAlvaAR: 30,
                 scaleWebXR: 0.7,
                 scale3DViewer: 1,
                 detailPosition: [0, 0.22, -0.24],
@@ -57,6 +59,36 @@ const storeInfo: StoreInfo[] = [
             },
             cameraPosition: [0.34, 0.77, 0.49],
             lightIntensity: 2,
+        }
+    },
+    {
+        id: 3,
+        use_name: 'theSourceDiner',
+        true_name: 'The Source Diner',
+        logo: 'theSourceDiner.png',
+        right_top: null,
+        left_bottom: null,
+        menuDisplayMode: 'standard',
+        firstEnvironment: {
+            hdrPath: '/hdr/theSourceDiner/',
+            hdrFile: 'theSourceDiner_3_small.hdr',
+            defaultModel: {
+                name: 'ミートボールサンデーソースフィットチーネ',
+                path: '/models/theSourceDiner/pasta_mounthly_feb_set_std_video_comp.glb',
+                detail: '2月のマンスリーパスタです！',
+                price: '1,760',
+            },
+            modelDisplaySettings: {
+                scale: 1,
+                scaleARjs: 7,
+                scaleAlvaAR: 30,
+                scaleWebXR: 0.7,
+                scale3DViewer: 1,
+                detailPosition: [0, 0.22, -0.24],
+                detailCenter: [0, 0.08],
+            },
+            cameraPosition: [42, 41, 34],
+            lightIntensity: 1,
         }
     },
 ];

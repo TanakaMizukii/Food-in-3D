@@ -42,6 +42,16 @@ export default function PrimaryFab() {
         setIsLoading(false);
     }
 
+    const handleBetaStart = async () => {
+        // 末尾 / を消してから親を計算
+        const current = pathname.replace(/\/$/, "");
+        const parent = current.split("/").slice(0, -1).join("/") || "/";
+
+        // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
+        const base = parent === "/" ? "" : parent;
+        router.push(`${base}/alvaAR`);
+    }
+
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     }
@@ -59,7 +69,7 @@ export default function PrimaryFab() {
                     {isLoading ? t('checking') : t('startButton')}
                 </button>
                 {isIOS && (
-                    <BetaButton href={`https://www.in3d.world/?=${store}`}>
+                    <BetaButton onClick={handleBetaStart}>
                         AR(β版)で開始
                     </BetaButton>
                 )}

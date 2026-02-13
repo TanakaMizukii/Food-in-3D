@@ -25,7 +25,10 @@
     "description": "Launch the camera to see products at actual size",
     "startButton": "Start AR",
     "checking": "Checking...",
-    "desktopAlert": "AR is not available on desktop. Please use a smartphone."
+    "desktopAlert": "AR is not available on desktop. Please use a smartphone.",
+    "cameraLoading": "Preparing camera...\nPlease wait.\n\nTap \"Allow\" when prompted",
+    "scanning": "Detecting surface...",
+    "modelLoading": "Loading model...\nPlease wait"
   },
   "arjs": {
     "cameraLoading": "Preparing camera...\nPlease wait.\n\nTap \"Allow\" when prompted",

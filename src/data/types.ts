@@ -57,6 +57,7 @@ export type ProductModelsProps = ProductModel[];
 export type ModelDisplaySettings = {
     scale: number;                      // モデルのスケール（後方互換性のため残す）
     scaleARjs?: number;                 // ARjs用スケール
+    scaleAlvaAR?: number;               // AlvaAR用スケール
     scaleWebXR?: number;                // WebXR用スケール
     scale3DViewer?: number;             // 3DViewer用スケール
     detailPosition: [number, number, number];  // 詳細情報の位置 [x, y, z]

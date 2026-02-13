@@ -13,16 +13,11 @@ type StartPanelProps = {
 }
 
 export default function ARStartPanel({ onUpdate, loading, store }: StartPanelProps) {
-    const router = useRouter();
-    const locale = catchLocale();
     const t = useTranslations('webXR');
 
     const handleClick = () => {
         onUpdate();
     };
-    const backClick = () => {
-        router.push(`/${locale}/${store}/viewer`);
-    }
 
     const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
 
@@ -35,7 +30,6 @@ export default function ARStartPanel({ onUpdate, loading, store }: StartPanelPro
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? t('checking') : t('startAR')}
                     </button>
-                    <button id="back-button" className={'backButton'} onClick={backClick}>{t('backToViewer')}</button>
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>
