@@ -121,7 +121,7 @@ const MyFabContainer = styled.div`
     align-items: center;
 
     @media (min-width: 768px) {
-        right: 20vw;
+        right: 10vw;
     }
 
     /* Expanded Content */

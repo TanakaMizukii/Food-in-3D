@@ -65,7 +65,7 @@ const storeInfo: StoreInfo[] = [
         id: 3,
         use_name: 'theSourceDiner',
         true_name: 'The Source Diner',
-        logo: 'theSourceDiner.png',
+        logo: 'ソースダイナーロゴ.png',
         right_top: null,
         left_bottom: null,
         menuDisplayMode: 'standard',
