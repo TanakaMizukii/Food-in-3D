@@ -28,7 +28,11 @@ const storeInfo: StoreInfo[] = [
                 detailCenter: [0, 0.8],
             },
             cameraPosition: [17, 42, 36],
-            lightIntensity: 0.5,
+            lightSettings: {
+                ambientLightIntensity: 0.8,
+                directionalLightIntensity: 0.5,
+                toneMappingExposure: 0.8,
+            },
         }
     },
     {
@@ -58,7 +62,11 @@ const storeInfo: StoreInfo[] = [
                 detailCenter: [0, 0.08],
             },
             cameraPosition: [0.34, 0.77, 0.49],
-            lightIntensity: 1,
+            lightSettings: {
+                ambientLightIntensity: 0.8,
+                directionalLightIntensity: 0.5,
+                toneMappingExposure: 0.8,
+            },
         }
     },
     {
@@ -74,7 +82,7 @@ const storeInfo: StoreInfo[] = [
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
                 name: 'ミートボールサンデーソースフィットチーネ',
-                path: '/models/theSourceDiner/pasta_mounthly_feb_set_std_video_comp.glb',
+                path: '/models/theSourceDiner/test96_3.glb',
                 detail: '2月のマンスリーパスタです！',
                 price: '1,760',
             },
@@ -87,8 +95,12 @@ const storeInfo: StoreInfo[] = [
                 detailPosition: [0, 0.22, -0.24],
                 detailCenter: [0, 0.08],
             },
-            cameraPosition: [42, 41, 34],
-            lightIntensity: 1,
+            cameraPosition: [0.34, 0.77, 0.49],
+            lightSettings: {
+                ambientLightIntensity: 0.8,
+                directionalLightIntensity: 0.5,
+                toneMappingExposure: 0.8,
+            },
         }
     },
 ];

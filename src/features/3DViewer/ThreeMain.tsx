@@ -69,6 +69,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 hdrFile: firstEnvironment?.hdrFile,
                 cameraPosition: firstEnvironment?.cameraPosition,
                 lightIntensity: firstEnvironment?.lightIntensity,
+                lightSettings: firstEnvironment?.lightSettings,
             };
             const ctx = await initThree(canvasElement, rendererOptions);
 
