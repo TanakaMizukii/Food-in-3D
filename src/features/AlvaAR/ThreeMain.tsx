@@ -109,7 +109,7 @@ export default function ThreeMain({
                 antialias: true,
                 hdrPath: firstEnv?.hdrPath,
                 hdrFile: firstEnv?.hdrFile,
-                lightIntensity: firstEnv?.lightIntensity,
+                lightSettings: firstEnv?.lightSettings,
             });
             setCtx(threeContext);
 

@@ -65,7 +65,7 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
             antialias: true,
             hdrPath: firstEnvironment?.hdrPath,
             hdrFile: firstEnvironment?.hdrFile,
-            lightIntensity: firstEnvironment?.lightIntensity,
+            lightSettings: firstEnvironment?.lightSettings,
         };
         const threeContext = initThree(canvasElement, rendererOptions, onCameraReady, onGuideDismiss);
         setCtx(threeContext);

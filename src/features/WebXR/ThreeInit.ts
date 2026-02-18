@@ -6,6 +6,7 @@ import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { PMREMGenerator } from 'three';
 import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import type { LightSettings } from '../../data/types';
 
 await MeshoptDecoder.ready;
 
@@ -18,7 +19,6 @@ export type ThreeCtx = {
     transControls: TransformControls;
     gizmo: THREE.Object3D;
     controller: THREE.XRTargetRaySpace;
-    light: THREE.HemisphereLight;
     loader: GLTFLoader;
     mouse: THREE.Vector2;
     raycaster: THREE.Raycaster;
@@ -36,7 +36,7 @@ export type InitOptions = {
     antialias?: boolean;
     hdrPath?: string;
     hdrFile?: string;
-    lightIntensity?: number; // ライトの強さ
+    lightSettings?: LightSettings;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -48,8 +48,12 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         antialias = true,
         hdrPath = '/hdr/denden/',
         hdrFile = 'dndn_2.1_small.hdr',
-        lightIntensity = 1,
+        lightSettings,
     } = opts;
+
+    const ambientLightIntensity = lightSettings?.ambientLightIntensity ?? 0.8;
+    const directionalLightIntensity = lightSettings?.directionalLightIntensity ?? 0.5;
+    const toneMappingExposure = lightSettings?.toneMappingExposure ?? 0.8;
 
     const renderer = new THREE.WebGLRenderer({
         canvas,
@@ -62,16 +66,18 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     // Blenderの見え方と合わせるための設定
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1;
+    renderer.toneMappingExposure = toneMappingExposure;
 
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(75, 1, 0.05, 10);
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, lightIntensity);
-    light.position.set( 1, 1, 1);
-    scene.add(light);
+    const amLight = new THREE.AmbientLight(0xfffffff, ambientLightIntensity);
+    const diLight = new THREE.DirectionalLight(0xffffff, directionalLightIntensity);
+    diLight.position.set( 1, 1, 1);
+    scene.add(diLight);
+    scene.add(amLight);
 
     // 詳細画面表示用のRendererの作成
     const labelRenderer = new CSS2DRenderer();
@@ -152,7 +158,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     });
 
     return { renderer, scene, camera, labelRenderer, loader, reticle, transControls, gizmo,
-        light, mouse, raycaster, detailNum, objectList, currentSession, hitTestSource, hitTestSourceRequested,
+        mouse, raycaster, detailNum, objectList, currentSession, hitTestSource, hitTestSourceRequested,
         controller, dispose,
     };
 }

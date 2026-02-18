@@ -9,6 +9,7 @@ import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { PMREMGenerator } from 'three';
 import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import type { LightSettings } from '../../data/types';
 
 await MeshoptDecoder.ready;
 
@@ -36,7 +37,7 @@ export type InitOptions = {
     antialias?: boolean;
     hdrPath?: string;
     hdrFile?: string;
-    lightIntensity?: number;
+    lightSettings?: LightSettings;
 };
 
 /** Three.js初期化 */
@@ -52,8 +53,12 @@ export function initThree(
         antialias = true,
         hdrPath = '/hdr/denden/',
         hdrFile = 'denden_2.1_small.hdr',
-        lightIntensity = 1,
+        lightSettings,
     } = opts;
+
+    const ambientLightIntensity = lightSettings?.ambientLightIntensity ?? 0.8;
+    const directionalLightIntensity = lightSettings?.directionalLightIntensity ?? 0.5;
+    const toneMappingExposure = lightSettings?.toneMappingExposure ?? 0.8;
 
     // WebGLRenderer
     const renderer = new THREE.WebGLRenderer({
@@ -67,7 +72,7 @@ export function initThree(
     // Blenderの見え方と合わせるための設定
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1;
+    renderer.toneMappingExposure = toneMappingExposure;
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
@@ -77,9 +82,11 @@ export function initThree(
     scene.add(camera);
 
     // Lights
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, lightIntensity);
-    light.position.set(1, 1, 1);
-    scene.add(light);
+    const amLight = new THREE.AmbientLight(0xfffffff, ambientLightIntensity);
+    const diLight = new THREE.DirectionalLight(0xffffff, directionalLightIntensity);
+    diLight.position.set(1, 1, 1);
+    scene.add(diLight);
+    scene.add(amLight);
 
     // CSS2DRenderer（ラベル表示用）
     const labelRenderer = new CSS2DRenderer();
