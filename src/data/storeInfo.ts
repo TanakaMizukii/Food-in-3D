@@ -27,7 +27,7 @@ const storeInfo: StoreInfo[] = [
                 detailPosition: [2, 6, -7],
                 detailCenter: [0, 0.8],
             },
-            cameraPosition: [17, 42, 36],
+            cameraPosition: [0, 42, 36],
             lightSettings: {
                 ambientLightIntensity: 0.8,
                 directionalLightIntensity: 0.5,
@@ -61,7 +61,7 @@ const storeInfo: StoreInfo[] = [
                 detailPosition: [0, 0.22, -0.24],
                 detailCenter: [0, 0.08],
             },
-            cameraPosition: [0.34, 0.77, 0.49],
+            cameraPosition: [0, 0.77, 0.49],
             lightSettings: {
                 ambientLightIntensity: 0.8,
                 directionalLightIntensity: 0.5,

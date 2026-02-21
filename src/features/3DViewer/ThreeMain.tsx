@@ -22,6 +22,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
+    const autoRotateRef = useRef(true);
 
     // 店舗のmodelDisplaySettingsを取得
     const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
@@ -58,6 +59,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
         let threeContext: ThreeContext | null = null;
         let detachResize: (() => void) | null = null;
         let clickHandlerRef: ((e: MouseEvent) => void) | null = null;
+        let stopAutoRotateHandler: (() => void) | null = null;
 
         (async () => {
             const rendererOptions = {
@@ -99,8 +101,33 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
 
             detachResize = attachResizeHandlers(ctx, container);
 
-            function animation() {
-                // console.log(ctx.camera.position);
+            // ── オート回転設定 ──────────────────────────────────
+            let animationStartTime: number | null = null;
+            // Spherical=球面座標, radius=半径(中心からどれくらい離れているか), phi=ファイ(上下方向の角度), theta=シータ(左右方向の角度)
+            let initialSpherical: { radius: number; phi: number; theta: number } | null = null;
+            const AUTO_ROTATE_MAX_ANGLE = Math.PI / 6;  // 回転する角度
+            const AUTO_ROTATE_PERIOD = 10000;  // 1往復の時間
+
+            stopAutoRotateHandler = () => { autoRotateRef.current = false; };
+            ctx.controls?.addEventListener('start', stopAutoRotateHandler);
+
+            function animation(time: number) {
+                // オート回転（ユーザー操作が入るまで左右±30°を往復）
+                if (autoRotateRef.current && ctx.controls) {
+                    if (animationStartTime === null) {
+                        animationStartTime = time;
+                        const offset = ctx.camera.position.clone().sub(ctx.controls.target); // これでcontrols.targetを座標の中心にしている
+                        const sph = new THREE.Spherical().setFromVector3(offset); // これを要素に分解x,y,zより考えやすいSphericalに分解
+                        initialSpherical = { radius: sph.radius, phi: sph.phi, theta: sph.theta };
+                    }
+                    const elapsed = time - animationStartTime;
+                    const angle = Math.sin((elapsed / AUTO_ROTATE_PERIOD) * Math.PI * 2) * AUTO_ROTATE_MAX_ANGLE;
+                    if (initialSpherical) {
+                        const sph = new THREE.Spherical(initialSpherical.radius, initialSpherical.phi, initialSpherical.theta + angle);
+                        ctx.camera.position.copy(new THREE.Vector3().setFromSpherical(sph).add(ctx.controls.target)); // addはベクトルとして足してる
+                    }
+                }
+                console.log(ctx.camera.position);
                 ctx.controls?.update();
                 ctx.renderer.render(ctx.scene, ctx.camera);
             }
@@ -110,6 +137,9 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
         return () => {
             cancelled = true;
             if (threeContext) {
+                if (stopAutoRotateHandler) {
+                    threeContext.controls?.removeEventListener('start', stopAutoRotateHandler);
+                }
                 if (clickHandlerRef) {
                     canvasElement.removeEventListener('click', clickHandlerRef);
                 }
