@@ -91,11 +91,13 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
     let controls: OrbitControls | undefined;
     if (useControls) {
         controls = new OrbitControls(camera, labelRenderer.domElement);
-        // controls.autoRotate = true;
-        // controls.enableDamping = true;
-        // controls.dampingFactor = 0.2;
-        controls.target.set(0, 0, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.5;
+        controls.target.set(0, 0.05, 0);
     }
+
+    // const helper = new THREE.AxesHelper(100);
+    // scene.add(helper);
 
     // モデルデータを読み込むためのローダーを作成
     // KTX2を準備

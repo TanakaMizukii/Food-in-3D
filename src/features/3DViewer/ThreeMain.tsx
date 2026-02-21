@@ -100,7 +100,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             detachResize = attachResizeHandlers(ctx, container);
 
             function animation() {
-                console.log(ctx.camera.position);
+                // console.log(ctx.camera.position);
                 ctx.controls?.update();
                 ctx.renderer.render(ctx.scene, ctx.camera);
                 ctx.labelRenderer.render(ctx.scene, ctx.camera);

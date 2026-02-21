@@ -82,7 +82,7 @@ const storeInfo: StoreInfo[] = [
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
                 name: 'ミートボールサンデーソースフィットチーネ',
-                path: '/models/theSourceDiner/test96_3.glb',
+                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp3.glb',
                 detail: '2月のマンスリーパスタです！',
                 price: '1,760',
             },
@@ -95,7 +95,7 @@ const storeInfo: StoreInfo[] = [
                 detailPosition: [0, 0.22, -0.24],
                 detailCenter: [0, 0.08],
             },
-            cameraPosition: [0.34, 0.77, 0.49],
+            cameraPosition: [0.25, 0.21, 0.26],
             lightSettings: {
                 ambientLightIntensity: 0.8,
                 directionalLightIntensity: 0.5,
