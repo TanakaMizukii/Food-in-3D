@@ -82,7 +82,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             if (openPanel) { openPanel.style.display = 'flex'; }
 
             clickHandlerRef = handleClick(ctx);
-            ctx.labelRenderer.domElement.addEventListener('click', clickHandlerRef);
+            canvasElement.addEventListener('click', clickHandlerRef);
 
             // 初期モデルの設定（firstEnvironmentがあればそれを使用）
             const firstModel = firstEnvironment?.defaultModel ? {
@@ -103,7 +103,6 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 // console.log(ctx.camera.position);
                 ctx.controls?.update();
                 ctx.renderer.render(ctx.scene, ctx.camera);
-                ctx.labelRenderer.render(ctx.scene, ctx.camera);
             }
             ctx.renderer.setAnimationLoop(animation);
         })();
@@ -112,7 +111,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             cancelled = true;
             if (threeContext) {
                 if (clickHandlerRef) {
-                    threeContext.labelRenderer.domElement.removeEventListener('click', clickHandlerRef);
+                    canvasElement.removeEventListener('click', clickHandlerRef);
                 }
                 detachResize?.();
                 threeContext.dispose();

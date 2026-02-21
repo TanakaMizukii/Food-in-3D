@@ -3,7 +3,6 @@ import { WebGPURenderer } from 'three/webgpu';
 import { PMREMGenerator } from 'three/webgpu';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
 import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
@@ -15,7 +14,6 @@ export type ThreeCtx = {
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     controls?: OrbitControls;
-    labelRenderer: CSS2DRenderer;
     loader: GLTFLoader;
     mouse: THREE.Vector2;
     raycaster: THREE.Raycaster;
@@ -80,17 +78,9 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
     scene.add(diLight);
     scene.add(amLight);
 
-    // 詳細画面表示用のRendererの作成
-    const labelRenderer = new CSS2DRenderer();
-    labelRenderer.setSize(window.innerWidth, window.innerHeight);
-    labelRenderer.domElement.style.position = 'absolute';
-    labelRenderer.domElement.style.top = '0px';
-    labelRenderer.domElement.id = 'label';
-    document.body.appendChild(labelRenderer.domElement);
-
     let controls: OrbitControls | undefined;
     if (useControls) {
-        controls = new OrbitControls(camera, labelRenderer.domElement);
+        controls = new OrbitControls(camera, canvas);
         controls.enableDamping = true;
         controls.dampingFactor = 0.5;
         controls.target.set(0, 0.05, 0);
@@ -146,7 +136,7 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
         // pmrem.dispose(); // 背景を頻繁に変える場合は有効化
     });
 
-    return { renderer, scene, camera, controls, labelRenderer,loader, mouse, raycaster, detailNum, objectList, dispose };
+    return { renderer, scene, camera, controls, loader, mouse, raycaster, detailNum, objectList, dispose };
 }
 
 /** リサイズ処理 ResizeObserver + window.resize をまとめてセットアップ */
@@ -187,5 +177,4 @@ export function resizeToContainer(ctx: ThreeCtx, container: HTMLElement) {
     ctx.camera.aspect = width / height;
     ctx.camera.updateProjectionMatrix();
     ctx.renderer.setSize(width, height, false);
-    ctx.labelRenderer.setSize(width, height);
 }
