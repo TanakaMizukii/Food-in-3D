@@ -20,7 +20,7 @@ export default function TopAppBar({ menuOpen, setMenuOpen, storeName }: TopAppBa
         <MyTopBar>
             {/* Top App Bar */}
             <div className="top-app-bar">
-                <button onClick={() => router.push(`/${locale}/${store}`)}><HiOutlineArrowLeft /></button>
+                <button onClick={() => router.back()}><HiOutlineArrowLeft /></button>
                 <h1>{storeName ?? '商品 3Dビュワー'}</h1>
                 <div className="top-app-bar-right">
                     <LanguageSelector />
