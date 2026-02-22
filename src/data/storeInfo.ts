@@ -81,9 +81,9 @@ const storeInfo: StoreInfo[] = [
             hdrPath: '/hdr/theSourceDiner/',
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
-                name: 'ミートボールサンデーソースフィットチーネ',
-                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp3.glb',
-                detail: '2月のマンスリーパスタです！',
+                name: 'チョリソーとモッツァレラの エスニックバーガー',
+                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp4.glb',
+                detail: '2月のマンスリーバーガーです！',
                 price: '1,760',
             },
             modelDisplaySettings: {
