@@ -75,7 +75,6 @@ export default function ViewerPage() {
                 <TopLayer>
                     <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
                     <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
-                    <PrimaryFab />
                 </TopLayer>
 
                 <BottomLayer>
@@ -84,6 +83,8 @@ export default function ViewerPage() {
                     <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory} peekHeight={peekHeight}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
+                {/* TopLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
+                <PrimaryFab />
             </Root>
         </ModelChangeContext.Provider>
         </>
