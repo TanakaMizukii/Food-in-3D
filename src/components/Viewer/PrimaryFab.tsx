@@ -115,7 +115,7 @@ const MyFabContainer = styled.div`
     position: absolute;
     top: 160px;
     right: 20px;
-    z-index: 10;
+    z-index: 1;
     display: flex;
     flex-direction: row;
     align-items: center;

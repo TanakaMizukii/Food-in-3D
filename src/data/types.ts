@@ -98,4 +98,6 @@ export type StoreInfo = {
     left_bottom?: string | null,
     firstEnvironment?: FirstEnvironment,
     menuDisplayMode?: MenuDisplayMode,  // メニュー表示モード（デフォルト: 'standard'）
+    startPanelBgColor?: string,         // スタートパネルの背景色（デフォルト: '#000'）
+    startPanelTextColor?: string,       // スタートパネルのテキスト色（デフォルト: '#f5f5f5'）
 }

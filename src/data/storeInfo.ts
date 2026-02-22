@@ -9,6 +9,8 @@ const storeInfo: StoreInfo[] = [
         right_top: 'ファミリーセット切り抜き.png',
         left_bottom: 'カルビ盛り切り抜き.png',
         menuDisplayMode: 'standard',
+        startPanelBgColor: '#000',
+        startPanelTextColor: '#f5f5f5',
         firstEnvironment: {
             hdrPath: '/hdr/kaishu/',
             hdrFile: 'kaisyu_73_small.hdr',
@@ -40,9 +42,11 @@ const storeInfo: StoreInfo[] = [
         use_name: 'denden',
         true_name: 'でんでん',
         logo: 'でんでんロゴ.png',
-        right_top: null,
-        left_bottom: null,
+        right_top: '山賊カレー_切り抜き.png',
+        left_bottom: '山賊焼き丼_切り抜き.png',
         menuDisplayMode: 'compact',
+        startPanelBgColor: '#000',
+        startPanelTextColor: '#f5f5f5',
         firstEnvironment: {
             hdrPath: '/hdr/denden/',
             hdrFile: 'denden_2.1_small.hdr',
@@ -73,10 +77,12 @@ const storeInfo: StoreInfo[] = [
         id: 3,
         use_name: 'theSourceDiner',
         true_name: 'The Source Diner',
-        logo: 'ソースダイナーロゴ.png',
-        right_top: null,
-        left_bottom: null,
+        logo: 'thesource_circle.png',
+        right_top: 'ラムダンプリング_切り抜き.png',
+        left_bottom: 'チーズバーガー_切り抜き.png',
         menuDisplayMode: 'standard',
+        startPanelBgColor: '#fff',
+        startPanelTextColor: '#111',
         firstEnvironment: {
             hdrPath: '/hdr/theSourceDiner/',
             hdrFile: 'theSourceDiner_3_small.hdr',
@@ -89,7 +95,7 @@ const storeInfo: StoreInfo[] = [
             modelDisplaySettings: {
                 scale: 1,
                 scaleARjs: 0.09,
-                scaleAlvaAR: 0.5,
+                scaleAlvaAR: 30,
                 scaleWebXR: 0.0065,
                 scale3DViewer: 1,
                 detailPosition: [0, 0.22, -0.24],
@@ -97,8 +103,8 @@ const storeInfo: StoreInfo[] = [
             },
             cameraPosition: [0.25, 0.21, 0.26],
             lightSettings: {
-                ambientLightIntensity: 0.8,
-                directionalLightIntensity: 0.5,
+                ambientLightIntensity: 1,
+                directionalLightIntensity: 1,
                 toneMappingExposure: 0.8,
             },
         }
