@@ -64,6 +64,13 @@ export type ModelDisplaySettings = {
     detailCenter: [number, number];     // 詳細情報の中心 [x, y]
 };
 
+// ライティング設定
+export type LightSettings = {
+    ambientLightIntensity: number;        // AmbientLightの強さ
+    directionalLightIntensity: number;    // DirectionalLightの強さ
+    toneMappingExposure: number;          // トーンマッピングの露出
+};
+
 // 店舗環境設定
 export type FirstEnvironment = {
     hdrPath: string;        // 環境マップのパス (例: '/hdr/kaishu/')
@@ -76,7 +83,7 @@ export type FirstEnvironment = {
     };
     modelDisplaySettings?: ModelDisplaySettings;  // モデル表示設定（オプション）
     cameraPosition?: [number, number, number];    // カメラ位置 [x, y, z]
-    lightIntensity?: number;                      // ライトの強さ
+    lightSettings?: LightSettings;                // ライティング詳細設定
 };
 
 // メニュー表示モード
@@ -91,4 +98,6 @@ export type StoreInfo = {
     left_bottom?: string | null,
     firstEnvironment?: FirstEnvironment,
     menuDisplayMode?: MenuDisplayMode,  // メニュー表示モード（デフォルト: 'standard'）
+    startPanelBgColor?: string,         // スタートパネルの背景色（デフォルト: '#000'）
+    startPanelTextColor?: string,       // スタートパネルのテキスト色（デフォルト: '#f5f5f5'）
 }

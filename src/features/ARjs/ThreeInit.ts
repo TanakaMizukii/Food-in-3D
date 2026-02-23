@@ -6,6 +6,7 @@ import { UseARToolkit } from './UseARToolkit';
 import { PMREMGenerator } from 'three';
 import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import type { LightSettings } from '../../data/types';
 await MeshoptDecoder.ready;
 
 /** AR.js Init */
@@ -33,7 +34,7 @@ export type InitOptions = {
     antialias?: boolean;
     hdrPath?: string;
     hdrFile?: string;
-    lightIntensity?: number; // ライトの強さ
+    lightSettings?: LightSettings;
 };
 
 /** Three.js 初期化（canvas必須） */
@@ -45,24 +46,33 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
         antialias = true,
         hdrPath = '/hdr/denden/',
         hdrFile = 'dndn_2.1_small.hdr',
-        lightIntensity = 2,
+        lightSettings,
     } = opts;
+
+    const ambientLightIntensity = lightSettings?.ambientLightIntensity ?? 0.8;
+    const directionalLightIntensity = lightSettings?.directionalLightIntensity ?? 0.5;
+    const toneMappingExposure = lightSettings?.toneMappingExposure ?? 0.8;
 
     const renderer = new THREE.WebGLRenderer({
         canvas,
         antialias,
         alpha,
     });
-    renderer.outputColorSpace = THREE.SRGBColorSpace
+    // Blenderの見え方と合わせるための設定
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = toneMappingExposure;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera();
     camera.far = 0.5;
 
     // 簡易ライト
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, lightIntensity);
-    light.position.set( 1, 1, 1);
-    scene.add(light);
+    const amLight = new THREE.AmbientLight(0xfffffff, ambientLightIntensity);
+    const diLight = new THREE.DirectionalLight(0xffffff, directionalLightIntensity);
+    diLight.position.set( 1, 1, 1);
+    scene.add(diLight);
+    scene.add(amLight);
 
     // 詳細画面表示用のRendererの作成
     const labelRenderer = new CSS2DRenderer();

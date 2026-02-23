@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import LanguageSelector from "@/components/Common/LanguageSelector";
 import { useState, useEffect } from "react";
 import { getMobileOS } from "@/lib/detectOS";
+import { findStoreBySlug } from "@/data/storeInfo";
+import { requestIMUPermission } from "@/lib/useDeviceOrientation";
 
 type StartPanelProps = {
     onUpdate: () => void;
@@ -26,14 +28,20 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
     const t = useTranslations('startPanel');
     const [isIOS, setIsIOS] = useState(false);
 
-    useEffect(() => {
-        if (getMobileOS() === 'ios') {
-            setIsIOS(true);
-        }
-    }, []);
-    const handleClick = () => {
+    // useEffect(() => {
+    //     if (getMobileOS() === 'ios') {
+    //         setIsIOS(true);
+    //     }
+    // }, []);
+
+    const handleClick = async () => {
+        await requestIMUPermission();
         onUpdate();
     };
+
+    const storeData = findStoreBySlug(store);
+    const bgColor = storeData?.startPanelBgColor ?? '#000';
+    const textColor = storeData?.startPanelTextColor ?? '#f5f5f5';
 
     const thumbSrc = (role: "right_top" | "logo" | "left_bottom") => getThumbSrc(store, role);
 
@@ -42,17 +50,17 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
         return <img src={src} alt={alt} id={id} className={className} />;
     }
 
-    const handleBetaStart = async () => {
-        // 末尾 / を消してから現在のパスを計算
-        const current = pathname.replace(/\/$/, "");
-        // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
-        const base = current === "/" ? "" : current;
-        router.push(`${base}/alvaAR`);
-    }
+    // const handleBetaStart = async () => {
+    //     // 末尾 / を消してから現在のパスを計算
+    //     const current = pathname.replace(/\/$/, "");
+    //     // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
+    //     const base = current === "/" ? "" : current;
+    //     router.push(`${base}/alvaAR`);
+    // }
 
     return(
         // <!-- 店舗スタートパネル -->
-        <MyStart>
+        <MyStart $bgColor={bgColor} $textColor={textColor}>
             <div id="start-overlay" className={'startOverlay'}>
                 <div className="languageSelectorWrapper">
                     <LanguageSelector />
@@ -83,67 +91,66 @@ export default function StoreStartPanel({ onUpdate, loading, store }: StartPanel
                     <button id="start-button" className={'startButton'} onClick={handleClick} disabled={loading}>
                         {loading ? t('loading') : t('startButton')}
                     </button>
-                    {isIOS && (
+                    {/* {isIOS && (
                         <BetaButton onClick={handleBetaStart}>
                             β版で開始
                         </BetaButton>
-                    )}
+                    )} */}
                 <div id="loading-spinner" className={'loadingSpinner'} style={{ display: loading ? 'block' : 'none' }} />
             </div>
         </MyStart>
     )
 }
 
-const BetaButton = styled.button`
-    background: linear-gradient(145deg, rgba(34,178,34,0.5), rgba(0,128,0,0.5));
-    color: white;
-    padding: 18px 45px;
-    border-radius: 50px;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
-    border: 1px solid #22b222;
-    cursor: pointer;
-    min-width: 200px;
-    text-align: center;
-    transition: all 0.2s ease-out;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-    text-decoration: none;
-    display: inline-block;
-    margin-top: 15px;
-    z-index: 1000;
+// const BetaButton = styled.button`
+//     background: linear-gradient(145deg, rgba(34,178,34,0.5), rgba(0,128,0,0.5));
+//     color: white;
+//     padding: 18px 45px;
+//     border-radius: 50px;
+//     font-size: 18px;
+//     font-weight: 600;
+//     letter-spacing: 1px;
+//     box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
+//     border: 1px solid #22b222;
+//     cursor: pointer;
+//     min-width: 200px;
+//     text-align: center;
+//     transition: all 0.2s ease-out;
+//     text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+//     text-decoration: none;
+//     display: inline-block;
+//     margin-top: 15px;
+//     z-index: 1000;
 
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 28px rgba(0,0,0,0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
-        background: linear-gradient(145deg, rgba(50, 205, 50, 0.7), rgba(0, 100, 0, 0.7));
-    }
+//     &:hover {
+//         transform: translateY(-3px);
+//         box-shadow: 0 12px 28px rgba(0,0,0,0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
+//         background: linear-gradient(145deg, rgba(50, 205, 50, 0.7), rgba(0, 100, 0, 0.7));
+//     }
 
-    &:active {
-        transform: translateY(0);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
-    }
-`;
+//     &:active {
+//         transform: translateY(0);
+//         box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.3);
+//     }
+// `;
 
-const MyStart = styled.div`
+const MyStart = styled.div<{ $bgColor: string; $textColor: string }>`
 .startOverlay {
     position: fixed;
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     z-index: 1000;
     transition: opacity 0.5s ease;
-    background: #000;
+    background: ${({ $bgColor }) => $bgColor};
     padding: 20px;
-    padding-top: 23vh;
     box-sizing: border-box;
 }
 
 .startImage {
-    width: 130px;
+    width: 150px;
     height: auto;
     margin-bottom: 25px;
     border-radius: 12px; /* 円形ではなく角丸に */
@@ -163,38 +170,38 @@ const MyStart = styled.div`
 
 .rightTopImg {
     position: absolute;
-    top: -15vh; /* Adjusted for overflow */
-    right: -50vw; /* Adjusted for overflow */
-    transform: rotate(15deg); /* Added rotation */
+    top: -20vw;
+    right: -60vw;
+    transform: rotate(15deg);
     animation-delay: 0.3s;
 }
 
 .leftBottomImg {
     position: absolute;
-    bottom: -9vh; /* Adjusted for overflow */
-    left: -40vw; /* Adjusted for overflow */
-    transform: rotate(-15deg); /* Added rotation */
+    bottom: -20vw;
+    left: -50vw;
+    transform: rotate(-15deg);
     animation-delay: 0.6s;
 }
 
 @media (min-width: 768px) {
     .startSideImg {
-        max-width: 500px; /* Set a max-width for larger screens */
+        max-width: 500px;
     }
 
     .rightTopImg {
-        top: -5vh;
-        right: -20vw; /* Adjust position for desktop */
+        top: -5vw;
+        right: -10vw;
     }
 
     .leftBottomImg {
-        bottom: -5vh;
-        left: -20vw; /* Adjust position for desktop */
+        bottom: -5vw;
+        left: -10vw;
     }
 }
 
 .startText {
-    color: #f5f5f5; /* オフホワイト */
+    color: ${({ $textColor }) => $textColor};
     font-size: 20px;
     font-family: "Garamond", "Times New Roman", serif;
     margin-bottom: 30px;
@@ -217,6 +224,7 @@ const MyStart = styled.div`
     text-align: center;
     transition: all 0.2s ease-out;
     text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    z-index: 1000;
 }
 
 .startButton:hover:not(:disabled) {

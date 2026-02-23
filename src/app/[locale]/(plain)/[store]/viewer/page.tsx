@@ -44,6 +44,7 @@ export default function ViewerPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
     const [sheetExpanded, setSheetExpanded] = useState(false);
+    const [peekHeight, setPeekHeight] = useState(0);
 
     const currentProduct: ProductModel = storeMenu.productModels[currentIndex]
 
@@ -74,15 +75,16 @@ export default function ViewerPage() {
                 <TopLayer>
                     <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
                     <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
-                    <PrimaryFab />
                 </TopLayer>
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
                     <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
-                    <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory} peekHeight={peekHeight}/>
+                    <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
+                {/* TopLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
+                <PrimaryFab />
             </Root>
         </ModelChangeContext.Provider>
         </>

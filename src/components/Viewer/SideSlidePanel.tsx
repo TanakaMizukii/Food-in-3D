@@ -48,6 +48,7 @@ const MySideSlide = styled.div`
         top: 0;
         right: 0;
         width: 80%;
+        max-width: 500px;
         height: 100%;
         background: rgba(255,255,255,0.92);
         backdrop-filter: blur(10px);

@@ -115,10 +115,17 @@ const MyFabContainer = styled.div`
     position: absolute;
     top: 160px;
     right: 20px;
-    z-index: 10;
+    z-index: 1;
     display: flex;
     flex-direction: row;
     align-items: center;
+    /* コンテナ自体はイベントを通過させ、OrbitControlsのピンチ操作を遮断しない。
+       子要素（.primary-fab・.expanded-content.visible）は各自でautoを保持する。 */
+    pointer-events: none;
+
+    @media (min-width: 768px) {
+        right: 10vw;
+    }
 
     /* Expanded Content */
     .expanded-content {
@@ -197,6 +204,7 @@ const MyFabContainer = styled.div`
     font-size: 26px;
     font-weight: 700;
     cursor: pointer;
+    pointer-events: auto; /* 親のnoneを上書きしてタップ可能にする */
 
     display: flex;
     align-items: center;
