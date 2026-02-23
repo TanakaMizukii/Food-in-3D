@@ -105,7 +105,7 @@ const storeInfo: StoreInfo[] = [
             lightSettings: {
                 ambientLightIntensity: 1,
                 directionalLightIntensity: 1,
-                toneMappingExposure: 0.8,
+                toneMappingExposure: 1,
             },
         }
     },

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from 'three';
+import { useDeviceOrientation } from "@/lib/useDeviceOrientation";
 import { initThree, attachResizeHandlers, ThreeCtx } from "./ThreeInit";
 import { loadModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
@@ -24,6 +25,15 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
     const autoRotateRef = useRef(true);
 
+    // IMU（端末傾き）フック
+    const { orientationRef, isSupported } = useDeviceOrientation();
+    const isSupportedRef = useRef(false);
+    const imuRotationRef = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        isSupportedRef.current = isSupported;
+    }, [isSupported]);
+
     // 店舗のmodelDisplaySettingsを取得
     const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
 
@@ -38,6 +48,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
         // 新しいモデルをロード
         const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
         nowModelRef.current = nowModel;
+        imuRotationRef.current = { x: 0, y: 0 }; // モデル切替時に IMU 回転をリセット
         onLoadingChange(false);
     }, [ctx, onLoadingChange, storeDisplaySettings]);
 
@@ -127,7 +138,28 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                         ctx.camera.position.copy(new THREE.Vector3().setFromSpherical(sph).add(ctx.controls.target)); // addはベクトルとして足してる
                     }
                 }
-                console.log(ctx.camera.position);
+
+                // IMU: 端末傾きをモデル回転に反映（カメラ視点から見た上下左右に対応）
+                if (nowModelRef.current && isSupportedRef.current) {
+                    const MAX_ANGLE = Math.PI / 6;  // 最大 22.5 度
+                    const LERP = 0.1;  // 滑らかさ（0=静止、1=即時追従）
+                    const { deltaBeta, deltaGamma } = orientationRef.current;
+                    const targetX = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaBeta  / 45) * MAX_ANGLE));
+                    const targetY = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaGamma / 45) * MAX_ANGLE));
+                    imuRotationRef.current.x += (targetX - imuRotationRef.current.x) * LERP;
+                    imuRotationRef.current.y += (targetY - imuRotationRef.current.y) * LERP;
+
+                    // カメラの右方向・上方向ベクトルをワールド空間で取得
+                    const camRight = new THREE.Vector3();
+                    const camUp = new THREE.Vector3();
+                    ctx.camera.matrixWorld.extractBasis(camRight, camUp, new THREE.Vector3());
+
+                    // カメラ軸周りのクォータニオンで回転（ワールド軸ではなくカメラ視点基準）
+                    const qX = new THREE.Quaternion().setFromAxisAngle(camRight, imuRotationRef.current.x);
+                    const qY = new THREE.Quaternion().setFromAxisAngle(camUp, imuRotationRef.current.y);
+                    nowModelRef.current.quaternion.copy(qX.multiply(qY));
+                }
+
                 ctx.controls?.update();
                 ctx.renderer.render(ctx.scene, ctx.camera);
             }
