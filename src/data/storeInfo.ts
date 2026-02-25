@@ -94,7 +94,7 @@ const storeInfo: StoreInfo[] = [
             },
             modelDisplaySettings: {
                 scale: 1,
-                scaleARjs: 0.09,
+                scaleARjs: 7,
                 scaleAlvaAR: 30,
                 scaleWebXR: 0.0065,
                 scale3DViewer: 1,
@@ -105,7 +105,7 @@ const storeInfo: StoreInfo[] = [
             lightSettings: {
                 ambientLightIntensity: 1,
                 directionalLightIntensity: 1,
-                toneMappingExposure: 1,
+                toneMappingExposure: 0.8,
             },
         }
     },

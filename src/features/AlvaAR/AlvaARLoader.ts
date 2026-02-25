@@ -8,9 +8,27 @@ export interface AlvaARPoint {
     y: number;
 }
 
+export interface IMUOrientation {
+    w: number;
+    x: number;
+    y: number;
+    z: number;
+}
+
+export interface IMUMotionSample {
+    timestamp: number;
+    gx: number; gy: number; gz: number;
+    ax: number; ay: number; az: number;
+}
+
 export interface AlvaARInstance {
     findCameraPose(imageData: ImageData): Float32Array | null;
-    findPlane(): Float32Array | null;
+    findCameraPoseWithIMU(
+        frame: ImageData,
+        orientation: IMUOrientation,
+        motion: IMUMotionSample[],
+    ): Float32Array | null;
+    findPlane(numIterations?: number): Float32Array | null;
     getFramePoints(): AlvaARPoint[];
     reset(): void;
 }
