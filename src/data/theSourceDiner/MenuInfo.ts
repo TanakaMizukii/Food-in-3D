@@ -92,7 +92,7 @@ export const productModels: ProductModelsProps = [
         minPrice: '1,870',
         description: 'とろけるチーズとジューシーなパティの王道チーズバーガー。\nシンプルながらも素材の美味しさが引き立つ、店主こだわりの一品です。',
         image: '/images/theSourceDiner/チーズバーガー (13).jpg',
-        model: '/models/theSourceDiner/dumpling_mala_set_std_video_comp4_non.glb',
+        model: '/models/theSourceDiner/burger_cheese_joint_std_video_comp2.glb',
         serving: '1人前',
         part: 'ビーフパティ・チーズ',
         origin: null,
