@@ -6,6 +6,7 @@ import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import { useTranslations } from 'next-intl';
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import { requestIMUPermission } from '@/lib/useDeviceOrientation';
 
 type PrimaryFabProps = {
     onOpenDetail: () => void;
@@ -49,6 +50,11 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
     }
 
     const handleBetaStart = async () => {
+        // IMU許可がまだの場合はここで申請（クリックイベント内なので iOS ダイアログが出る）
+        if (sessionStorage.getItem('imu_permission') !== 'granted') {
+            await requestIMUPermission();
+        }
+
         // 末尾 / を消してから親を計算
         const current = pathname.replace(/\/$/, "");
         const parent = current.split("/").slice(0, -1).join("/") || "/";

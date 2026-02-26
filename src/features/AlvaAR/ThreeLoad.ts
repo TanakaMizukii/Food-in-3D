@@ -63,7 +63,7 @@ export async function loadModel(
         model.position.copy(reticle.position);
         model.quaternion.copy(reticle.quaternion);
         model.rotateX(Math.PI / 2);
-        model.rotateY(Math.PI / 2);
+        model.rotateY(-Math.PI / 2);
 
         ctx.scene.add(model);
         ctx.objectList.push(model);

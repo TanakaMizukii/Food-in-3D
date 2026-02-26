@@ -80,6 +80,34 @@ export function applyIMUFallbackPlacement(
 }
 
 /**
+ * IMUの向きとSLAMカメラ姿勢から、実世界の「上」方向をThree.js SLAMワールド座標で計算する。
+ *
+ * imuOrientation は deviceOrientationToQuaternion(alpha, beta, gamma) で得られる
+ * W3C Earth→Device フレーム変換クォータニオン。
+ * 逆クォータニオンを Earth の「上」ベクトル (0,0,1) に適用してカメラローカル空間の
+ * 「上」方向を求め、camera.quaternion でSLAMワールド空間に変換する。
+ *
+ * @returns SLAMワールド空間での実世界上方向ベクトル（正規化済み）
+ */
+export function computeUpWorld(
+    imuOrientation: IMUOrientation,
+    cameraQuaternion: THREE.Quaternion,
+): THREE.Vector3 {
+    const hasImu = imuOrientation.x !== 0 || imuOrientation.y !== 0 || imuOrientation.z !== 0;
+    if (!hasImu) {
+        // IMUデータ未取得時はSLAMワールドY軸をフォールバックとして使用
+        return new THREE.Vector3(0, 1, 0);
+    }
+    const imuQ = new THREE.Quaternion(
+        imuOrientation.x, imuOrientation.y, imuOrientation.z, imuOrientation.w,
+    );
+    // W3C Earth frame の「上」(0,0,1) → デバイス/カメラローカル空間
+    const upCamera = new THREE.Vector3(0, 0, 1).applyQuaternion(imuQ.clone().invert());
+    // カメラローカル空間 → SLAMワールド空間
+    return upCamera.applyQuaternion(cameraQuaternion).normalize();
+}
+
+/**
  * DeviceOrientationEvent の alpha/beta/gamma を
  * AlvaAR が期待する { w, x, y, z } クォータニオンに変換する。
  * ZXY オイラー順（デバイス向き標準）

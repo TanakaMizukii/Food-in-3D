@@ -9,10 +9,7 @@ import { initThree, attachResizeHandlers } from '@/features/AlvaAR/ThreeInit';
 import { loadModel, disposeModel } from '@/features/AlvaAR/ThreeLoad';
 import { handleClick } from '@/features/AlvaAR/ThreeClick';
 import { loadAlvaAR, type AlvaARInstance } from '@/features/AlvaAR/AlvaARLoader';
-import {
-    createPoseApplier,
-    deviceOrientationToQuaternion,
-} from '@/features/AlvaAR/AlvaARConnector';
+import { createPoseApplier, deviceOrientationToQuaternion, computeUpWorld } from '@/features/AlvaAR/AlvaARConnector';
 import type { IMUOrientation, IMUMotionSample } from '@/features/AlvaAR/AlvaARLoader';
 import { initCamera, onFrame, resize2cover, stopCamera, type CoverRect } from '@/features/AlvaAR/CameraStream';
 import ARHelper from '@/components/AR/ARHelper';
@@ -58,6 +55,8 @@ export default function ThreeMain({
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
     const alvaRef = useRef<AlvaARInstance | null>(null);
     const loopActiveRef = useRef(true);
+    const viewNumRef = useRef(0);
+    const reticleShowTimeRef = useRef<number | null>(null);
 
     const onLoadingProgressRef = useRef(onLoadingProgress);
     useEffect(() => { onLoadingProgressRef.current = onLoadingProgress; }, [onLoadingProgress]);
@@ -154,9 +153,9 @@ export default function ThreeMain({
             const defaultModel = firstEnv?.defaultModel;
             const scaleAlvaAR = firstEnv?.modelDisplaySettings?.scaleAlvaAR ?? 100;
 
-            // SLAM状態変数
-            let reticleShowTime: number | null = null;
-            let viewNum = 0;
+            // SLAM状態変数（リセット対応のためrefを使用）
+            viewNumRef.current = 0;
+            reticleShowTimeRef.current = null;
             let planeDetectedOnce = false;
 
             // IMU状態変数
@@ -193,15 +192,14 @@ export default function ThreeMain({
             const { scene, camera, renderer, labelRenderer, reticle, videoCanvas, videoCtx } = threeContext;
 
             // ARCamIMUView アプローチ: 仮想地面（findPlane の代替）
-            // 大きな水平メッシュをカメラ起点の -10 単位下に設置し、
+            // IMUから算出した重力方向を使い、カメラから GROUND_DIST 単位下に地面平面を設置して
             // 毎フレームのレイキャストでリティクル位置を決定する
-            const VIRTUAL_GROUND_Y = 10;
+            const GROUND_DIST = 10;
             const virtualGround = new THREE.Mesh(
                 new THREE.CircleGeometry(1000, 32),
                 new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide }),
             );
-            virtualGround.rotation.x = Math.PI / 2;
-            virtualGround.position.y = VIRTUAL_GROUND_Y;
+            // 向き・位置はフレームループ内で IMU データにより動的に更新する
             scene.add(virtualGround);
             const groundRaycaster = new THREE.Raycaster();
             const centerNDC = new THREE.Vector2(0, 0); // 画面中央
@@ -229,16 +227,25 @@ export default function ThreeMain({
                     if (pose) {
                         applyPose(pose, camera.quaternion, camera.position);
 
-                        // ARCamIMUView: 仮想地面をカメラのXZ位置に追従させ、
-                        // 画面中央レイキャストでリティクルを配置
-                        virtualGround.position.x = camera.position.x;
-                        virtualGround.position.z = camera.position.z;
+                        // IMUから実世界の「上」方向を算出し、仮想地面を現実の水平面に合わせる
+                        const upWorld = computeUpWorld(imuOrientation, camera.quaternion);
+
+                        // 仮想地面: CircleGeometry のローカル法線 (+Z) を upWorld に向け、
+                        // カメラの GROUND_DIST 単位下（重力方向）に中心を配置
+                        virtualGround.quaternion.setFromUnitVectors(
+                            new THREE.Vector3(0, 0, 1), upWorld,
+                        );
+                        virtualGround.position.copy(camera.position)
+                            .addScaledVector(upWorld, -GROUND_DIST);
+
                         groundRaycaster.setFromCamera(centerNDC, camera);
                         const groundHits = groundRaycaster.intersectObject(virtualGround);
                         if (groundHits.length > 0) {
                             reticle.position.copy(groundHits[0].point);
-                            reticle.quaternion.identity();
-                            (reticle as THREE.Mesh).rotateX(-Math.PI / 2);
+                            // レティクルをIMU基準の地面平面に平行に向ける
+                            reticle.quaternion.setFromUnitVectors(
+                                new THREE.Vector3(0, 0, 1), upWorld,
+                            );
                             reticle.visible = true;
 
                             if (!planeDetectedOnce) {
@@ -268,14 +275,14 @@ export default function ThreeMain({
                     }
 
                     // レティクル表示後の自動モデル配置
-                    if (reticle.visible && reticleShowTime === null) {
-                        reticleShowTime = now;
+                    if (reticle.visible && reticleShowTimeRef.current === null) {
+                        reticleShowTimeRef.current = now;
                     }
                     if (!reticle.visible) {
-                        reticleShowTime = null;
+                        reticleShowTimeRef.current = null;
                     }
                     // レティクル表示1.5秒後にデフォルトモデルを配置
-                    if (viewNum === 0 && reticleShowTime !== null && now - reticleShowTime > 1500) {
+                    if (viewNumRef.current === 0 && reticleShowTimeRef.current !== null && now - reticleShowTimeRef.current > 1500) {
                         if (defaultModel && threeContext) {
                             loadModel({
                                 modelName: defaultModel.name,
@@ -287,8 +294,8 @@ export default function ThreeMain({
                                 onInitialModelLoaded();
                             });
                         }
-                        viewNum = 1;
-                        reticleShowTime = null;
+                        viewNumRef.current = 1;
+                        reticleShowTimeRef.current = null;
                     }
 
                     // レティクルとモデルの当たり判定（透明度変更）
@@ -333,6 +340,17 @@ export default function ThreeMain({
 
     const handleReset = () => {
         alvaRef.current?.reset();
+        // 状態変数をリセットして再トラッキング・再自動配置を有効化
+        viewNumRef.current = 0;
+        reticleShowTimeRef.current = null;
+        // モデルをシーンから除去し、レティクルを非表示にする
+        if (ctx?.nowModel) {
+            ctx.scene.remove(ctx.nowModel);
+            disposeModel(ctx.nowModel);
+            ctx.nowModel = null;
+            ctx.objectList.length = 0;
+        }
+        if (ctx?.reticle) ctx.reticle.visible = false;
     };
 
     return (
