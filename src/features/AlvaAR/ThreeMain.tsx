@@ -37,6 +37,8 @@ type ThreeMainProps = {
     onCameraReady: () => void;
     onPlaneDetected: () => void;
     onInitialModelLoaded: () => void;
+    onLoadingChange?: (loading: boolean) => void;
+    onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
 };
 
@@ -45,6 +47,8 @@ export default function ThreeMain({
     onCameraReady,
     onPlaneDetected,
     onInitialModelLoaded,
+    onLoadingChange,
+    onLoadingProgress,
     storeInfo,
 }: ThreeMainProps) {
     const router = useRouter();
@@ -55,16 +59,21 @@ export default function ThreeMain({
     const alvaRef = useRef<AlvaARInstance | null>(null);
     const loopActiveRef = useRef(true);
 
+    const onLoadingProgressRef = useRef(onLoadingProgress);
+    useEffect(() => { onLoadingProgressRef.current = onLoadingProgress; }, [onLoadingProgress]);
+
     const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
 
     const changeModel = useCallback(async (modelInfo: ModelInfo) => {
         if (!ctx) return;
+        onLoadingChange?.(true);
         const modelWithSettings = {
             ...modelInfo,
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
-        await loadModel(modelWithSettings, ctx, ctx.reticle);
-    }, [ctx, storeDisplaySettings]);
+        await loadModel(modelWithSettings, ctx, ctx.reticle, onLoadingProgress);
+        onLoadingChange?.(false);
+    }, [ctx, onLoadingChange, onLoadingProgress, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -274,8 +283,9 @@ export default function ThreeMain({
                                 modelDetail: defaultModel.detail,
                                 modelPrice: defaultModel.price,
                                 displaySettings: firstEnv?.modelDisplaySettings,
-                            }, threeContext, reticle as THREE.Mesh);
-                            onInitialModelLoaded();
+                            }, threeContext, reticle as THREE.Mesh, onLoadingProgressRef.current).then(() => {
+                                onInitialModelLoaded();
+                            });
                         }
                         viewNum = 1;
                         reticleShowTime = null;

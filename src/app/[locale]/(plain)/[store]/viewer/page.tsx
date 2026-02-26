@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import '../App.css';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -41,6 +41,11 @@ export default function ViewerPage() {
     const [currentIndex, setCurrentIndex] = useState(getInitialIndex());
     const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
+    const handleLoadingChange = useCallback((loading: boolean) => {
+        if (loading) setLoadingProgress(0);
+        setLoading(loading);
+    }, []);
     const [menuOpen, setMenuOpen] = useState(false);
     const [showTutorial, setShowTutorial] = useState(true);
     const [sheetExpanded, setSheetExpanded] = useState(false);
@@ -65,11 +70,16 @@ export default function ViewerPage() {
     return (
         <>
         <TutorialOverlay isVisible={showTutorial} onClose={() => setShowTutorial(false)}/>
-        <LoadingPanel isVisible={loading} />
+        <LoadingPanel isVisible={loading} progress={loadingProgress} />
         <ModelChangeContext.Provider value={{ changeModel: wrappedChangeModel }}>
             <Root>
                 <SceneLayer>
-                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} storeInfo={storeInfo} />
+                    <ThreeMain
+                        setChangeModel={setChangeModel}
+                        onLoadingChange={handleLoadingChange}
+                        onLoadingProgress={setLoadingProgress}
+                        storeInfo={storeInfo}
+                    />
                 </SceneLayer>
 
                 <TopLayer>

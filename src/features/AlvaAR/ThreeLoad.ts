@@ -22,6 +22,7 @@ export async function loadModel(
     Model: ModelProps,
     ctx: ThreeCtx,
     reticle: THREE.Mesh,
+    onProgress?: (progress: number) => void,
 ): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
         modelName = 'モデル',
@@ -36,13 +37,11 @@ export async function loadModel(
     const detailPosition = displaySettings?.detailPosition ?? [0.1, 0.08, -0.03];
     const detailCenter = displaySettings?.detailCenter ?? [0, 0.8];
 
-    try {
-        // ローディングインジケーター表示
-        const loadingOverlay = document.getElementById('loading');
-        if (loadingOverlay) {
-            loadingOverlay.classList.add('visible');
-        }
+    // LoadingManager を生成し、ロード完了時に 100% を通知
+    const manager = new THREE.LoadingManager(() => { onProgress?.(100); });
+    ctx.loader.manager = manager;
 
+    try {
         // 前モデルの削除
         if (ctx.nowModel) {
             ctx.scene.remove(ctx.nowModel);
@@ -50,8 +49,12 @@ export async function loadModel(
             ctx.objectList.length = 0;
         }
 
-        // モデルロード
-        const gltf = await ctx.loader.loadAsync(modelPath);
+        // モデルロード（バイト単位の進捗コールバック付き）
+        const gltf = await ctx.loader.loadAsync(modelPath, (event: ProgressEvent) => {
+            if (event.lengthComputable && event.total > 0) {
+                onProgress?.(Math.round((event.loaded / event.total) * 100));
+            }
+        });
         const model = gltf.scene;
         model.scale.set(scale, scale, scale);
         model.userData.isDetail = true;
@@ -95,25 +98,16 @@ export async function loadModel(
         model.add(detail);
         detail.layers.set(1);
 
-        // ローディング非表示 + 初回だけdetailレイヤー有効化
-        if (loadingOverlay) {
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-                if (ctx.detailNum === 0) {
-                    ctx.camera.layers.enable(1);
-                    ctx.detailNum += 1;
-                }
-            }, 100);
+        // 初回だけdetailレイヤー有効化
+        if (ctx.detailNum === 0) {
+            ctx.camera.layers.enable(1);
+            ctx.detailNum += 1;
         }
 
+        ctx.loader.manager = THREE.DefaultLoadingManager;
         return model;
     } catch (error) {
-        const loadingOverlay = document.getElementById('loading');
-        if (loadingOverlay) {
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-            }, 100);
-        }
+        ctx.loader.manager = THREE.DefaultLoadingManager;
         console.error(error);
         alert('モデルの読み込みに失敗しました。');
         return null;

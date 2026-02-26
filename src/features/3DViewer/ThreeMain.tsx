@@ -15,10 +15,11 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onLoadingChange: (loading: boolean) => void;
+    onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingProgress, storeInfo }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -46,11 +47,11 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
         // 新しいモデルをロード
-        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
+        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current, onLoadingProgress);
         nowModelRef.current = nowModel;
         imuRotationRef.current = { x: 0, y: 0 }; // モデル切替時に IMU 回転をリセット
         onLoadingChange(false);
-    }, [ctx, onLoadingChange, storeDisplaySettings]);
+    }, [ctx, onLoadingChange, onLoadingProgress, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -106,7 +107,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 displaySettings: firstEnvironment.modelDisplaySettings,
             } : {};
             onLoadingChange(true);
-            const nowModel = await loadModel(firstModel, ctx, nowModelRef.current);
+            const nowModel = await loadModel(firstModel, ctx, nowModelRef.current, onLoadingProgress);
             nowModelRef.current = nowModel;
             onLoadingChange(false);
 

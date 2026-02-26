@@ -3,15 +3,24 @@ import styled from "styled-components"
 type Props = {
     isVisible?: boolean;
     text?: string;
+    progress?: number;
 }
 
-export default function LoadingPanel({ isVisible, text = 'モデルを読み込み中...' }: Props) {
+export default function LoadingPanel({ isVisible, text = 'モデルを読み込み中...', progress }: Props) {
     return(
         // <!-- ローディングインジケーター -->
         <MyLoading>
             <div id="loading" className={`loading-overlay ${isVisible ? 'visible' : ''}`}>
                 <div className="loading-spinner"></div>
                 <div className="loading-text">{text}</div>
+                {progress !== undefined && (
+                    <>
+                        <div className="loading-progress-container">
+                            <div className="loading-progress-bar" style={{ width: `${progress}%` }} />
+                        </div>
+                        <div className="loading-progress-text">{progress}%</div>
+                    </>
+                )}
             </div>
         </MyLoading>
     )
@@ -56,5 +65,27 @@ const MyLoading = styled.div`
     font-size:22px;
     text-align: center;
     white-space: pre-line;
+}
+
+.loading-progress-container {
+    width: 200px;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+.loading-progress-bar {
+    height: 100%;
+    background-color: #3498db;
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+.loading-progress-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-top: 6px;
 }
 `
