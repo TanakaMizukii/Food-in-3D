@@ -88,7 +88,7 @@ const storeInfo: StoreInfo[] = [
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
                 name: 'チョリソーとモッツァレラの エスニックバーガー',
-                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp4.glb',
+                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp5.glb',
                 detail: '2月のマンスリーバーガーです！',
                 price: '1,760',
             },
