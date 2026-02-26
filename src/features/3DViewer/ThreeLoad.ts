@@ -52,6 +52,20 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         // 詳細オブジェクトの表示状態をboolean値で設定
         model.userData.isDetail = true;
         ctx.scene.add(model);
+
+        // ソースダイナーのモデルにのみシェーディング処理を適用
+        if (modelPath.includes('theSourceDiner')) {
+            model.traverse((obj) => {
+                if (obj instanceof THREE.Mesh) {
+                    if (obj.name = 'Plate') {
+                        obj.geometry.computeVertexNormals();
+                    } else {
+                        obj.material.flatShading = true;
+                        obj.material.needsUpdate = true;
+                    }
+                }
+            });
+        }
         // 配列に保存
         ctx.objectList.push(model);
         const nowModel = model;
