@@ -96,6 +96,7 @@ export const productModels: ProductModelsProps = [
         serving: '1人前',
         part: 'ビーフパティ・チーズ',
         origin: null,
+        recPeople: 'たっぷりのチーズとハンバーガーを楽しみたい方',
         recommended: 'ケチャップ・マスタード',
         tags: ['定番', 'チーズ', 'ジューシー', 'おすすめ']
     },

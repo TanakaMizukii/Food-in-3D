@@ -30,6 +30,7 @@ const storeInfo: StoreInfo[] = [
                 detailCenter: [0, 0.8],
             },
             cameraPosition: [0, 42, 36],
+            controlsTarget: [0, 5, 0],
             lightSettings: {
                 ambientLightIntensity: 0.8,
                 directionalLightIntensity: 0.5,
@@ -66,6 +67,7 @@ const storeInfo: StoreInfo[] = [
                 detailCenter: [0, 0.08],
             },
             cameraPosition: [0, 0.77, 0.49],
+            controlsTarget: [0, 0.1, 0],
             lightSettings: {
                 ambientLightIntensity: 0.8,
                 directionalLightIntensity: 0.5,
@@ -102,6 +104,7 @@ const storeInfo: StoreInfo[] = [
                 detailCenter: [0, 0.08],
             },
             cameraPosition: [0.25, 0.21, 0.26],
+            controlsTarget: [0, 0.05, 0],
             lightSettings: {
                 ambientLightIntensity: 1,
                 directionalLightIntensity: 1,

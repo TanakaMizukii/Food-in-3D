@@ -16,7 +16,25 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
     const contentRef = React.useRef<HTMLDivElement | null>(null);
     const peekRef = React.useRef<HTMLDivElement | null>(null);
     const [peekHeight, setPeekHeight] = React.useState(0);
+    const [isFull, setIsFull] = React.useState(false);
+    // 閉じるアニメーション中もコンテンツを保持するための遅延フラグ
+    const [contentVisible, setContentVisible] = React.useState(false);
     const t = useTranslations('product');
+
+    // 外部から閉じられたときにフル状態もリセット
+    React.useEffect(() => {
+        if (!sheetExpanded) setIsFull(false);
+    }, [sheetExpanded]);
+
+    // sheetExpanded が false になっても 300ms はコンテンツを保持（閉じるアニメーション用）
+    React.useEffect(() => {
+        if (sheetExpanded) {
+            setContentVisible(true);
+        } else {
+            const timer = setTimeout(() => setContentVisible(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [sheetExpanded]);
 
     // peekコンテンツの高さを計測し、親に通知
     React.useEffect(() => {
@@ -48,12 +66,14 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
             const diff = touchStartY.current - touchEndY.current;
             const isScrolled = contentRef.current ? contentRef.current.scrollTop > 0 : false;
 
-            if (diff > 50 && !sheetExpanded) {
-                // 上スワイプで展開
-                setSheetExpanded(true);
-            } else if (diff < -50 && sheetExpanded && !isScrolled) {
-                // 下スワイプで閉じる (コンテンツがスクロールされていない場合のみ)
-                setSheetExpanded(false);
+            if (diff > 50) {
+                // 上スワイプ: peek→expanded→full と段階的に開く
+                if (!sheetExpanded) setSheetExpanded(true);
+                else if (!isFull) setIsFull(true);
+            } else if (diff < -50 && !isScrolled) {
+                // 下スワイプ: full→expanded→peek と段階的に閉じる
+                if (isFull) setIsFull(false);
+                else if (sheetExpanded) setSheetExpanded(false);
             }
         }
         touchStartY.current = null;
@@ -62,24 +82,24 @@ export default function BottomSheet({currentProduct, sheetExpanded, setSheetExpa
 
     return(
         <MyTopBar>
-            {/* オーバーレイ: 展開時にパネル外タップで閉じる */}
-            {sheetExpanded && <div className="sheet-overlay" onClick={() => setSheetExpanded(false)} />}
+            {/* オーバーレイ: 展開時にパネル外タップで完全に閉じる */}
+            {sheetExpanded && <div className="sheet-overlay" onClick={() => { setIsFull(false); setSheetExpanded(false); }} />}
             {/* Bottom Sheet */}
             <div
-                className={`bottom-sheet ${sheetExpanded ? 'expanded' : 'peek'}`}
+                className={`bottom-sheet ${isFull ? 'full' : sheetExpanded ? 'expanded' : 'peek'}`}
                 style={!sheetExpanded && peekHeight > 0 ? { transform: `translateY(calc(100% - ${peekHeight}px))` } : undefined}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
             >
                 <div ref={peekRef}>
-                    <div className="sheet-handle-area" onClick={() => setSheetExpanded(!sheetExpanded)}>
+                    <div className="sheet-handle-area" onClick={() => { if (isFull) setIsFull(false); else setSheetExpanded(!sheetExpanded); }}>
                         <div className="sheet-handle" />
                     </div>
-                    <div className="sheet-peek-content" onClick={() => setSheetExpanded(!sheetExpanded)}>
+                    <div className="sheet-peek-content" onClick={() => { if (isFull) setIsFull(false); else setSheetExpanded(!sheetExpanded); }}>
                         <h2 className="sheet-title">{currentProduct.name}</h2>
                     </div>
                 </div>
-                {sheetExpanded && (
+                {contentVisible && (
                     <div className="sheet-expanded-content" ref={contentRef}>
                         <div className="sheet-price">¥{currentProduct.price.toLocaleString()}</div>
                         <p className="sheet-description">{currentProduct.description}</p>
@@ -165,7 +185,8 @@ const MyTopBar = styled.div`
         background: rgba(255,255,255,0.95);
         backdrop-filter: blur(20px);
         border-radius: 24px 24px 0 0;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 99;
         max-height: 45vh;
         display: flex;
@@ -182,6 +203,15 @@ const MyTopBar = styled.div`
 
     .bottom-sheet.expanded {
         transform: translateY(0);
+    }
+
+    .bottom-sheet.full {
+        transform: translateY(0);
+        max-height: 65vh;
+
+        @media (min-width: 768px) {
+            max-height: 90vh;
+        }
     }
 
     .sheet-handle-area {

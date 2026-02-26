@@ -11,10 +11,9 @@ type SpecificProps = {
     categories: Category[];
     productModels: ProductModelsProps;
     productCategory: string[]; // 日本語のカテゴリ名リスト（商品のcategoryフィールドとマッチング用）
-    peekHeight?: number;
 }
 
-export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels, productCategory, peekHeight }: SpecificProps) {
+export default function SpecificPanels({currentIndex, currentCategory, setCurrentIndex, categories, productModels, productCategory}: SpecificProps) {
 
     const currentProduct: ProductModel = productModels[currentIndex]
 
@@ -125,7 +124,7 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
     return(
         <MySpecific>
             {/* Specific Panels */}
-            <div className="variant-chips" ref={scrollRef} style={peekHeight ? { bottom: `${peekHeight + 8}px` } : undefined}>
+            <div className="variant-chips" ref={scrollRef}>
                 <div className="variant-chips-inner">
                     {variants.map(({ model, i }) => (
                         <button
@@ -149,10 +148,6 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
 const MySpecific = styled.div`
     /* Specific Panels */
     .variant-chips {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 50px;
         padding: 12px 16px;
         display: flex;
         gap: 8px;

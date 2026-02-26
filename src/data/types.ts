@@ -83,6 +83,7 @@ export type FirstEnvironment = {
     };
     modelDisplaySettings?: ModelDisplaySettings;  // モデル表示設定（オプション）
     cameraPosition?: [number, number, number];    // カメラ位置 [x, y, z]
+    controlsTarget?: [number, number, number],    // 初期モデル表示位置 [x, y, z]
     lightSettings?: LightSettings;                // ライティング詳細設定
 };
 
