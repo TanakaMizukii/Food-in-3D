@@ -10,6 +10,7 @@ import { productModels as theSourceDinerModels, productCategory as theSourceDine
 // 店舗ごとの翻訳データ
 import kaishuTranslations from './kaishu/translations';
 import dendenTranslations from './denden/translations';
+import theSourceDinerTranslations from './theSourceDiner/translations';
 
 export type StoreMenu = {
     productModels: ProductModelsProps;
@@ -30,6 +31,7 @@ export const storeMenuMap: Record<string, StoreMenu> = {
 export const storeTranslationsMap: Record<string, Record<string, StoreTranslations>> = {
     kaishu: kaishuTranslations,
     denden: dendenTranslations,
+    theSourceDiner: theSourceDinerTranslations,
 };
 
 // デフォルトの店舗メニュー
