@@ -79,7 +79,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
                 </button>
                 {isIOS && (
                     <BetaButton onClick={handleBetaStart}>
-                        AR(β版)で開始
+                        店舗外の方(β版)
                     </BetaButton>
                 )}
             </div>
@@ -98,7 +98,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
 };
 
 const BetaButton = styled.a`
-    background: linear-gradient(135deg, #ff4d4d, #cc0000);
+    background: #ff4d4d;
     color: #ffffff;
     border: none;
     border-radius: 14px;
@@ -114,7 +114,7 @@ const BetaButton = styled.a`
     margin-top: 8px;
 
     &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #ff5f5f, #dd1111);
+        background: #ff5f5f;
         box-shadow: 0 8px 22px rgba(255, 77, 77, 0.45);
         transform: translateY(-1px);
     }
@@ -223,7 +223,7 @@ const MyFabContainer = styled.div`
     }
 
 .ar-start-button {
-    background: linear-gradient(135deg, #4ade80, #22c55e); /* 明るいライム系 */
+    background:  #4ade80; /* 明るいライム系 */
     color: #ffffff;
     border: none;
     border-radius: 14px;
@@ -238,7 +238,7 @@ const MyFabContainer = styled.div`
 
 /* ホバー時：軽く光る → 押したくなる */
 .ar-start-button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #5ef08e, #31d971);
+    background:  #5ef08e;
     box-shadow: 0 8px 22px rgba(34, 197, 94, 0.45);
     transform: translateY(-1px);
 }

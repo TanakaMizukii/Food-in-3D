@@ -91,8 +91,8 @@ const storeInfo: StoreInfo[] = [
             defaultModel: {
                 name: 'チョリソーとモッツァレラの エスニックバーガー',
                 path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp5.glb',
-                detail: '2月のマンスリーバーガーです！',
-                price: '1,760',
+                detail: '2月期間限定のマンスリーバーガー！スパイシーなチョリソーととろけるモッツァレラチーズが絶妙にマッチしたエスニック風バーガーです！',
+                price: '2,150',
             },
             modelDisplaySettings: {
                 scale: 1,
