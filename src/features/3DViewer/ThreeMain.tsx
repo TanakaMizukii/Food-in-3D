@@ -143,8 +143,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
 
                 // IMU: 端末傾きをモデル回転に反映（カメラ視点から見た上下左右に対応）
                 if (nowModelRef.current && isSupportedRef.current) {
-                    const MAX_ANGLE = Math.PI / 6;  // 最大 22.5 度
-                    const LERP = 0.1;  // 滑らかさ（0=静止、1=即時追従）
+                    const MAX_ANGLE = Math.PI / 8;  // 最大 22.5 度
+                    const LERP = 0.05;  // 滑らかさ（0=静止、1=即時追従）
                     const { deltaBeta, deltaGamma } = orientationRef.current;
                     const targetX = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaBeta  / 45) * MAX_ANGLE));
                     const targetY = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaGamma / 45) * MAX_ANGLE));
