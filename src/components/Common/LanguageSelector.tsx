@@ -61,11 +61,13 @@ const SelectorButton = styled.button`
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     padding: 8px 12px;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s;
@@ -76,7 +78,7 @@ const SelectorButton = styled.button`
     }
 
     &:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.65);
     }
 `;
 
