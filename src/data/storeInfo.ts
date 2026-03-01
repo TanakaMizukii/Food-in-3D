@@ -89,10 +89,10 @@ const storeInfo: StoreInfo[] = [
             hdrPath: '/hdr/theSourceDiner/',
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
-                name: 'チョリソーとモッツァレラの エスニックバーガー',
-                path: '/models/theSourceDiner/burger_monthly_feb_set_std_video_comp5.glb',
-                detail: '2月期間限定のマンスリーバーガー！スパイシーなチョリソーととろけるモッツァレラチーズが絶妙にマッチしたエスニック風バーガーです！',
-                price: '2,150',
+                name: 'チーズバーガー',
+                path: '/models/theSourceDiner/burger_cheese_joint_std_video_comp5.glb',
+                detail: 'とろけるチーズとジューシーなパティの王道チーズバーガー。シンプルながらも素材の美味しさが引き立つ、店主こだわりの一品です。',
+                price: '1,870',
             },
             modelDisplaySettings: {
                 scale: 1,

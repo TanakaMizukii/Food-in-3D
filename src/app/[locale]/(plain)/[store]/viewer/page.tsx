@@ -47,7 +47,7 @@ export default function ViewerPage() {
         setLoading(loading);
     }, []);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [showTutorial, setShowTutorial] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
     const [sheetExpanded, setSheetExpanded] = useState(false);
     const [peekHeight, setPeekHeight] = useState(0);
 
