@@ -5,7 +5,6 @@
  */
 import type { XR8PipelineModule, XR8HitResult } from './xr8Types';
 import * as THREE from 'three';
-window.THREE = THREE;
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';

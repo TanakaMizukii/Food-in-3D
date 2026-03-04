@@ -34,15 +34,18 @@ type ThreeMainProps = {
     storeInfo: StoreInfo | null;
 };
 
-// 読み込む外部スクリプトのパス（public/8thWallAR/external/ に配置されていること）
-const EXTERNAL_SCRIPTS = [
-    '/8thWallAR/external/xrextras/xrextras.js',
-    '/8thWallAR/external/landing-page/landing-page.js',
-    '/8thWallAR/external/xr/xr.js',
-] as const;
+type ScriptEntry = { src: string; attrs?: Record<string, string> };
+
+// 読み込む外部スクリプト（public/8thWallAR/external/ に配置されていること）
+// xr.js には data-preload-chunks="slam" が必要（XR8.XrController を含む SLAM モジュールを内部ロードさせる）
+const EXTERNAL_SCRIPTS: ScriptEntry[] = [
+    { src: '/8thWallAR/external/xrextras/xrextras.js' },
+    { src: '/8thWallAR/external/landing-page/landing-page.js' },
+    { src: '/8thWallAR/external/xr/xr.js', attrs: { 'data-preload-chunks': 'slam' } },
+];
 
 /** スクリプトを順番に読み込む（既に読み込み済みのものはスキップ） */
-function loadScript(src: string): Promise<void> {
+function loadScript({ src, attrs }: ScriptEntry): Promise<void> {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) {
             resolve();
@@ -51,6 +54,11 @@ function loadScript(src: string): Promise<void> {
         const script = document.createElement('script');
         script.src = src;
         script.async = false;
+        if (attrs) {
+            for (const [key, val] of Object.entries(attrs)) {
+                script.setAttribute(key, val);
+            }
+        }
         script.onload = () => resolve();
         script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
         document.head.appendChild(script);
@@ -102,11 +110,21 @@ export default function ThreeMain({
         let mounted = true;
 
         const init = async () => {
+            // xrloaded イベントを xr.js 読み込み前に登録しておく
+            // （xr.js の onload より xrloaded 発火が遅れる場合があるため Promise でラップ）
+            const xrReadyPromise = new Promise<void>((resolve) => {
+                window.addEventListener('xrloaded', () => resolve(), { once: true });
+            });
+
             // 外部スクリプトを順番に読み込む
             for (const src of EXTERNAL_SCRIPTS) {
                 await loadScript(src);
                 if (!mounted) return;
             }
+
+            // xrloaded イベント（XR8 + 全サブモジュールの完全初期化）を待つ
+            await xrReadyPromise;
+            if (!mounted || !canvasRef.current) return;
 
             // パイプラインモジュール生成
             const scenePipeline = initScenePipelineModule({
@@ -119,17 +137,7 @@ export default function ThreeMain({
             });
             scenePipelineRef.current = scenePipeline;
 
-            // XR8 が既に読み込まれていればすぐ起動、そうでなければ xrloaded を待つ
-            const onXrLoaded = () => {
-                if (!mounted || !canvasRef.current) return;
-                startXR8Pipeline({ canvas: canvasRef.current, scenePipelineModule: scenePipeline });
-            };
-
-            if (typeof XR8 !== 'undefined') {
-                onXrLoaded();
-            } else {
-                window.addEventListener('xrloaded', onXrLoaded, { once: true });
-            }
+            startXR8Pipeline({ canvas: canvasRef.current, scenePipelineModule: scenePipeline });
         };
 
         init().catch((err) => {

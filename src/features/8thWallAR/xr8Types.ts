@@ -32,9 +32,9 @@ export type XR8ThreejsScene = {
 
 declare global {
     interface Window {
-        LandingPage: {
+        LandingPage?: {
             pipelineModule(): XR8PipelineModule;
-        };
+        } | null;
         THREE?: typeof import('three');
     }
 
