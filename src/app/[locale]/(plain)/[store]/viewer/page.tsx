@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import '../App.css';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -41,8 +41,13 @@ export default function ViewerPage() {
     const [currentIndex, setCurrentIndex] = useState(getInitialIndex());
     const [currentCategory, setCurrentCategory] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
+    const handleLoadingChange = useCallback((loading: boolean) => {
+        if (loading) setLoadingProgress(0);
+        setLoading(loading);
+    }, []);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [showTutorial, setShowTutorial] = useState(true);
+    const [showTutorial, setShowTutorial] = useState(false);
     const [sheetExpanded, setSheetExpanded] = useState(false);
     const [peekHeight, setPeekHeight] = useState(0);
 
@@ -64,27 +69,32 @@ export default function ViewerPage() {
 
     return (
         <>
-        <TutorialOverlay isVisible={showTutorial} onClose={() => setShowTutorial(false)}/>
-        <LoadingPanel isVisible={loading} />
+        {/* <TutorialOverlay isVisible={showTutorial} onClose={() => setShowTutorial(false)}/> */}
+        <LoadingPanel isVisible={loading} progress={loadingProgress} />
         <ModelChangeContext.Provider value={{ changeModel: wrappedChangeModel }}>
             <Root>
                 <SceneLayer>
-                    <ThreeMain setChangeModel={setChangeModel} onLoadingChange={setLoading} storeInfo={storeInfo} />
+                    <ThreeMain
+                        setChangeModel={setChangeModel}
+                        onLoadingChange={handleLoadingChange}
+                        onLoadingProgress={setLoadingProgress}
+                        storeInfo={storeInfo}
+                    />
                 </SceneLayer>
 
                 <TopLayer>
                     <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
                     <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
                 </TopLayer>
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} onOpenDetail={() => setSheetExpanded(true)}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory} peekHeight={peekHeight}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.productCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
-                {/* TopLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
-                <PrimaryFab />
+                {/* BottomLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
+                <PrimaryFab onOpenDetail={() => setSheetExpanded(true)} peekHeight={peekHeight} />
             </Root>
         </ModelChangeContext.Provider>
         </>

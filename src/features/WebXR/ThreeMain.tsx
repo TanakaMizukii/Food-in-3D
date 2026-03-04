@@ -28,6 +28,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ctx, setCtx] = useState<ThreeContext | null>(null);
+    const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
     const reticleShowTimeRef = useRef<DOMHighResTimeStamp | null>(null);
     const viewNumRef = useRef<number>(0);
     const inFlightRef = useRef(false);
@@ -44,7 +45,9 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
         // 新しいモデルをロード
-        await loadModel(modelWithSettings, ctx);
+        setLoadingProgress(0);
+        await loadModel(modelWithSettings, ctx, setLoadingProgress);
+        setLoadingProgress(undefined);
     }, [ctx, storeDisplaySettings]);
 
     useEffect(() => {
@@ -186,7 +189,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     return (
         <>
             <GuideScanPlane />
-            <LoadingPanel />
+            <LoadingPanel progress={loadingProgress} />
             <ARHelper onExit={handleExit} onClear={handleClear} onReset={handleReset} showClearObjects={true} showResetHit={true}/>
             <div id="wrapper" ref={containerRef} >
                 <canvas id="myCanvas" ref={canvasRef} />

@@ -64,6 +64,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
     renderer.toneMappingExposure = toneMappingExposure;
 
     const scene = new THREE.Scene();
+    scene.environmentIntensity = 1.2;
     const camera = new THREE.PerspectiveCamera();
     camera.far = 0.5;
 

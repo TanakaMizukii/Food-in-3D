@@ -1,56 +1,63 @@
 import styled from "styled-components";
-import { HiMagnifyingGlass } from "react-icons/hi2";
 
 import { useContext } from 'react';
 import { ModelChangeContext } from "../../contexts/ModelChangeContext";
-import type { ProductModelsProps } from "@/data/types";
+import type { Category, ProductModelsProps } from "@/data/types";
 
 type ArrowsProps = {
     currentIndex: number;
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
     productModels: ProductModelsProps;
-    onOpenDetail: () => void;
+    currentCategory: number;
+    categories: Category[];
+    productCategory: string[];
 }
 
-export default function NavArrows({currentIndex, setCurrentIndex, productModels, onOpenDetail}: ArrowsProps) {
+export default function NavArrows({currentIndex, setCurrentIndex, productModels, currentCategory, categories, productCategory}: ArrowsProps) {
     const { changeModel } = useContext(ModelChangeContext);
-    const handleItemBackChange = (index: number) => {
-        if (currentIndex > 0) {
-            setCurrentIndex(index);
-            const model = productModels[index]
-            changeModel({modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price})
-        }
+
+    const currentCategoryIndex = categories.findIndex(c => c.id === currentCategory);
+    const currentJapaneseCategoryName = productCategory[currentCategoryIndex];
+
+    const variants = productModels.map((m, i) => ({ model: m, i }))
+        .filter(({ model }) => {
+            if (currentCategory === 1) return true;
+            return model.category === currentJapaneseCategoryName;
+        });
+
+    const currentVariantIndex = variants.findIndex(v => v.i === currentIndex);
+    const prevVariant = currentVariantIndex > 0 ? variants[currentVariantIndex - 1] : null;
+    const nextVariant = currentVariantIndex < variants.length - 1 ? variants[currentVariantIndex + 1] : null;
+
+    const handleBack = () => {
+        if (!prevVariant) return;
+        setCurrentIndex(prevVariant.i);
+        const model = prevVariant.model;
+        changeModel({ modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price });
     };
-    const handleItemGoChange = (index: number) => {
-        if (productModels.length - 1) {
-            setCurrentIndex(index);
-            const model = productModels[index]
-            changeModel({modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price})
-        }
+
+    const handleGo = () => {
+        if (!nextVariant) return;
+        setCurrentIndex(nextVariant.i);
+        const model = nextVariant.model;
+        changeModel({ modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price });
     };
 
     return(
         <MyNavArrows>
-            {/* Detail Button */}
-            <button className="detail-button" onClick={onOpenDetail}>
-                <HiMagnifyingGlass />
-            </button>
             {/* Navigation Arrows */}
             <div className="nav-arrows">
                 <button
                     className="nav-arrow"
-                    onClick={() => {
-                        handleItemBackChange(currentIndex - 1);
-                    }}
-                    disabled={currentIndex === 0}
+                    onClick={handleBack}
+                    disabled={!prevVariant}
                 >
                     ◀
                 </button>
                 <button
                     className="nav-arrow"
-                    onClick={() =>
-                        handleItemGoChange(currentIndex + 1)}
-                    disabled={currentIndex === productModels.length - 1}
+                    onClick={handleGo}
+                    disabled={!nextVariant}
                 >
                     ▶
                 </button>
@@ -60,46 +67,6 @@ export default function NavArrows({currentIndex, setCurrentIndex, productModels,
 };
 
 const MyNavArrows = styled.div`
-        /* Detail Button */
-        .detail-button {
-            position: absolute;
-            bottom: calc(env(safe-area-inset-bottom) + 180px);
-            right: 12px;
-
-            @media (min-width: 768px) {
-                right: 10vw;
-            }
-            width: 44px;
-            height: 44px;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 50%;
-            color: rgba(255,255,255,0.9);
-            cursor: pointer;
-            transition: all 0.2s;
-            z-index: 85;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-button svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .detail-button:hover {
-            background: rgba(0,0,0,0.7);
-            transform: scale(1.05);
-        }
-
-        .detail-button:active {
-            background: rgba(0,0,0,0.8);
-            transform: scale(0.95);
-        }
-
         /* Navigation Arrows */
         .nav-arrows {
             position: absolute;

@@ -1,7 +1,7 @@
 'use client';
 import styled from "styled-components";
 import { HiOutlineCursorClick, HiOutlineMenu } from "react-icons/hi";
-import { HiCubeTransparent, HiChevronDown } from "react-icons/hi2";
+import { HiCubeTransparent, HiMagnifyingGlass } from "react-icons/hi2";
 import { useTranslations } from 'next-intl';
 
 type TutorialOverlayProps = {
@@ -33,7 +33,7 @@ export default function TutorialOverlay({ isVisible, onClose }: TutorialOverlayP
                             <div className="gesture-text">{t('menu')}{t('menuDesc')}</div>
                         </div>
                         <div className="gesture-item">
-                            <div className="gesture-icon"><HiChevronDown /></div>
+                            <div className="gesture-icon"><HiMagnifyingGlass /></div>
                             <div className="gesture-text">{t('details')} {t('detailsDesc')}</div>
                         </div>
                     </div>

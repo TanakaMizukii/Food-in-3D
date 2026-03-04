@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { initThree, attachResizeHandlers } from "@/features/ARjs/ThreeInit";
 import { loadModel } from "@/features/ARjs/ThreeLoad";
 import { handleClick } from "@/features/ARjs/ThreeClick";
-import LoadingPanel from "@/components/Common/LoadingPanel";
 import ARHelper from "@/components/AR/ARHelper";
 import { useRouter } from "next/navigation";
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
@@ -21,10 +20,12 @@ type ThreeMainProps = {
     onCameraReady: () => void;
     onGuideDismiss: () => void;
     onInitialModelLoaded: () => void;
+    onLoadingChange?: (loading: boolean) => void;
+    onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, storeInfo }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, onLoadingChange, onLoadingProgress, storeInfo }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
     const locale = catchLocale();
@@ -38,15 +39,17 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
 
     const changeModel = useCallback(async (modelInfo: { modelName?: string, modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; }) => {
         if (!ctx) return;
+        onLoadingChange?.(true);
         // displaySettingsが渡されていない場合は店舗のmodelDisplaySettingsを使用
         const modelWithSettings = {
             ...modelInfo,
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
         // 新しいモデルをロード
-        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
+        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current, onLoadingProgress);
         nowModelRef.current = nowModel;
-    }, [ctx, storeDisplaySettings]);
+        onLoadingChange?.(false);
+    }, [ctx, onLoadingChange, onLoadingProgress, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -119,7 +122,6 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
 
     return (
         <>
-            <LoadingPanel />
             <ARHelper onExit={handleExit} showClearObjects={false} showResetHit={false}/>
             <div id="wrapper" ref={containerRef} >
                 <canvas id="myCanvas" ref={canvasRef} />

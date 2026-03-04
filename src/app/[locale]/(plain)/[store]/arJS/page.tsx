@@ -54,6 +54,12 @@ export default function ARjsPage() {
     const [isGuideVisible, setIsGuideVisible] = useState(false);
     const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
     const [isMarkerFound, setIsMarkerFound] = useState(false);
+    const [isModelLoading, setIsModelLoading] = useState(false);
+    const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
+    const handleLoadingChange = useCallback((loading: boolean) => {
+        if (loading) setLoadingProgress(0);
+        setIsModelLoading(loading);
+    }, []);
     const [guideText, setGuideText] = useState(t('cameraLoading'));
 
     const handleCameraReady = useCallback(() => {
@@ -93,16 +99,17 @@ export default function ARjsPage() {
     // ローディングパネルの表示条件:
     // 1. カメラ準備中 (!isCameraReady)
     // 2. マーカー検知後、まだ初期モデルがロードされていない (isMarkerFound && !isInitialModelLoaded)
-    const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded);
+    // 3. モデル切替中 (isModelLoading)
+    const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded) || isModelLoading;
 
     // リロード待機中は何も表示しない
     if (!isReady) {
-        return <LoadingPanel isVisible={true} text={guideText} />;
+        return <LoadingPanel isVisible={true} text={guideText} progress={loadingProgress} />;
     }
 
     return (
         <MyarJS>
-            <LoadingPanel isVisible={showLoading} text={guideText} />
+            <LoadingPanel isVisible={showLoading} text={guideText} progress={loadingProgress} />
             <GuideQRCode isVisible={isGuideVisible} />
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain
@@ -110,6 +117,8 @@ export default function ARjsPage() {
                     onCameraReady={handleCameraReady}
                     onGuideDismiss={handleGuideDismiss}
                     onInitialModelLoaded={handleInitialModelLoaded}
+                    onLoadingChange={handleLoadingChange}
+                    onLoadingProgress={setLoadingProgress}
                     storeInfo={storeInfo}
                 />
                 {menuDisplayMode === 'compact' ? (

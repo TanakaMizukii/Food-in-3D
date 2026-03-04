@@ -1,8 +1,32 @@
+import * as THREE from 'three';
 import type { ThreeCtx } from './ThreeInit';
 
-// マウスをクリックしたときのイベント
+// クリックするたびに 0→1→2→0... とサイクルする:
+//   0: 詳細パネル表示・ギズモ非表示
+//   1: 詳細パネル非表示・ギズモ表示（水平移動）
+//   2: 詳細パネル・ギズモ非表示（観察モード）
+//   空白クリック: 全解除
+//
+// attach()/detach() は ThreeClick.ts では使用しない。
+// attach はモデルロード側で一度だけ行う。
+
+function applyClickState(_clickedObject: THREE.Object3D, ctx: ThreeCtx, clickState: number) {
+    if (clickState === 0) {
+        ctx.gizmo.visible = false;
+        ctx.camera.layers.enable(1);
+    } else if (clickState === 1) {
+        ctx.gizmo.visible = true;
+        ctx.camera.layers.disable(1);
+    } else {
+        ctx.gizmo.visible = false;
+        ctx.camera.layers.disable(1);
+    }
+}
+
 export function handleClick(ctx: ThreeCtx) {
-    return(event: MouseEvent) => {
+    let focusedObject: THREE.Object3D | null = null;
+
+    return (event: MouseEvent) => {
         const element = event.currentTarget as HTMLElement | null;
         if (!element) return;
 
@@ -20,41 +44,28 @@ export function handleClick(ctx: ThreeCtx) {
 
         if (intersects.length > 0) {
             let clickedObject = intersects[0].object;
-            // グループ化されている場合、最上位の親を選択する
             while (clickedObject.parent && clickedObject.parent !== ctx.scene) {
                 clickedObject = clickedObject.parent;
             }
 
-            // すでに選択されているオブジェクトを再度クリックしたら選択解除
-            if (ctx.transControls.object === clickedObject) {
-                ctx.gizmo.visible = false;
-                ctx.transControls.detach();
-                // isDetailの表示をオンにする
-                clickedObject.userData.isDetail = true;
-                ctx.camera.layers.enable(1);
+            if (focusedObject !== clickedObject) {
+                if (focusedObject) focusedObject.userData.clickCount = 0;
+                focusedObject = clickedObject;
+                clickedObject.userData.clickCount = 0;
             } else {
-                // 新しいオブジェクトを選択
-                ctx.transControls.attach(clickedObject);
-                ctx.gizmo.visible = true;
-
-                // isDetailのロジック
-                if (clickedObject.userData.isDetail === undefined) {
-                    clickedObject.userData.isDetail = false; // 初期値
-                }
-                clickedObject.userData.isDetail = !clickedObject.userData.isDetail;
-
-                if (clickedObject.userData.isDetail) {
-                    ctx.camera.layers.enable(1);
-                } else {
-                    ctx.camera.layers.disable(1);
-                }
+                const prev = clickedObject.userData.clickCount ?? 0;
+                clickedObject.userData.clickCount = (prev + 1) % 3;
             }
+
+            applyClickState(clickedObject, ctx, clickedObject.userData.clickCount);
         } else {
-            // 何もない空間をクリックした場合、選択を解除
-            if (ctx.transControls.object) {
-                ctx.transControls.detach();
-                ctx.gizmo.visible = false;
+            // 空白クリック: 全解除
+            if (focusedObject) {
+                focusedObject.userData.clickCount = 0;
+                focusedObject = null;
             }
+            ctx.gizmo.visible = false;
+            ctx.camera.layers.disable(1);
         }
-    }
+    };
 }

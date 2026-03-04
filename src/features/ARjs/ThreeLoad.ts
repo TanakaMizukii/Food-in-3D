@@ -17,7 +17,7 @@ export type ModelProps = {
     displaySettings?: ModelDisplaySettings;
 }
 
-export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THREE.Group<THREE.Object3DEventMap> | null): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
+export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THREE.Group<THREE.Object3DEventMap> | null, onProgress?: (progress: number) => void): Promise<THREE.Group<THREE.Object3DEventMap> | null> {
     const {
         modelName = 'カルビ盛り',
         modelPath = '/models/denden/chicken_combo_large_comp.glb',
@@ -31,21 +31,18 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
     const detailPosition = displaySettings?.detailPosition ?? [0, 0, 0];
     const detailCenter = displaySettings?.detailCenter ?? [0, 0];
 
+    // LoadingManager を生成し、ロード完了時に 100% を通知
+    const manager = new THREE.LoadingManager(() => { onProgress?.(100); });
+    ctx.loader.manager = manager;
+
     let detailDiv = null;
     try {
-        // ローディングインジケーターの表示
-        const loadingOverlay = document.getElementById('loading');
-        const guideMarker = document.getElementById('guideMarker');
-        const guideVisible = guideMarker?.classList.contains('visible');
-
-        if (!guideVisible) {
-            if (loadingOverlay) {
-                loadingOverlay?.classList.add('visible');
+        // 今回表すモデルの表示（バイト単位の進捗コールバック付き）
+        const objects = await ctx.loader.loadAsync(modelPath, (event: ProgressEvent) => {
+            if (event.lengthComputable && event.total > 0) {
+                onProgress?.(Math.round((event.loaded / event.total) * 100));
             }
-        }
-
-        // 今回表すモデルの表示
-        const objects = await ctx.loader.loadAsync(modelPath);
+        });
         // 前モデルの削除
         if (prevModel) {
             ctx.smoothedRoot.remove(prevModel);
@@ -84,26 +81,16 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         model.add(detail);
         detail.layers.set(1);
 
-        // ローディングインジケーターを非表示
-        if (loadingOverlay) {
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-                // 初回だけ無条件で表示を行う
-                if (ctx.detailNum == 0) {
-                ctx.camera.layers.enable(1);
-                ctx.detailNum += 1;
-                }
-            }, 100);
+        // 初回だけ無条件で表示を行う
+        if (ctx.detailNum == 0) {
+            ctx.camera.layers.enable(1);
+            ctx.detailNum += 1;
         }
 
+        ctx.loader.manager = THREE.DefaultLoadingManager;
         return nowModel;
     } catch(error) {
-        const loadingOverlay = document.getElementById('loading');
-        if(loadingOverlay) {
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-            }, 100);
-        }
+        ctx.loader.manager = THREE.DefaultLoadingManager;
         alert(error +'モデルの読み込みに失敗しました。');
         console.log(error);
         return null;

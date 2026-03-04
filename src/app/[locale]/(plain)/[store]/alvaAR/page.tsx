@@ -32,6 +32,12 @@ export default function AlvaARPage() {
     const [isCameraReady, setIsCameraReady] = useState(false);
     const [isPlaneDetected, setIsPlaneDetected] = useState(false);
     const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
+    const [isModelLoading, setIsModelLoading] = useState(false);
+    const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
+    const handleLoadingChange = useCallback((loading: boolean) => {
+        if (loading) setLoadingProgress(0);
+        setIsModelLoading(loading);
+    }, []);
     const [guideText, setGuideText] = useState(t('cameraLoading'));
 
     const handleCameraReady = useCallback(() => {
@@ -81,12 +87,15 @@ export default function AlvaARPage() {
         }
     }, [isInitialModelLoaded, isPlaneDetected, menuDisplayMode]);
 
-    // ローディング表示条件
-    const showLoading = !isCameraReady || (isPlaneDetected && !isInitialModelLoaded);
+    // ローディング表示条件:
+    // 1. カメラ準備中 (!isCameraReady)
+    // 2. 平面検出後、まだ初期モデルがロードされていない (isPlaneDetected && !isInitialModelLoaded)
+    // 3. モデル切替中 (isModelLoading)
+    const showLoading = !isCameraReady || (isPlaneDetected && !isInitialModelLoaded) || isModelLoading;
 
     return (
         <>
-            <LoadingPanel isVisible={showLoading} text={guideText} />
+            <LoadingPanel isVisible={showLoading} text={guideText} progress={loadingProgress} />
             <GuideScanPlane />
             <ModelChangeContext.Provider value={{ changeModel }}>
                 <ThreeMain
@@ -94,6 +103,8 @@ export default function AlvaARPage() {
                     onCameraReady={handleCameraReady}
                     onPlaneDetected={handlePlaneDetected}
                     onInitialModelLoaded={handleInitialModelLoaded}
+                    onLoadingChange={handleLoadingChange}
+                    onLoadingProgress={setLoadingProgress}
                     storeInfo={storeInfo}
                 />
                 {menuDisplayMode === 'compact' ? (

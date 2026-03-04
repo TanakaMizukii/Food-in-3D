@@ -108,7 +108,7 @@ const MyCategory = styled.div`
         position: relative;
         padding: 0;
         overflow: hidden;
-        margin-top: 40px;
+        margin-top: 30px;
     }
 
     .category-carousel::before,

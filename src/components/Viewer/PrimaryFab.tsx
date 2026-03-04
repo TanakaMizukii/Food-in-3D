@@ -5,8 +5,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import { useTranslations } from 'next-intl';
+import { HiMagnifyingGlass } from "react-icons/hi2";
+import { requestIMUPermission } from '@/lib/useDeviceOrientation';
 
-export default function PrimaryFab() {
+type PrimaryFabProps = {
+    onOpenDetail: () => void;
+    peekHeight?: number;
+};
+
+export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -43,25 +50,27 @@ export default function PrimaryFab() {
     }
 
     const handleBetaStart = async () => {
+        // IMU許可がまだの場合はここで申請（クリックイベント内なので iOS ダイアログが出る）
+        if (sessionStorage.getItem('imu_permission') !== 'granted') {
+            await requestIMUPermission();
+        }
+
         // 末尾 / を消してから親を計算
         const current = pathname.replace(/\/$/, "");
         const parent = current.split("/").slice(0, -1).join("/") || "/";
 
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
-        router.push(`${base}/alvaAR`);
+        router.push(`${base}/8thWallAR`);
     }
 
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     }
 
-    const pathParts = pathname.split('/');
-    const store = pathParts.length > 2 ? pathParts[pathParts.length - 2] : '';
-
     return(
-        <MyFabContainer>
-            {/* Expanded content */}
+        <MyFabContainer style={{ bottom: `calc(${peekHeight}px + 40px)` }}>
+            {/* Expanded content - 上に展開 */}
             <div className={`expanded-content ${isExpanded ? 'visible' : ''}`}>
                 <h6 className="explanation-title">{t('title')}</h6>
                 <p className="explanation-text">{t('description')}</p>
@@ -70,21 +79,26 @@ export default function PrimaryFab() {
                 </button>
                 {isIOS && (
                     <BetaButton onClick={handleBetaStart}>
-                        AR(β版)で開始
+                        店舗外の方(β版)
                     </BetaButton>
                 )}
             </div>
 
-            {/* Primary FAB */}
-            <button className="primary-fab" onClick={toggleExpand}>
-                {isExpanded ? '×' : 'AR'}
-            </button>
+            {/* ボタン行: AR FAB + 虫眼鏡 */}
+            <div className="fab-row">
+                <button className="primary-fab" onClick={toggleExpand}>
+                    {isExpanded ? '×' : 'AR'}
+                </button>
+                <button className="detail-fab" onClick={onOpenDetail}>
+                    <HiMagnifyingGlass />
+                </button>
+            </div>
         </MyFabContainer>
     )
 };
 
 const BetaButton = styled.a`
-    background: linear-gradient(135deg, #ff4d4d, #cc0000);
+    background: #ff4d4d;
     color: #ffffff;
     border: none;
     border-radius: 14px;
@@ -100,7 +114,7 @@ const BetaButton = styled.a`
     margin-top: 8px;
 
     &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #ff5f5f, #dd1111);
+        background: #ff5f5f;
         box-shadow: 0 8px 22px rgba(255, 77, 77, 0.45);
         transform: translateY(-1px);
     }
@@ -113,21 +127,62 @@ const BetaButton = styled.a`
 
 const MyFabContainer = styled.div`
     position: absolute;
-    top: 160px;
-    right: 20px;
-    z-index: 1;
+    left: 50%;
+    bottom: 120px;
+    transform: translateX(-32px); /* AR ボタン(64px)の中心を画面 50% に合わせる */
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     /* コンテナ自体はイベントを通過させ、OrbitControlsのピンチ操作を遮断しない。
-       子要素（.primary-fab・.expanded-content.visible）は各自でautoを保持する。 */
+       子要素（.primary-fab・.detail-fab・.expanded-content.visible）は各自でautoを保持する。 */
     pointer-events: none;
 
-    @media (min-width: 768px) {
-        right: 10vw;
+    @media (min-width: 1268px) {
+        display: none;
     }
 
-    /* Expanded Content */
+    /* ボタン行 */
+    .fab-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 40px;
+    }
+
+    /* 虫眼鏡FAB */
+    .detail-fab {
+        width: 52px;
+        height: 52px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 50%;
+        color: rgba(255,255,255,0.9);
+        cursor: pointer;
+        transition: all 0.2s;
+        pointer-events: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .detail-fab svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .detail-fab:hover {
+        background: rgba(0,0,0,0.75);
+        transform: scale(1.05);
+    }
+
+    .detail-fab:active {
+        transform: scale(0.95);
+    }
+
+    /* Expanded Content - 上に展開 (AR ボタン中心に配置) */
     .expanded-content {
         display: flex;
         flex-direction: column;
@@ -137,16 +192,18 @@ const MyFabContainer = styled.div`
         padding: 16px;
         border-radius: 12px;
         width: 220px;
-        margin-right: 16px;
+        /* AR ボタン中心(32px from left) に 220px パネルを揃える: 32 - 110 = -78px */
+        margin-left: -78px;
+        margin-bottom: 12px;
         opacity: 0;
-        transform: translateX(10px) scale(0.95);
+        transform: translateY(10px) scale(0.95);
         transition: opacity 0.2s ease-out, transform 0.2s ease-out;
         pointer-events: none;
     }
 
     .expanded-content.visible {
         opacity: 1;
-        transform: translateX(0) scale(1);
+        transform: translateY(0) scale(1);
         pointer-events: auto;
     }
 
@@ -166,7 +223,7 @@ const MyFabContainer = styled.div`
     }
 
 .ar-start-button {
-    background: linear-gradient(135deg, #4ade80, #22c55e); /* 明るいライム系 */
+    background:  #4ade80; /* 明るいライム系 */
     color: #ffffff;
     border: none;
     border-radius: 14px;
@@ -181,7 +238,7 @@ const MyFabContainer = styled.div`
 
 /* ホバー時：軽く光る → 押したくなる */
 .ar-start-button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #5ef08e, #31d971);
+    background:  #5ef08e;
     box-shadow: 0 8px 22px rgba(34, 197, 94, 0.45);
     transform: translateY(-1px);
 }

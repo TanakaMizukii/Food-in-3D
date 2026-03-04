@@ -15,10 +15,11 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 type ThreeMainProps = {
     setChangeModel: React.Dispatch<React.SetStateAction<ChangeModelFn>>;
     onLoadingChange: (loading: boolean) => void;
+    onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
 };
 
-export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingProgress, storeInfo }: ThreeMainProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
@@ -46,11 +47,11 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
         // 新しいモデルをロード
-        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current);
+        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current, onLoadingProgress);
         nowModelRef.current = nowModel;
         imuRotationRef.current = { x: 0, y: 0 }; // モデル切替時に IMU 回転をリセット
         onLoadingChange(false);
-    }, [ctx, onLoadingChange, storeDisplaySettings]);
+    }, [ctx, onLoadingChange, onLoadingProgress, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -81,6 +82,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 hdrPath: firstEnvironment?.hdrPath,
                 hdrFile: firstEnvironment?.hdrFile,
                 cameraPosition: firstEnvironment?.cameraPosition,
+                controlsTarget: firstEnvironment?.controlsTarget,
                 lightSettings: firstEnvironment?.lightSettings,
             };
             const ctx = await initThree(canvasElement, rendererOptions);
@@ -106,7 +108,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
                 displaySettings: firstEnvironment.modelDisplaySettings,
             } : {};
             onLoadingChange(true);
-            const nowModel = await loadModel(firstModel, ctx, nowModelRef.current);
+            const nowModel = await loadModel(firstModel, ctx, nowModelRef.current, onLoadingProgress);
             nowModelRef.current = nowModel;
             onLoadingChange(false);
 
@@ -141,8 +143,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, storeInfo }
 
                 // IMU: 端末傾きをモデル回転に反映（カメラ視点から見た上下左右に対応）
                 if (nowModelRef.current && isSupportedRef.current) {
-                    const MAX_ANGLE = Math.PI / 6;  // 最大 22.5 度
-                    const LERP = 0.1;  // 滑らかさ（0=静止、1=即時追従）
+                    const MAX_ANGLE = Math.PI / 8;  // 最大 22.5 度
+                    const LERP = 0.05;  // 滑らかさ（0=静止、1=即時追従）
                     const { deltaBeta, deltaGamma } = orientationRef.current;
                     const targetX = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaBeta  / 45) * MAX_ANGLE));
                     const targetY = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, (deltaGamma / 45) * MAX_ANGLE));
