@@ -29,8 +29,7 @@ export default function EightWallARPage() {
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
     });
-    const [isCameraReady, setIsCameraReady] = useState(false);
-    const [isPlaneDetected, setIsPlaneDetected] = useState(false);
+const [isPlaneDetected, setIsPlaneDetected] = useState(false);
     const [isInitialModelLoaded, setIsInitialModelLoaded] = useState(false);
     const [isModelLoading, setIsModelLoading] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
@@ -41,7 +40,6 @@ export default function EightWallARPage() {
     const [guideText, setGuideText] = useState(t('cameraLoading'));
 
     const handleCameraReady = useCallback(() => {
-        setIsCameraReady(true);
         setGuideText(t('scanning'));
         const scanningOverlay = document.getElementById('scanning-overlay');
         if (scanningOverlay) {
@@ -82,7 +80,7 @@ export default function EightWallARPage() {
         }
     }, [isInitialModelLoaded, isPlaneDetected, menuDisplayMode]);
 
-    const showLoading = !isCameraReady || (isPlaneDetected && !isInitialModelLoaded) || isModelLoading;
+    const showLoading = (isPlaneDetected && !isInitialModelLoaded) || isModelLoading;
 
     return (
         <>
