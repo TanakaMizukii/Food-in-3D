@@ -5,7 +5,7 @@
  * xr.js / xrextras.js / landing-page.js を動的に読み込み、
  * XR8 パイプラインを起動して AR を開始する。
  */
-import './xr8Types';
+import '@/types/xr8Types';
 import styled from 'styled-components';
 import { useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';

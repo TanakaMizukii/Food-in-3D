@@ -24,7 +24,7 @@ const storeInfo: StoreInfo[] = [
                 scale: 1,
                 scaleARjs: 0.09,
                 scaleAlvaAR: 0.5,
-                scale8thWallAR: 0.5,
+                scale8thWallAR: 0.05,
                 scaleWebXR: 0.0085,
                 scale3DViewer: 1,
                 detailPosition: [2, 6, -7],

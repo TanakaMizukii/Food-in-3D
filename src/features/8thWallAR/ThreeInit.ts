@@ -1,23 +1,19 @@
 /**
- * 8thWallAR 用 Three.js + XR8 パイプラインモジュール
- * threejs-scene-init.js を TypeScript 化したもの。
- * storeInfo / scale は引数で受け取り、window.loadModel などのグローバル公開は廃止。
+ * 8thWallAR 用 XR8 パイプラインモジュール
+ * シーン初期化のみを担当。モデル操作は ThreeLoad.ts / ThreeClick.ts に分離。
  */
-import type { XR8PipelineModule, XR8HitResult } from './xr8Types';
+import type { XR8PipelineModule, XR8HitResult } from '@/types/xr8Types';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
+import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
+import { TransformControls } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import type { StoreInfo, ModelDisplaySettings } from '@/data/types';
+import type { StoreInfo } from '@/data/types';
+import { loadModel, disposeModel, type ModelProps, type SceneState } from './ThreeLoad';
+import { handleClick } from './ThreeClick';
 
-export type ModelProps = {
-    modelPath?: string;
-    modelName?: string;
-    modelDetail?: string;
-    modelPrice?: string;
-    displaySettings?: ModelDisplaySettings;
-};
+export type { ModelProps };
 
 export type PipelineModuleParams = {
     storeInfo: StoreInfo | null;
@@ -28,153 +24,6 @@ export type PipelineModuleParams = {
     onLoadingProgress?: (progress: number) => void;
 };
 
-// ---- モデル読み込み ----
-async function loadModel(
-    modelProps: ModelProps,
-    state: SceneState,
-): Promise<boolean> {
-    const {
-        modelPath = '/models/denden/chicken_combo_large_comp.glb',
-        modelName = 'モデル',
-        modelDetail = '',
-        modelPrice = '',
-        displaySettings,
-    } = modelProps;
-
-    const scale = displaySettings?.scale8thWallAR ?? displaySettings?.scale ?? 2;
-    const detailPosition = displaySettings?.detailPosition ?? [0.1, 0.08, -0.03];
-    const detailCenter = displaySettings?.detailCenter ?? [0, 0.8];
-
-    try {
-        // 既存モデルを削除
-        if (state.nowModel) {
-            state.scene.remove(state.nowModel);
-            disposeModel(state.nowModel);
-            state.objectList.length = 0;
-            state.nowModel = null;
-        }
-
-        state.onLoadingChange?.(true);
-
-        // GLB ロード
-        const gltf = await state.loader.loadAsync(modelPath, (event: ProgressEvent) => {
-            if (event.lengthComputable && event.total > 0) {
-                state.onLoadingProgress?.(Math.round((event.loaded / event.total) * 100));
-            }
-        });
-        const model = gltf.scene as THREE.Group;
-        model.scale.set(scale, scale, scale);
-        model.userData.isDetail = true;
-
-        // レティクルの位置・向きにモデルを配置
-        model.position.copy(state.reticle.position);
-        model.quaternion.copy(state.reticle.quaternion);
-        model.rotateX(Math.PI / 2);
-        model.rotateY(Math.PI / 2);
-
-        state.scene.add(model);
-        state.nowModel = model;
-        state.objectList.push(model);
-
-        model.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-                state.objectList.push(child);
-            }
-        });
-
-        // 詳細パネル（CSS2DObject）作成
-        const detailDiv = document.createElement('div');
-        detailDiv.className = 'detail';
-        detailDiv.innerHTML = `
-            <h3 class="panel__name">${modelName}</h3><hr>
-            <p class="panel__desc">${modelDetail}</p>
-            <div class="panel__price" aria-label="価格">
-                <span class="food-panel__price-currency">￥</span>
-                <span class="panel__price-value">${modelPrice} 円</span>
-            </div>
-        `;
-
-        const detail = new CSS2DObject(detailDiv);
-        detail.position.set(detailPosition[0], detailPosition[1], detailPosition[2]);
-        detail.center = new THREE.Vector2(detailCenter[0], detailCenter[1]);
-        model.add(detail);
-        detail.layers.set(1);
-
-        setTimeout(() => {
-            state.onLoadingChange?.(false);
-            if (state.detailNum === 0) {
-                state.camera.layers.enable(1);
-                state.detailNum += 1;
-            }
-        }, 100);
-
-        return true;
-    } catch (error) {
-        state.onLoadingChange?.(false);
-        console.error(error);
-        return false;
-    }
-}
-
-// ---- モデルリソース解放 ----
-function disposeModel(targetModel: THREE.Group): void {
-    const detailElement = document.querySelector('.detail');
-    if (detailElement) detailElement.remove();
-
-    targetModel.traverse((obj) => {
-        const mesh = obj as THREE.Mesh;
-        mesh.geometry?.dispose?.();
-        const mat = mesh.material;
-        if (mat) {
-            if (Array.isArray(mat)) mat.forEach((m) => m.dispose?.());
-            else (mat as THREE.Material).dispose?.();
-        }
-        if ((mesh.material as THREE.MeshStandardMaterial)?.map) {
-            (mesh.material as THREE.MeshStandardMaterial).map?.dispose();
-        }
-    });
-}
-
-// ---- シーン内部状態 ----
-type SceneState = {
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
-    renderer: THREE.WebGLRenderer;
-    reticle: THREE.Mesh;
-    labelRenderer: CSS2DRenderer;
-    loader: GLTFLoader;
-    objectList: THREE.Object3D[];
-    nowModel: THREE.Group | null;
-    detailNum: number;
-    onLoadingChange?: (loading: boolean) => void;
-    onLoadingProgress?: (progress: number) => void;
-};
-
-// ---- クリックハンドラ ----
-function handleClick(event: MouseEvent, state: SceneState): void {
-    const element = event.currentTarget as HTMLElement;
-    const x = event.clientX - element.offsetLeft;
-    const y = event.clientY - element.offsetTop;
-    const w = element.offsetWidth;
-    const h = element.offsetHeight;
-
-    const mouse = new THREE.Vector2((x / w) * 2 - 1, -(y / h) * 2 + 1);
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, state.camera);
-    const intersects = raycaster.intersectObjects(state.objectList, true);
-
-    if (intersects.length > 0) {
-        event.stopPropagation();
-        let clicked = intersects[0].object;
-        while (clicked.parent && clicked !== state.nowModel) {
-            clicked = clicked.parent;
-        }
-        clicked.userData.isDetail = !clicked.userData.isDetail;
-        const el = document.querySelector('.detail') as HTMLElement | null;
-        if (el) el.style.visibility = clicked.userData.isDetail ? 'visible' : 'hidden';
-    }
-}
-
 // ---- XR8 パイプラインモジュール生成 ----
 export function initScenePipelineModule(params: PipelineModuleParams): XR8PipelineModule {
     const { storeInfo, onCameraReady, onPlaneDetected, onInitialModelLoaded, onLoadingChange, onLoadingProgress } = params;
@@ -182,7 +31,6 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
     const defaultModel = storeInfo?.firstEnvironment?.defaultModel;
     const displaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
 
-    // 状態はクロージャでカプセル化（モジュールスコープを汚染しない）
     let state: SceneState | null = null;
     let reticleShowTime: number | null = null;
     let viewNum = 0;
@@ -195,7 +43,7 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
         onStart: ({ canvas }: { canvas: HTMLCanvasElement }) => {
             const { scene, camera, renderer } = XR8.Threejs.xrScene();
 
-            // CSS2DRenderer
+            // CSS2DRenderer（視覚的オーバーレイのみ。操作は renderer.domElement で受け取る）
             const labelRenderer = new CSS2DRenderer();
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
             labelRenderer.domElement.style.position = 'absolute';
@@ -226,6 +74,14 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
             directionalLight.position.set(1, 1, 1);
             scene.add(directionalLight);
 
+            // TransformControls（renderer.domElement に接続: XR8 キャンバスがタッチを受け取る）
+            const transControls = new TransformControls(camera, renderer.domElement);
+            transControls.showY = false;
+            transControls.setMode('translate');
+            const gizmo = transControls.getHelper();
+            gizmo.visible = false;
+            scene.add(gizmo);
+
             state = {
                 scene,
                 camera,
@@ -233,17 +89,16 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
                 reticle,
                 labelRenderer,
                 loader,
+                transControls,
+                gizmo,
                 objectList: [],
                 nowModel: null,
-                detailNum: 0,
                 onLoadingChange,
                 onLoadingProgress,
             };
 
-            // クリックハンドラ登録
-            clickHandler = (e: MouseEvent) => {
-                if (state) handleClick(e, state);
-            };
+            // クリックハンドラを renderer.domElement に登録（XR8 キャンバスでタップを検出）
+            clickHandler = handleClick(state);
             renderer.domElement.addEventListener('click', clickHandler);
 
             // カメラ準備完了を通知
@@ -339,6 +194,8 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
         // モデルクリア（ThreeMain.tsx の handleClear から呼ばれる）
         clearModel: (): void => {
             if (!state || !state.nowModel) return;
+            state.transControls.detach();
+            state.gizmo.visible = false;
             state.scene.remove(state.nowModel);
             disposeModel(state.nowModel);
             state.nowModel = null;
@@ -351,6 +208,7 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
             if (clickHandler) {
                 state.renderer.domElement.removeEventListener('click', clickHandler);
             }
+            state.transControls.dispose();
             if (state.labelRenderer.domElement.parentNode) {
                 state.labelRenderer.domElement.parentNode.removeChild(state.labelRenderer.domElement);
             }

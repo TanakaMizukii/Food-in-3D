@@ -3,7 +3,7 @@
  * index.js を TypeScript 化したもの。
  * XR8 のカメラパイプラインモジュールを登録して AR を開始する。
  */
-import './xr8Types';
+import '@/types/xr8Types';
 import * as THREE from 'three';
 import type { XR8PipelineModule } from './ThreeInit';
 
