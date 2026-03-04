@@ -107,6 +107,9 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, onProgress?: (
         ctx.objectList.push(clone);
         const nowModel = clone;
 
+        ctx.transControls.attach(clone);
+        ctx.gizmo.visible = false;
+
         // 初回だけ無条件で表示を行う
         if (ctx.detailNum == 0) {
             ctx.camera.layers.enable(1);

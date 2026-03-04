@@ -104,6 +104,9 @@ export async function loadModel(
         model.add(detail);
         detail.layers.set(1);
 
+        state.transControls.attach(model);
+        state.gizmo.visible = false;
+
         setTimeout(() => {
             state.onLoadingChange?.(false);
             state.camera.layers.enable(1);
