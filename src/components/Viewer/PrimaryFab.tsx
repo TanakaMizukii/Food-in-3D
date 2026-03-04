@@ -61,7 +61,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
 
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
-        router.push(`${base}/alvaAR`);
+        router.push(`${base}/8thWallAR`);
     }
 
     const toggleExpand = () => {
