@@ -2,29 +2,45 @@ import styled from "styled-components";
 
 import { useContext } from 'react';
 import { ModelChangeContext } from "../../contexts/ModelChangeContext";
-import type { ProductModelsProps } from "@/data/types";
+import type { Category, ProductModelsProps } from "@/data/types";
 
 type ArrowsProps = {
     currentIndex: number;
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
     productModels: ProductModelsProps;
+    currentCategory: number;
+    categories: Category[];
+    productCategory: string[];
 }
 
-export default function NavArrows({currentIndex, setCurrentIndex, productModels}: ArrowsProps) {
+export default function NavArrows({currentIndex, setCurrentIndex, productModels, currentCategory, categories, productCategory}: ArrowsProps) {
     const { changeModel } = useContext(ModelChangeContext);
-    const handleItemBackChange = (index: number) => {
-        if (currentIndex > 0) {
-            setCurrentIndex(index);
-            const model = productModels[index]
-            changeModel({modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price})
-        }
+
+    const currentCategoryIndex = categories.findIndex(c => c.id === currentCategory);
+    const currentJapaneseCategoryName = productCategory[currentCategoryIndex];
+
+    const variants = productModels.map((m, i) => ({ model: m, i }))
+        .filter(({ model }) => {
+            if (currentCategory === 1) return true;
+            return model.category === currentJapaneseCategoryName;
+        });
+
+    const currentVariantIndex = variants.findIndex(v => v.i === currentIndex);
+    const prevVariant = currentVariantIndex > 0 ? variants[currentVariantIndex - 1] : null;
+    const nextVariant = currentVariantIndex < variants.length - 1 ? variants[currentVariantIndex + 1] : null;
+
+    const handleBack = () => {
+        if (!prevVariant) return;
+        setCurrentIndex(prevVariant.i);
+        const model = prevVariant.model;
+        changeModel({ modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price });
     };
-    const handleItemGoChange = (index: number) => {
-        if (productModels.length - 1) {
-            setCurrentIndex(index);
-            const model = productModels[index]
-            changeModel({modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price})
-        }
+
+    const handleGo = () => {
+        if (!nextVariant) return;
+        setCurrentIndex(nextVariant.i);
+        const model = nextVariant.model;
+        changeModel({ modelName: model.name, modelPath: model.model, modelDetail: model.description, modelPrice: model.price });
     };
 
     return(
@@ -33,18 +49,15 @@ export default function NavArrows({currentIndex, setCurrentIndex, productModels}
             <div className="nav-arrows">
                 <button
                     className="nav-arrow"
-                    onClick={() => {
-                        handleItemBackChange(currentIndex - 1);
-                    }}
-                    disabled={currentIndex === 0}
+                    onClick={handleBack}
+                    disabled={!prevVariant}
                 >
                     ◀
                 </button>
                 <button
                     className="nav-arrow"
-                    onClick={() =>
-                        handleItemGoChange(currentIndex + 1)}
-                    disabled={currentIndex === productModels.length - 1}
+                    onClick={handleGo}
+                    disabled={!nextVariant}
                 >
                     ▶
                 </button>

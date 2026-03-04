@@ -69,7 +69,7 @@ export default function ViewerPage() {
 
     return (
         <>
-        <TutorialOverlay isVisible={showTutorial} onClose={() => setShowTutorial(false)}/>
+        {/* <TutorialOverlay isVisible={showTutorial} onClose={() => setShowTutorial(false)}/> */}
         <LoadingPanel isVisible={loading} progress={loadingProgress} />
         <ModelChangeContext.Provider value={{ changeModel: wrappedChangeModel }}>
             <Root>
@@ -90,7 +90,7 @@ export default function ViewerPage() {
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.productCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
                 {/* BottomLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
