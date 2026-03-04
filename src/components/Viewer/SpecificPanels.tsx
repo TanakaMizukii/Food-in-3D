@@ -21,8 +21,9 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
     const scrollRef = useRef<HTMLDivElement>(null);
     const chipRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
     const prevCategoryRef = useRef(currentCategory);
-    const isUserScrollingRef = useRef(false);
+    const isProgrammaticScrollRef = useRef(false);
     const scrollTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+    const programmaticScrollTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
     const handleVariantChange = useCallback((index: number, model: ProductModel) => {
         setCurrentIndex(index);
@@ -47,11 +48,16 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
         const chip = chipRefs.current.get(index);
         if (!container || !chip) return;
 
+        isProgrammaticScrollRef.current = true;
+        if (programmaticScrollTimerRef.current) clearTimeout(programmaticScrollTimerRef.current);
         const containerWidth = container.offsetWidth;
         const chipLeft = chip.offsetLeft;
         const chipWidth = chip.offsetWidth;
         const scrollTo = chipLeft - containerWidth / 2 + chipWidth / 2;
         container.scrollTo({ left: scrollTo, behavior: 'smooth' });
+        programmaticScrollTimerRef.current = setTimeout(() => {
+            isProgrammaticScrollRef.current = false;
+        }, 500);
     }, []);
 
     // スクロールで中央のチップを検出して選択
@@ -60,7 +66,7 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
         if (!container) return;
 
         const handleScroll = () => {
-            isUserScrollingRef.current = true;
+            if (isProgrammaticScrollRef.current) return;
 
             if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
             scrollTimerRef.current = setTimeout(() => {
@@ -86,9 +92,10 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
                     if (variant) {
                         handleVariantChange(variant.i, variant.model);
                     }
+                } else {
+                    // 同じチップでもスクロール位置がズレていれば中央に戻す
+                    scrollToCenter(closestIndex !== -1 ? closestIndex : currentIndex);
                 }
-
-                isUserScrollingRef.current = false;
             }, 150);
         };
 
@@ -97,13 +104,11 @@ export default function SpecificPanels({currentIndex, currentCategory, setCurren
             container.removeEventListener('scroll', handleScroll);
             if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
         };
-    }, [variants, currentIndex, handleVariantChange]);
+    }, [variants, currentIndex, handleVariantChange, scrollToCenter]);
 
-    // currentIndex が変わったらチップを中央にスクロール（ユーザースクロール以外の場合のみ）
+    // currentIndex が変わったらチップを中央にスクロール（常に）
     useEffect(() => {
-        if (!isUserScrollingRef.current) {
-            scrollToCenter(currentIndex);
-        }
+        scrollToCenter(currentIndex);
     }, [currentIndex, scrollToCenter]);
 
     // カテゴリ変更後0.5秒動かなければ、そのカテゴリの最初のモデルを自動選択
