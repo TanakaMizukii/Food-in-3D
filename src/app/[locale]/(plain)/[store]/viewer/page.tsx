@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import '../App.css';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -30,9 +31,17 @@ export default function ViewerPage() {
     const storeInfo = findStoreBySlug(nowStore);
     const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
+    const searchParams = useSearchParams();
+    const modelIdParam = searchParams.get('model');
 
-    // Find initial index based on storeInfo's default model (日本語のベースメニューでマッチ)
+    // Find initial index based on URL ?model param, or storeInfo's default model (日本語のベースメニューでマッチ)
     const getInitialIndex = () => {
+        if (modelIdParam) {
+            const id = Number(modelIdParam);
+            const baseMenu = getStoreMenu(nowStore);
+            const idx = baseMenu.productModels.findIndex(p => p.id === id);
+            if (idx >= 0) return idx;
+        }
         if (!storeInfo?.firstEnvironment?.defaultModel) return 0;
         const defaultModelName = storeInfo.firstEnvironment.defaultModel.name;
         const baseMenu = getStoreMenu(nowStore);
@@ -61,6 +70,11 @@ export default function ViewerPage() {
 
     const wrappedChangeModel: ChangeModelFn = async (info) => {
         setMenuOpen(false);
+        if (info.modelName) {
+            const baseMenu = getStoreMenu(nowStore);
+            const idx = baseMenu.productModels.findIndex(p => p.name === info.modelName);
+            if (idx >= 0) setCurrentIndex(idx);
+        }
         await changeModel(info);
     };
 
@@ -96,7 +110,7 @@ export default function ViewerPage() {
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
                 {/* BottomLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
-                <PrimaryFab onOpenDetail={() => setSheetExpanded(true)} peekHeight={peekHeight} />
+                <PrimaryFab onOpenDetail={() => setSheetExpanded(true)} peekHeight={peekHeight} currentModelId={currentProduct?.id} />
             </Root>
         </ModelChangeContext.Provider>
         </>

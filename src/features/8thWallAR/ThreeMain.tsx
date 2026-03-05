@@ -151,6 +151,19 @@ export default function ThreeMain({
                 (scenePipelineRef.current as { cleanup?: () => void }).cleanup?.();
                 scenePipelineRef.current = null;
             }
+            // XR8セッションを停止（カメラとアニメーションループを終了させる）
+            try {
+                if (typeof XR8 !== 'undefined') {
+                    XR8.stop();
+                }
+            } catch (e) {
+                console.warn('XR8.stop() failed:', e);
+            }
+            // XRExtras.FullWindowCanvas が body/html に注入したスタイルをリセット
+            document.body.style.overflow = '';
+            document.body.style.margin = '';
+            document.body.style.padding = '';
+            document.documentElement.style.overflow = '';
         };
     // storeInfo が変わったときだけ再初期化
     // eslint-disable-next-line react-hooks/exhaustive-deps

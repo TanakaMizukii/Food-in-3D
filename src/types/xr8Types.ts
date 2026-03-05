@@ -41,6 +41,7 @@ declare global {
     const XR8: {
         addCameraPipelineModules(modules: XR8PipelineModule[]): void;
         run(params: { canvas: HTMLCanvasElement }): void;
+        stop(): void;
         GlTextureRenderer: { pipelineModule(): XR8PipelineModule };
         Threejs: {
             pipelineModule(): XR8PipelineModule;

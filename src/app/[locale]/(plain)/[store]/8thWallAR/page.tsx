@@ -1,7 +1,8 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -23,9 +24,44 @@ export default function EightWallARPage() {
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
-    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
+    const baseLocalizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('ar');
+    const searchParams = useSearchParams();
+
+    // URLパラメータからの初期モデル解決
+    const modelIdParam = searchParams.get('model');
+    const initialProduct = modelIdParam
+        ? storeMenu.productModels.find(p => p.id === Number(modelIdParam))
+        : undefined;
+
+    // useMemoでオブジェクト参照を安定化（毎レンダーで新規オブジェクトになると無限ループになる）
+    const localizedStoreInfo = useMemo((): typeof baseLocalizedStoreInfo => {
+        if (!modelIdParam || !baseLocalizedStoreInfo?.firstEnvironment) return baseLocalizedStoreInfo;
+        const id = Number(modelIdParam);
+        const product = storeMenu.productModels.find(p => p.id === id);
+        if (!product) return baseLocalizedStoreInfo;
+        return {
+            ...baseLocalizedStoreInfo,
+            firstEnvironment: {
+                ...baseLocalizedStoreInfo.firstEnvironment!,
+                defaultModel: {
+                    name: product.name,
+                    path: product.model,
+                    detail: product.description,
+                    price: product.price,
+                }
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modelIdParam]);
+
+    const defaultModelId = storeMenu.productModels.find(
+        p => p.name === baseLocalizedStoreInfo?.firstEnvironment?.defaultModel?.name
+    )?.id;
+    const [currentModelId, setCurrentModelId] = useState<number | undefined>(
+        initialProduct?.id ?? defaultModelId
+    );
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -83,11 +119,20 @@ const [isPlaneDetected, setIsPlaneDetected] = useState(false);
 
     const showLoading = (isPlaneDetected && !isInitialModelLoaded) || isModelLoading;
 
+    // モデル変更時にcurrentModelIdを追跡するラッパー
+    const trackedChangeModel: ChangeModelFn = useCallback(async (info) => {
+        if (info.modelName) {
+            const found = storeMenu.productModels.find(p => p.name === info.modelName);
+            if (found) setCurrentModelId(found.id);
+        }
+        await changeModel(info);
+    }, [changeModel, storeMenu.productModels]);
+
     return (
         <>
             <LoadingPanel isVisible={showLoading} text={guideText} progress={loadingProgress} />
             <GuideScanPlane />
-            <ModelChangeContext.Provider value={{ changeModel }}>
+            <ModelChangeContext.Provider value={{ changeModel: trackedChangeModel }}>
                 <ThreeMain
                     setChangeModel={setChangeModel}
                     onCameraReady={handleCameraReady}

@@ -11,9 +11,10 @@ import { requestIMUPermission } from '@/lib/useDeviceOrientation';
 type PrimaryFabProps = {
     onOpenDetail: () => void;
     peekHeight?: number;
+    currentModelId?: number;
 };
 
-export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabProps) {
+export default function PrimaryFab({ onOpenDetail, peekHeight = 0, currentModelId }: PrimaryFabProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -41,8 +42,9 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
 
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
         if (os === "android" || os === "ios") {
-            router.push(xr === "supported" ? `${base}/arView` : `${base}/arJS`);
+            router.push(xr === "supported" ? `${base}/arView${modelParam}` : `${base}/arJS${modelParam}`);
         } else {
             router.push(`${base}/viewer`);
             alert(t('desktopAlert'));
@@ -63,7 +65,8 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
 
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
-        router.push(`${base}/8thWallAR`);
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        router.push(`${base}/8thWallAR${modelParam}`);
     }
 
     const toggleExpand = () => {
