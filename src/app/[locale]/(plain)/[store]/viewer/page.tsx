@@ -85,12 +85,12 @@ export default function ViewerPage() {
                 <TopLayer>
                     <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
                     <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.jaProductCategory}/>
                 </TopLayer>
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.productCategory}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.jaProductCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
                 {/* BottomLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
