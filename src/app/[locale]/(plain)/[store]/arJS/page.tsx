@@ -1,7 +1,7 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
@@ -22,7 +22,7 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 // ページ遷移で来た場合のみリロードする（AR.jsのレイアウト問題を回避）
 const ARJS_RELOAD_KEY = 'arjs-reloaded';
 
-export default function ARjsPage() {
+function ARjsPageInner() {
     // i18nによるAR.jsのカメラ映像の位置ずれへの対処用コード
     // 本質的な根本原因は未解決
     const [isReady, setIsReady] = useState(false);
@@ -174,6 +174,14 @@ export default function ARjsPage() {
                 )}
             </ModelChangeContext.Provider>
         </MyarJS>
+    );
+}
+
+export default function ARjsPage() {
+    return (
+        <Suspense>
+            <ARjsPageInner />
+        </Suspense>
     );
 }
 

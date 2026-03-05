@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
@@ -19,7 +19,7 @@ import { useTranslations } from 'next-intl';
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-export default function ARViewPage() {
+function ARViewPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const nowStore = catchParentPathName();
@@ -124,5 +124,13 @@ export default function ARViewPage() {
             </ModelChangeContext.Provider>
         }
         </>
+    );
+}
+
+export default function ARViewPage() {
+    return (
+        <Suspense>
+            <ARViewPageInner />
+        </Suspense>
     );
 }

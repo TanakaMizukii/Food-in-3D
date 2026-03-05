@@ -1,7 +1,8 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, Suspense } from 'react';
+
 import { useSearchParams } from 'next/navigation';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
@@ -19,7 +20,7 @@ import type { ModelDisplaySettings } from '@/data/types';
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-export default function EightWallARPage() {
+function EightWallARPageInner() {
     const nowStore = catchParentPathName();
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
@@ -157,5 +158,13 @@ const [isPlaneDetected, setIsPlaneDetected] = useState(false);
                 )}
             </ModelChangeContext.Provider>
         </>
+    );
+}
+
+export default function EightWallARPage() {
+    return (
+        <Suspense>
+            <EightWallARPageInner />
+        </Suspense>
     );
 }

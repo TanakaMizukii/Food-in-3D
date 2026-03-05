@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import '../App.css';
@@ -24,7 +24,7 @@ import { findStoreBySlug } from '@/data/storeInfo';
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-export default function ViewerPage() {
+function ViewerPageInner() {
     const nowStore = catchParentPathName();
     const locale = catchLocale();
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
@@ -114,6 +114,14 @@ export default function ViewerPage() {
             </Root>
         </ModelChangeContext.Provider>
         </>
+    );
+}
+
+export default function ViewerPage() {
+    return (
+        <Suspense>
+            <ViewerPageInner />
+        </Suspense>
     );
 }
 
