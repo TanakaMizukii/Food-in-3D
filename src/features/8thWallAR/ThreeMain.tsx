@@ -109,6 +109,9 @@ export default function ThreeMain({
         const canvas = canvasRef.current;
         let mounted = true;
 
+        // XR8.run() が document.head に挿入する <style> タグを追跡するため、起動前にスナップショットを取る
+        const headStylesBefore = new Set(Array.from(document.head.querySelectorAll('style')));
+
         const init = async () => {
             // xrloaded イベントを xr.js 読み込み前に登録しておく
             // （xr.js の onload より xrloaded 発火が遅れる場合があるため Promise でラップ）
@@ -159,11 +162,12 @@ export default function ThreeMain({
             } catch (e) {
                 console.warn('XR8.stop() failed:', e);
             }
-            // XRExtras.FullWindowCanvas が body/html に注入したスタイルをリセット
-            document.body.style.overflow = '';
-            document.body.style.margin = '';
-            document.body.style.padding = '';
-            document.documentElement.style.overflow = '';
+            // XR8.run() が document.head に挿入した <style> タグを削除（body height/overflow 等の残留ルールを除去）
+            document.head.querySelectorAll('style').forEach((el) => {
+                if (!headStylesBefore.has(el)) {
+                    el.parentNode?.removeChild(el);
+                }
+            });
         };
     // storeInfo が変わったときだけ再初期化
     // eslint-disable-next-line react-hooks/exhaustive-deps
