@@ -10,7 +10,7 @@ import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo } from '@/data/storeMenus';
 import { useTranslations } from 'next-intl';
 
 import styled from "styled-components"
@@ -44,6 +44,7 @@ export default function ARjsPage() {
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
+    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('arjs');
 
@@ -119,7 +120,7 @@ export default function ARjsPage() {
                     onInitialModelLoaded={handleInitialModelLoaded}
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
-                    storeInfo={storeInfo}
+                    storeInfo={localizedStoreInfo}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />

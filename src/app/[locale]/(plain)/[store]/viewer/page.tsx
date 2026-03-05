@@ -17,7 +17,7 @@ import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/Viewer/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo, getStoreMenu } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
@@ -28,13 +28,15 @@ export default function ViewerPage() {
     const locale = catchLocale();
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
+    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
 
-    // Find initial index based on storeInfo's default model
+    // Find initial index based on storeInfo's default model (日本語のベースメニューでマッチ)
     const getInitialIndex = () => {
         if (!storeInfo?.firstEnvironment?.defaultModel) return 0;
         const defaultModelName = storeInfo.firstEnvironment.defaultModel.name;
-        const index = storeMenu.productModels.findIndex(p => p.name === defaultModelName);
+        const baseMenu = getStoreMenu(nowStore);
+        const index = baseMenu.productModels.findIndex(p => p.name === defaultModelName);
         return index >= 0 ? index : 0;
     };
 
@@ -78,7 +80,7 @@ export default function ViewerPage() {
                         setChangeModel={setChangeModel}
                         onLoadingChange={handleLoadingChange}
                         onLoadingProgress={setLoadingProgress}
-                        storeInfo={storeInfo}
+                        storeInfo={localizedStoreInfo}
                     />
                 </SceneLayer>
 

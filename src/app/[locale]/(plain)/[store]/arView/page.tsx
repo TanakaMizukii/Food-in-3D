@@ -12,7 +12,7 @@ import ARStartPanel from "@/components/StartPanel/ARStartPanel";
 import ARResetPanel from "@/components/AR/ARResetPanel";
 import ThreeMain from '@/features/WebXR/ThreeMain';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { useTranslations } from 'next-intl';
 
@@ -25,6 +25,7 @@ export default function ARViewPage() {
     const locale = catchLocale();
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
+    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('ar');
 
@@ -69,7 +70,7 @@ export default function ARViewPage() {
         :(<ARStartPanel onUpdate={handleStart} loading={loading} store={nowStore} />)}
         {start &&
             <ModelChangeContext.Provider value={{ changeModel }}>
-                <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={storeInfo} />
+                <ThreeMain setChangeModel={setChangeModel} startAR={start} onSessionEnd={handleSessionEnd} onSessionReset={handleSessionReset} storeInfo={localizedStoreInfo} />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
                 ) : (

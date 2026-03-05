@@ -87,7 +87,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
                 </button>
                 {isIOS && (
                     <BetaButton onClick={handleBetaStart}>
-                        店舗外の方(β版)
+                        {t('betaButton')}
                     </BetaButton>
                 )}
             </div>

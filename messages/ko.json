@@ -25,6 +25,7 @@
     "description": "카메라를 실행하여 실제 크기로 상품을 확인할 수 있습니다",
     "startButton": "AR 시작",
     "checking": "확인 중...",
+    "betaButton": "매장 외 이용 (β버전)",
     "desktopAlert": "데스크톱에서는 AR 표시가 불가능합니다. 스마트폰으로 이용해 주세요.",
     "cameraLoading": "카메라를 준비하고 있습니다...\n잠시만 기다려 주세요.\n\n안내가 나오면 \"허용\"을 눌러 주세요",
     "scanning": "평면을 감지 중...",

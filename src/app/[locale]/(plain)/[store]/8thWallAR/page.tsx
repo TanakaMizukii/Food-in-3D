@@ -10,7 +10,7 @@ import GuideScanPlane from '@/components/AR/GuideScanPlane';
 import ThreeMain from '@/features/8thWallAR/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo } from '@/data/storeMenus';
 import { useTranslations } from 'next-intl';
 
 import type { ModelDisplaySettings } from '@/data/types';
@@ -23,6 +23,7 @@ export default function EightWallARPage() {
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
+    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('ar');
 
@@ -94,7 +95,7 @@ const [isPlaneDetected, setIsPlaneDetected] = useState(false);
                     onInitialModelLoaded={handleInitialModelLoaded}
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
-                    storeInfo={storeInfo}
+                    storeInfo={localizedStoreInfo}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer
