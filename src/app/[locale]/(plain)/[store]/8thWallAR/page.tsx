@@ -111,10 +111,8 @@ const [isPlaneDetected, setIsPlaneDetected] = useState(false);
             if (openPanel) {
                 openPanel.style.display = 'flex';
             }
-            const clearObjects = document.getElementById('clear-objects');
-            const resetHit = document.getElementById('reset-hit');
-            if (clearObjects) clearObjects.style.display = 'flex';
-            if (resetHit) resetHit.style.display = 'flex';
+            const groupActions = document.getElementById('group-actions');
+            if (groupActions) groupActions.style.display = 'flex';
         }
     }, [isInitialModelLoaded, isPlaneDetected, menuDisplayMode]);
 
@@ -142,6 +140,7 @@ const [isPlaneDetected, setIsPlaneDetected] = useState(false);
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
                     storeInfo={localizedStoreInfo}
+                    currentModelId={currentModelId}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer

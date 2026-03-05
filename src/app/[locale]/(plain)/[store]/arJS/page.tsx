@@ -166,6 +166,7 @@ function ARjsPageInner() {
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
                     storeInfo={localizedStoreInfo}
+                    currentModelId={currentModelId}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />

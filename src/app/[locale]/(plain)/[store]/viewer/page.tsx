@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import '../App.css';
@@ -29,10 +29,31 @@ function ViewerPageInner() {
     const locale = catchLocale();
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
-    const localizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
+    const baseLocalizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const searchParams = useSearchParams();
     const modelIdParam = searchParams.get('model');
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const localizedStoreInfo = useMemo((): typeof baseLocalizedStoreInfo => {
+        if (!modelIdParam || !baseLocalizedStoreInfo?.firstEnvironment) return baseLocalizedStoreInfo;
+        const id = Number(modelIdParam);
+        const product = storeMenu.productModels.find(p => p.id === id);
+        if (!product) return baseLocalizedStoreInfo;
+        return {
+            ...baseLocalizedStoreInfo,
+            firstEnvironment: {
+                ...baseLocalizedStoreInfo.firstEnvironment!,
+                defaultModel: {
+                    name: product.name,
+                    path: product.model,
+                    detail: product.description,
+                    price: product.price,
+                }
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modelIdParam]);
 
     // Find initial index based on URL ?model param, or storeInfo's default model (日本語のベースメニューでマッチ)
     const getInitialIndex = () => {

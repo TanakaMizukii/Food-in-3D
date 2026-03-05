@@ -152,6 +152,7 @@ function AlvaARPageInner() {
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
                     storeInfo={localizedStoreInfo}
+                    currentModelId={currentModelId}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer

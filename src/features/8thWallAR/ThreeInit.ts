@@ -223,6 +223,7 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
             disposeModel(state.nowModel);
             state.nowModel = null;
             state.objectList.length = 0;
+            (state.reticle.material as THREE.MeshBasicMaterial).opacity = 1.0;
         },
 
         // クリーンアップ

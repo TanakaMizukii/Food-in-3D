@@ -40,6 +40,7 @@ declare global {
 
     const XR8: {
         addCameraPipelineModules(modules: XR8PipelineModule[]): void;
+        removeCameraPipelineModule(name: string): void;
         run(params: { canvas: HTMLCanvasElement }): void;
         stop(): void;
         GlTextureRenderer: { pipelineModule(): XR8PipelineModule };
@@ -51,6 +52,7 @@ declare global {
             pipelineModule(): XR8PipelineModule;
             hitTest(x: number, y: number, types?: Array<{ type: string }>): XR8HitResult[];
             updateCameraProjectionMatrix(params: XR8CameraProjectionMatrixParams): void;
+            recenter(): void;
         };
     };
 

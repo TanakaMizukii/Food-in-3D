@@ -32,6 +32,7 @@ type ThreeMainProps = {
     onLoadingChange?: (loading: boolean) => void;
     onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
+    currentModelId?: number;
 };
 
 type ScriptEntry = { src: string; attrs?: Record<string, string> };
@@ -73,6 +74,7 @@ export default function ThreeMain({
     onLoadingChange,
     onLoadingProgress,
     storeInfo,
+    currentModelId,
 }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
@@ -113,13 +115,17 @@ export default function ThreeMain({
         const headStylesBefore = new Set(Array.from(document.head.querySelectorAll('style')));
 
         const init = async () => {
-            // xrloaded イベントを xr.js 読み込み前に登録しておく
-            // （xr.js の onload より xrloaded 発火が遅れる場合があるため Promise でラップ）
+            // XR8 が未ロードの場合のみ xrloaded イベントを待つ
+            // 2回目以降は既にグローバルが存在するため即時解決
             const xrReadyPromise = new Promise<void>((resolve) => {
+                if (typeof XR8 !== 'undefined') {
+                    resolve();
+                    return;
+                }
                 window.addEventListener('xrloaded', () => resolve(), { once: true });
             });
 
-            // 外部スクリプトを順番に読み込む
+            // 外部スクリプトを順番に読み込む（既にロード済みのものはスキップ）
             for (const src of EXTERNAL_SCRIPTS) {
                 await loadScript(src);
                 if (!mounted) return;
@@ -174,7 +180,8 @@ export default function ThreeMain({
     }, [storeInfo]);
 
     const handleExit = () => {
-        router.push(`/${locale}/${nowStore}/viewer`);
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        router.push(`/${locale}/${nowStore}/viewer${modelParam}`);
     };
 
     const handleClear = () => {
@@ -184,9 +191,13 @@ export default function ThreeMain({
     };
 
     const handleReset = () => {
-        // 8th Wall では XR8 セッションを再起動することでリセット相当の操作になる
-        // シンプルにページリロードで対応
-        window.location.reload();
+        try {
+            if (typeof XR8 !== 'undefined') {
+                XR8.XrController.recenter();
+            }
+        } catch (e) {
+            console.warn('XR8.XrController.recenter() failed:', e);
+        }
     };
 
     return (
@@ -197,6 +208,7 @@ export default function ThreeMain({
                 onReset={handleReset}
                 showClearObjects={true}
                 showResetHit={true}
+                groupActions={true}
             />
             <MyCanvas id="camerafeed" ref={canvasRef} />
         </>

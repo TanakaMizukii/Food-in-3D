@@ -2,6 +2,8 @@
 
 import styled from "styled-components"
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { HiOutlineMenu, HiX } from "react-icons/hi";
 
 interface ARHelperProps {
     onExit: () => void;
@@ -9,10 +11,12 @@ interface ARHelperProps {
     onReset?: () => void;
     showClearObjects: boolean;
     showResetHit: boolean;
+    groupActions?: boolean;
 }
 
-export default function ARHelper({ onExit, onClear, onReset, showClearObjects, showResetHit }: ARHelperProps) {
+export default function ARHelper({ onExit, onClear, onReset, showClearObjects, showResetHit, groupActions }: ARHelperProps) {
     const t = useTranslations('arHelper');
+    const [expanded, setExpanded] = useState(false);
 
     return(
         // <!-- AR中のUI -->
@@ -23,17 +27,47 @@ export default function ARHelper({ onExit, onClear, onReset, showClearObjects, s
             </div>
 
             <button id="exit-button" className="send-viewer-button" onClick={onExit}>{t('backToViewer')}</button>
-            {showClearObjects && (
-                <div id="clear-objects" className="clear-objects">
-                    <button id="clear-button" className="clear-button" onClick={onClear}>♻️</button>
-                    <div id="clear-text" className="clear-text">{t('clearModel')}</div>
+
+            {groupActions ? (
+                <div id="group-actions" className="group-actions" style={{ display: 'none' }}>
+                    <button
+                        className={`group-toggle-button${expanded ? ' expanded' : ''}`}
+                        onClick={() => setExpanded(v => !v)}
+                    >
+                        {expanded ? <HiX size={22} /> : <HiOutlineMenu size={22} />}
+                    </button>
+                    {expanded && (
+                        <div className="group-panel">
+                            {showClearObjects && (
+                                <div className="group-action-item">
+                                    <button className="clear-button" onClick={() => { onClear?.(); setExpanded(false); }}>♻️</button>
+                                    <div className="clear-text">{t('clearModel')}</div>
+                                </div>
+                            )}
+                            {showResetHit && (
+                                <div className="group-action-item">
+                                    <button className="reset-button" onClick={() => { onReset?.(); setExpanded(false); }}>🔎</button>
+                                    <div className="reset-text">{t('resetPlane')}</div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-            )}
-            {showResetHit && (
-                <div id="reset-hit" className="reset-hit">
-                    <button id="reset-button" className="reset-button" onClick={onReset}>🔎</button>
-                    <div id="reset-text" className="reset-text">{t('resetPlane')}</div>
-                </div>
+            ) : (
+                <>
+                    {showClearObjects && (
+                        <div id="clear-objects" className="clear-objects">
+                            <button id="clear-button" className="clear-button" onClick={onClear}>♻️</button>
+                            <div id="clear-text" className="clear-text">{t('clearModel')}</div>
+                        </div>
+                    )}
+                    {showResetHit && (
+                        <div id="reset-hit" className="reset-hit">
+                            <button id="reset-button" className="reset-button" onClick={onReset}>🔎</button>
+                            <div id="reset-text" className="reset-text">{t('resetPlane')}</div>
+                        </div>
+                    )}
+                </>
             )}
         </MyHelper>
     );
@@ -195,5 +229,62 @@ const MyHelper = styled.div`
     font-size: 14px;
     text-align: center;
     z-index: 100;
+}
+
+.group-actions {
+    position: absolute;
+    top: 110px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    z-index: 100;
+}
+
+.group-toggle-button {
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.group-toggle-button.expanded {
+    background: rgba(80, 80, 80, 0.75);
+}
+.group-toggle-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+.group-toggle-button:active {
+    transform: scale(0.95);
+}
+
+.group-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    animation: slideDown 0.18s ease;
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.group-action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 `
