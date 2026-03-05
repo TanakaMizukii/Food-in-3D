@@ -47,7 +47,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         alpha = false,
         antialias = true,
         hdrPath = '/hdr/denden/',
-        hdrFile = 'dndn_2.1_small.hdr',
+        hdrFile = 'denden_2.1_small.hdr',
         lightSettings,
     } = opts;
 
