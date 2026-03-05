@@ -137,12 +137,6 @@ const BetaButton = styled.a`
 `;
 
 const MyFabContainer = styled.div`
-    @keyframes fab-pulse {
-        0%   { transform: scale(1); }
-        50%  { transform: scale(1.10); }
-        100% { transform: scale(1); }
-    }
-
     position: absolute;
     left: 50%;
     bottom: 120px;
@@ -313,12 +307,23 @@ const MyFabContainer = styled.div`
 }
 
 /* パルスアニメーション（クリックされるまで） */
+    @keyframes fab-pulse-ar {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.20); }
+        100% { transform: scale(1); }
+    }
+    @keyframes fab-pulse-detail {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
 .primary-fab.pulsing {
-    animation: fab-pulse 1.4s ease-in-out infinite;
+    animation: fab-pulse-ar 1.4s ease-in-out infinite;
 }
 
 .detail-fab.pulsing {
-    animation: fab-pulse 1.4s ease-in-out infinite;
+    animation: fab-pulse-detail 1.4s ease-in-out infinite;
     animation-delay: 0.7s;
 }
 

@@ -139,11 +139,6 @@ export default function ARjsPage() {
     // 3. モデル切替中 (isModelLoading)
     const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded) || isModelLoading;
 
-    // リロード待機中は何も表示しない
-    if (!isReady) {
-        return <LoadingPanel isVisible={true} text={guideText} progress={loadingProgress} />;
-    }
-
     // モデル変更時にcurrentModelIdを追跡するラッパー
     const trackedChangeModel: ChangeModelFn = useCallback(async (info) => {
         if (info.modelName) {
@@ -152,6 +147,11 @@ export default function ARjsPage() {
         }
         await changeModel(info);
     }, [changeModel, storeMenu.productModels]);
+
+    // リロード待機中は何も表示しない
+    if (!isReady) {
+        return <LoadingPanel isVisible={true} text={guideText} progress={loadingProgress} />;
+    }
 
     return (
         <MyarJS>
