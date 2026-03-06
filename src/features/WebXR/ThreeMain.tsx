@@ -76,6 +76,29 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
                 ctx.renderer.xr.setReferenceSpaceType('local');
                 await ctx.renderer.xr.setSession(session);
 
+                // Hit test source をセッション初期化直後に取得（アニメーションループ外で呼ぶことが重要）
+                if (typeof session.requestHitTestSource === 'function') {
+                    try {
+                        const viewerRefSpace = await session.requestReferenceSpace('viewer');
+                        const hitTestSource = await session.requestHitTestSource({ space: viewerRefSpace });
+                        if (hitTestSource) {
+                            ctx.hitTestSource = hitTestSource;
+                            session.addEventListener('end', () => {
+                                hitTestSource.cancel();
+                                ctx.hitTestSource = null;
+                                ctx.hitTestSourceRequested = false;
+                            }, { once: true });
+                        } else {
+                            console.warn('WebXR: hit-test source が作成できませんでした');
+                        }
+                    } catch (e) {
+                        console.error('WebXR: hit-test source の取得に失敗:', e);
+                    }
+                } else {
+                    console.warn('WebXR: requestHitTestSource が利用不可（hit-test 未付与の可能性）');
+                }
+                ctx.hitTestSourceRequested = true;
+
                 setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: session } : prevCtx);
 
                 // セッション終了時の処理
@@ -131,13 +154,13 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
 
         // 毎フレーム実行部分
         threeContext.renderer.setAnimationLoop(animate);
-        async function animate(timestamp: DOMHighResTimeStamp, frame: XRFrame) {
+        function animate(timestamp: DOMHighResTimeStamp, frame: XRFrame) {
             // ヒットテスト実行関数
             updateHitTest(threeContext, frame);
-            // 初回ヒット時の処理関数
-            await handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
+            // 初回ヒット時の処理関数（fire-and-forget: viewNumRefで二重実行を防ぐ）
+            handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
 
-            // レンダリング
+            // レンダリング（XRフレーム内で同期的に実行）
             threeContext.renderer.render(threeContext.scene, threeContext.camera);
             threeContext.labelRenderer.render(threeContext.scene, threeContext.camera);
         };
@@ -189,8 +212,8 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     return (
         <>
             <GuideScanPlane />
-            <LoadingPanel progress={loadingProgress} />
-            <ARHelper onExit={handleExit} onClear={handleClear} onReset={handleReset} showClearObjects={true} showResetHit={true}/>
+            <LoadingPanel isVisible={loadingProgress !== undefined} progress={loadingProgress} />
+            <ARHelper onExit={handleExit} onClear={handleClear} onReset={handleReset} showClearObjects={true} showResetHit={true} groupActions={true} />
             <div id="wrapper" ref={containerRef} >
                 <canvas id="myCanvas" ref={canvasRef} />
             </div>
