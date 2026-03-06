@@ -86,7 +86,6 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
         controls.enableDamping = true;
         controls.dampingFactor = 0.5;
         controls.target.set(controlsTarget[0], controlsTarget[1], controlsTarget[2]);
-        console.log(controls.target);
     }
 
     // const helper = new THREE.AxesHelper(100);
