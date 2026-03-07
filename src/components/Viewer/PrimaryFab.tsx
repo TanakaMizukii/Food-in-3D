@@ -44,7 +44,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0, currentModelI
 
         const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
         if (os === "android" || os === "ios") {
-            router.push(xr === "supported" ? `${base}/arView${modelParam}` : `${base}/arJS${modelParam}`);
+            router.push(xr === "supported" ? `${base}/8thWallAR${modelParam}` : `${base}/arJS${modelParam}`);
         } else {
             router.push(`${base}/viewer`);
             alert(t('desktopAlert'));
