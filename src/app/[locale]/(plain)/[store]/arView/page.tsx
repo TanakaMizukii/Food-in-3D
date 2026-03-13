@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useMemo, Suspense } from "react";
+import { useCallback, useState, useMemo, Suspense, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
@@ -63,6 +63,10 @@ function ARViewPageInner() {
     const [currentModelId, setCurrentModelId] = useState<number | undefined>(
         initialProduct?.id ?? defaultModelId
     );
+    const currentModelIdRef = useRef(currentModelId);
+    useEffect(() => {
+        currentModelIdRef.current = currentModelId;
+    }, [currentModelId]);
 
     const [loading, setLoading] = useState(false);
     const [start, setStart] = useState(false);
@@ -90,7 +94,7 @@ function ARViewPageInner() {
         setStart(false);
         setShowARResetPanel(false);
         setLoading(false);
-        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        const modelParam = currentModelIdRef.current !== undefined ? `?model=${currentModelIdRef.current}` : '';
         router.push(`/${locale}/${nowStore}/viewer${modelParam}`);
     };
 

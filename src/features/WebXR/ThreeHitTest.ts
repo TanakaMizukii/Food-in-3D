@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { ThreeCtx } from "./ThreeInit";
-import { loadModel } from "./ThreeLoad";
 import type { RefObject } from 'react';
 import type { ModelDisplaySettings } from '@/data/types';
 
@@ -46,6 +45,7 @@ export async function handleFirstHit(
     reticleShowTimeRef: RefObject<DOMHighResTimeStamp | null>,
     viewNumRef: RefObject<number>,
     firstModelInfo?: ModelInfo,
+    onLoad?: (info: ModelInfo) => Promise<void>,
 ) {
     if (viewNumRef.current !== 0) {
         return;
@@ -71,7 +71,7 @@ export async function handleFirstHit(
         if (reticleShowTimeRef.current !== null && timestamp - reticleShowTimeRef.current > 1500) {
             viewNumRef.current = 1;
             reticleShowTimeRef.current = null;
-            await loadModel(firstModelInfo ?? {}, ctx);
+            await onLoad?.(firstModelInfo ?? {});
             // モデルロード完了後：メニューオープンガイドとアクションボタンを表示
             const openPanel = document.getElementById('menu-openGuide') || document.getElementById('compact-menu-openGuide');
             const groupActions = document.getElementById('group-actions');

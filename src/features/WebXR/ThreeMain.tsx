@@ -148,7 +148,11 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             // ヒットテスト実行関数
             updateHitTest(threeContext, frame);
             // 初回ヒット時の処理関数（fire-and-forget: viewNumRefで二重実行を防ぐ）
-            handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
+            handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo, async (info) => {
+                setLoadingProgress(0);
+                await loadModel(info, threeContext, setLoadingProgress);
+                setLoadingProgress(undefined);
+            });
 
             // XRセッション中かつXRフレームがない場合はスキップ
             // isPresenting より getSession() の方がタイミング的に信頼性が高い
