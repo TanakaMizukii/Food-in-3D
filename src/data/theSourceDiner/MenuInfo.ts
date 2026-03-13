@@ -32,7 +32,7 @@ export const productModels: ProductModelsProps = [
         description: '旬の春野菜をたっぷり使ったクリームチャウダー風の濃厚ソースが、もちもちのフィットチーネに絡み合う至高のパスタ！\n野菜の甘みとクリーミーなソースのハーモニーをお楽しみください。',
         minDetail: '春野菜×濃厚クリームソース!',
         image: '/images/theSourceDiner/3月マンスリーパスタ.jpg',
-        model: '/models/theSourceDiner/pasta_monthly_mar_set_std_video_comp2.glb',
+        model: '/models/theSourceDiner/pasta_monthly_mar_set_std_video_comp3.glb',
         serving: '1人前',
         part: '春野菜・フィットチーネ',
         origin: null,

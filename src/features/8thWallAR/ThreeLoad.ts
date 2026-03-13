@@ -106,10 +106,10 @@ export async function loadModel(
 
         state.transControls.attach(model);
         state.gizmo.visible = false;
+        state.camera.layers.disable(1);
 
         setTimeout(() => {
             state.onLoadingChange?.(false);
-            state.camera.layers.enable(1);
         }, 100);
 
         return true;

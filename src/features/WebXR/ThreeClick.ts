@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import type { ThreeCtx } from './ThreeInit';
 
-// クリックするたびに 0→1→2→0... とサイクルする:
+// クリックするたびに 0→1→2→3→0... とサイクルする:
 //   0: 詳細パネル表示・ギズモ非表示
-//   1: 詳細パネル非表示・ギズモ表示（水平移動）
-//   2: 詳細パネル・ギズモ非表示（観察モード）
+//   1: 詳細パネル非表示・Y軸回転ギズモ表示
+//   2: 詳細パネル非表示・水平移動ギズモ表示
+//   3: 詳細パネル・ギズモ非表示（観察モード）
 //   空白クリック: 全解除
 //
 // attach()/detach() は ThreeClick.ts では使用しない。
@@ -15,6 +16,17 @@ function applyClickState(_clickedObject: THREE.Object3D, ctx: ThreeCtx, clickSta
         ctx.gizmo.visible = false;
         ctx.camera.layers.enable(1);
     } else if (clickState === 1) {
+        ctx.transControls.setMode('rotate');
+        ctx.transControls.showX = false;
+        ctx.transControls.showY = true;
+        ctx.transControls.showZ = false;
+        ctx.gizmo.visible = true;
+        ctx.camera.layers.disable(1);
+    } else if (clickState === 2) {
+        ctx.transControls.setMode('translate');
+        ctx.transControls.showX = true;
+        ctx.transControls.showY = false;
+        ctx.transControls.showZ = true;
         ctx.gizmo.visible = true;
         ctx.camera.layers.disable(1);
     } else {
@@ -54,7 +66,7 @@ export function handleClick(ctx: ThreeCtx) {
                 clickedObject.userData.clickCount = 0;
             } else {
                 const prev = clickedObject.userData.clickCount ?? 0;
-                clickedObject.userData.clickCount = (prev + 1) % 3;
+                clickedObject.userData.clickCount = (prev + 1) % 4;
             }
 
             applyClickState(clickedObject, ctx, clickedObject.userData.clickCount);

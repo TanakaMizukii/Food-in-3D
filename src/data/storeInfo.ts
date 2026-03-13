@@ -92,7 +92,7 @@ const storeInfo: StoreInfo[] = [
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
                 name: '春野菜のクリームチャウダー風　クリームソースフィットチーネ',
-                path: '/models/theSourceDiner/pasta_monthly_mar_set_std_video_comp2.glb',
+                path: '/models/theSourceDiner/pasta_monthly_mar_set_std_video_comp3.glb',
                 detail: '旬の春野菜をたっぷり使ったクリームチャウダー風の濃厚ソースが、もちもちのフィットチーネに絡み合う至高のパスタ！\n野菜の甘みとクリーミーなソースのハーモニーをお楽しみください。',
                 price: '1,760',
             },

@@ -22,7 +22,6 @@ export type ThreeCtx = {
     loader: GLTFLoader;
     mouse: THREE.Vector2;
     raycaster: THREE.Raycaster;
-    detailNum: number;
     objectList: THREE.Object3D[];
     hitTestSource: XRHitTestSource | null;
     hitTestSourceRequested: boolean;
@@ -121,7 +120,6 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     const mouse = new THREE.Vector2(-100, -100); // 初期値を画面外に設定
     // レイキャストの作成(初期値の設定)
     const raycaster = new THREE.Raycaster();
-    const detailNum = 0;
     const objectList: THREE.Object3D[] = [];
     const currentSession = undefined;
     const hitTestSource = null;
@@ -158,7 +156,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     });
 
     return { renderer, scene, camera, labelRenderer, loader, reticle, transControls, gizmo,
-        mouse, raycaster, detailNum, objectList, currentSession, hitTestSource, hitTestSourceRequested,
+        mouse, raycaster, objectList, currentSession, hitTestSource, hitTestSourceRequested,
         controller, dispose,
     };
 }
