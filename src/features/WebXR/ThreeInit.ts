@@ -114,7 +114,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     transControls.showY = false;
     const gizmo = transControls.getHelper();
     scene.add(gizmo); // gizmoをシーンに追加
-    transControls.setMode('translate'); // モードを「移動」に固定
+    transControls.setMode('translate');
     gizmo.visible = false; // gizmoを初期状態で非表示に
 
     // マウスの位置を格納するベクトルを作成
