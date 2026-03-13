@@ -44,7 +44,7 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0, currentModelI
 
         const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
         if (os === "android" || os === "ios") {
-            router.push(xr === "supported" ? `${base}/8thWallAR${modelParam}` : `${base}/arJS${modelParam}`);
+            router.push(xr === "supported" ? `${base}/arView${modelParam}` : `${base}/8thWallAR${modelParam}`);
         } else {
             router.push(`${base}/viewer`);
             alert(t('desktopAlert'));
@@ -88,11 +88,11 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0, currentModelI
                 <button className="ar-start-button" onClick={handleARStart} disabled={isLoading}>
                     {isLoading ? t('checking') : t('startButton')}
                 </button>
-                {isIOS && (
+                {/* {isIOS && (
                     <BetaButton onClick={handleBetaStart}>
                         {t('betaButton')}
                     </BetaButton>
-                )}
+                )} */}
             </div>
 
             {/* ボタン行: AR FAB + 虫眼鏡 */}

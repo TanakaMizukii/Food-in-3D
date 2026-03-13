@@ -171,6 +171,10 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
         return () => {
             cancelled = true;
             if (threeContext) {
+                // アニメーションループを先に停止（dispose前に必須）
+                // 停止しないとキャンバスがDOMから除去されてコンテキストロスト後も
+                // ループが走り続け、WebGLエラーを大量発生させる
+                threeContext.renderer.setAnimationLoop(null);
                 if (stopAutoRotateHandler) {
                     threeContext.controls?.removeEventListener('start', stopAutoRotateHandler);
                 }

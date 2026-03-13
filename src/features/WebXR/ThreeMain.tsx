@@ -31,7 +31,6 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
     const reticleShowTimeRef = useRef<DOMHighResTimeStamp | null>(null);
     const viewNumRef = useRef<number>(0);
-    const inFlightRef = useRef(false);
     const reset = useRef(false);
 
     // 店舗のmodelDisplaySettingsを取得
@@ -56,20 +55,13 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     }, [changeModel, setChangeModel]);
 
     useEffect(() => {
-        if (!startAR || !ctx || ctx.currentSession) return;
-        if (inFlightRef.current) return;
-        inFlightRef.current = true;
+        if (!startAR || !ctx) return;
+
+        // 既にセッションが存在する場合はスキップ
+        if (ctx.renderer.xr.getSession()) return;
 
         (async () => {
             try {
-                // 既にRenderer側にセッションがあれば再利用 or 何もしない
-                const existing = ctx.renderer?.xr?.getSession?.();
-                if (existing) {
-                    // 必要ならctx.currentSession に同期だけ取る
-                    setCtx(prev => prev ? { ...prev, currentSession: existing } : prev);
-                    return;
-                }
-
                 const session = await startARSession();
                 if (!session) return;
 
@@ -99,28 +91,26 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
                 }
                 ctx.hitTestSourceRequested = true;
 
-                setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: session } : prevCtx);
+                setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: session } : prevCtx);
 
                 // セッション終了時の処理
                 session.addEventListener('end', () => {
                     if (reset.current) {
                         handleSessionResetCleanup(ctx, reticleShowTimeRef, viewNumRef);
-                        setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: undefined } : prevCtx);
+                        setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: undefined } : prevCtx);
                         onSessionReset();
                     } else {
                         handleSessionEndCleanup(ctx, reticleShowTimeRef, viewNumRef);
-                        setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: undefined } : prevCtx);
+                        setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: undefined } : prevCtx);
                         onSessionEnd();
                     }
                 });
             } catch (error) {
                 console.error("Failed to start AR session:", error);
                 alert(error);
-            } finally {
-                inFlightRef.current = false;
             }
         })();
-    }, [startAR, ctx, onSessionEnd]);
+    }, [startAR, ctx, onSessionEnd, onSessionReset]);
 
     useEffect(() => {
         // 初期化処理
@@ -160,7 +150,9 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
             // 初回ヒット時の処理関数（fire-and-forget: viewNumRefで二重実行を防ぐ）
             handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
 
-            // レンダリング（XRフレーム内で同期的に実行）
+            // XRセッション中かつXRフレームがない場合はスキップ
+            // isPresenting より getSession() の方がタイミング的に信頼性が高い
+            if (threeContext.renderer.xr.getSession() && !frame) return;
             threeContext.renderer.render(threeContext.scene, threeContext.camera);
             threeContext.labelRenderer.render(threeContext.scene, threeContext.camera);
         };
@@ -168,6 +160,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
         return () => {
             threeContext.renderer.setAnimationLoop(null);
             threeContext.labelRenderer.domElement.removeEventListener('click', clickHandler);
+            threeContext.labelRenderer.domElement.parentNode?.removeChild(threeContext.labelRenderer.domElement);
             detach();
             threeContext.dispose();
         };

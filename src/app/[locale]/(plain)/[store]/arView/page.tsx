@@ -75,15 +75,16 @@ function ARViewPageInner() {
         setLoading(true);
         const os = getMobileOS();
         const xr = await checkImmersiveARSupport();
+        const modelParamStr = modelIdParam ? `?model=${modelIdParam}` : '';
 
         if (os === 'android' || os === 'ios') {
-            router.push(xr === 'supported' ? `/${locale}/${nowStore}/arView` : `/${locale}/${nowStore}/arJS`);
+            router.push(xr === 'supported' ? `/${locale}/${nowStore}/arView${modelParamStr}` : `/${locale}/${nowStore}/arJS${modelParamStr}`);
             if (xr === 'supported') {setStart(true)}
         } else {
             router.push(`/${locale}/${nowStore}/viewer`);
             alert(t('desktopAlert'));
         }
-    }, [router, nowStore, locale, t]);
+    }, [router, nowStore, locale, t, modelIdParam]);
 
     const handleSessionEnd = () => {
         setStart(false);
@@ -97,7 +98,7 @@ function ARViewPageInner() {
         setStart(false);
         setShowARResetPanel(true);
         setLoading(false);
-    }
+    };
 
     // モデル変更時にcurrentModelIdを追跡するラッパー
     const trackedChangeModel: ChangeModelFn = useCallback(async (info) => {
