@@ -54,7 +54,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, prevModel: THR
         if (modelPath.includes('theSourceDiner')) {
             model.traverse((obj) => {
                 if (obj instanceof THREE.Mesh) {
-                    if (obj.name = 'Plate') {
+                    if (obj.name === 'Plate') {
                         obj.geometry.computeVertexNormals();
                     } else {
                         obj.material.flatShading = true;

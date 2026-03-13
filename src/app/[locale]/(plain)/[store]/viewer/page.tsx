@@ -71,7 +71,7 @@ function ViewerPageInner() {
     };
 
     const [currentIndex, setCurrentIndex] = useState(getInitialIndex());
-    const [currentCategory, setCurrentCategory] = useState(1);
+    const [currentCategory, setCurrentCategory] = useState(storeMenu.categories[0]?.id ?? 1);
     const [loading, setLoading] = useState(true);
     const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
     const handleLoadingChange = useCallback((loading: boolean) => {

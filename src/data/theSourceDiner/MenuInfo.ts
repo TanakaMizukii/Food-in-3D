@@ -2,7 +2,7 @@ import type { Category, ProductModelsProps } from '../types';
 
 export const categories: Category[] = [
     {
-        id: 1,
+        id: 2,
         name: 'マンスリーメニュー',
         count: 2,
         description: '今月しか楽しめない商品をご覧ください！'
@@ -24,24 +24,6 @@ export const productCategory: string[] = [
 export const productModels: ProductModelsProps = [
     {
         id: 1,
-        name: 'フライドチキンバーガー　自家製食べるラー油仕立て',
-        shortName: '３月のマンスリーバーガー',
-        category: 'マンスリーメニュー',
-        price: '2,150',
-        minPrice: '2,150',
-        description: 'クリスピーに揚げたフライドチキンに、自家製の食べるラー油をたっぷりと重ねた食べ応えのある最高の一品！\nピリ辛の旨味と香ばしいチキンの食感が絶妙に絡み合う、3月限定のマンスリーバーガーです。',
-        minDetail: 'ピリ辛ラー油×サクサクチキン!',
-        image: '/images/theSourceDiner/3月マンスリーバーガー.jpg',
-        model: '/models/theSourceDiner/burger_monthly_mar_joint_std_video_comp.glb',
-        serving: '1人前',
-        part: 'フライドチキン・自家製食べるラー油',
-        origin: null,
-        recPeople: 'ピリ辛×チキンが\n好きな方',
-        recommended: '自家製食べるラー油',
-        tags: ['ピリ辛', 'フライドチキン', '食べるラー油', '期間限定']
-    },
-    {
-        id: 2,
         name: '春野菜のクリームチャウダー風　クリームソースフィットチーネ',
         shortName: '３月のマンスリーパスタ',
         category: 'マンスリーメニュー',
@@ -57,6 +39,24 @@ export const productModels: ProductModelsProps = [
         recPeople: '春野菜やクリーム系\nパスタが好きな方',
         recommended: 'パルメザンチーズ',
         tags: ['春野菜', 'クリーム', 'パスタ', '期間限定']
+    },
+    {
+        id: 2,
+        name: 'フライドチキンバーガー　自家製食べるラー油仕立て',
+        shortName: '３月のマンスリーバーガー',
+        category: 'マンスリーメニュー',
+        price: '2,150',
+        minPrice: '2,150',
+        description: 'クリスピーに揚げたフライドチキンに、自家製の食べるラー油をたっぷりと重ねた食べ応えのある最高の一品！\nピリ辛の旨味と香ばしいチキンの食感が絶妙に絡み合う、3月限定のマンスリーバーガーです。',
+        minDetail: 'ピリ辛ラー油×サクサクチキン!',
+        image: '/images/theSourceDiner/3月マンスリーバーガー.jpg',
+        model: '/models/theSourceDiner/burger_monthly_mar_joint_std_video_comp.glb',
+        serving: '1人前',
+        part: 'フライドチキン・自家製食べるラー油',
+        origin: null,
+        recPeople: 'ピリ辛×チキンが\n好きな方',
+        recommended: '自家製食べるラー油',
+        tags: ['ピリ辛', 'フライドチキン', '食べるラー油', '期間限定']
     },
     {
         id: 4,

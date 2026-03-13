@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import * as THREE from 'three';
 import { useDeviceOrientation } from "@/lib/useDeviceOrientation";
 import { initThree, attachResizeHandlers, ThreeCtx } from "./ThreeInit";
-import { loadModel } from "./ThreeLoad";
+import { loadModel, disposeModel } from "./ThreeLoad";
 import { handleClick } from "./ThreeClick";
 import type { StoreInfo, ModelDisplaySettings } from "@/data/types";
 
@@ -23,7 +23,8 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const nowModelRef = useRef<THREE.Group | null>(null);
-    const [ctx, setCtx] = useState<ThreeContext | null>(null);
+    const loadGenRef = useRef(0);
+    const ctxRef = useRef<ThreeContext | null>(null);
     const autoRotateRef = useRef(true);
 
     // IMU（端末傾き）フック
@@ -38,20 +39,44 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
     // 店舗のmodelDisplaySettingsを取得
     const storeDisplaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
 
-    const changeModel = useCallback(async (modelInfo: { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; displaySettings?: ModelDisplaySettings; }) => {
-        if (!ctx) return;
+    const changeModel = useCallback(async (modelInfo: ModelInfo) => {
+        const activeCtx = ctxRef.current;
+        if (!activeCtx) return;
+
+        // 世代カウンターをインクリメント（古い呼び出しを無効化）
+        const gen = ++loadGenRef.current;
+
+        // 前モデルを同期的にクリーンアップ（awaitより前に実行することで競合を防ぐ）
+        const prevModel = nowModelRef.current;
+        nowModelRef.current = null;
+        if (prevModel) {
+            activeCtx.scene.remove(prevModel);
+            disposeModel(prevModel);
+            activeCtx.objectList = [];
+        }
+
         onLoadingChange(true);
         // displaySettingsが渡されていない場合は店舗のmodelDisplaySettingsを使用
         const modelWithSettings = {
             ...modelInfo,
             displaySettings: modelInfo.displaySettings ?? storeDisplaySettings,
         };
-        // 新しいモデルをロード
-        const nowModel = await loadModel(modelWithSettings, ctx, nowModelRef.current, onLoadingProgress);
+        // 新しいモデルをロード（prevModelは上で除去済みなのでnullを渡す）
+        const nowModel = await loadModel(modelWithSettings, activeCtx, null, onLoadingProgress);
+
+        // 古い呼び出し結果は破棄（この間に新しいchangeModelが呼ばれた場合）
+        if (gen !== loadGenRef.current) {
+            if (nowModel) {
+                activeCtx.scene.remove(nowModel);
+                disposeModel(nowModel);
+            }
+            return;
+        }
+
         nowModelRef.current = nowModel;
         imuRotationRef.current = { x: 0, y: 0 }; // モデル切替時に IMU 回転をリセット
         onLoadingChange(false);
-    }, [ctx, onLoadingChange, onLoadingProgress, storeDisplaySettings]);
+    }, [onLoadingChange, onLoadingProgress, storeDisplaySettings]);
 
     useEffect(() => {
         setChangeModel(() => changeModel);
@@ -91,7 +116,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
             if (cancelled) { ctx.dispose(); return; }
 
             threeContext = ctx;
-            setCtx(ctx);
+            ctxRef.current = ctx;
 
             const openPanel = document.getElementById('menu-openGuide');
             if (openPanel) { openPanel.style.display = 'flex'; }
@@ -107,10 +132,10 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
                 modelPrice: firstEnvironment.defaultModel.price,
                 displaySettings: firstEnvironment.modelDisplaySettings,
             } : {};
-            onLoadingChange(true);
-            const nowModel = await loadModel(firstModel, ctx, nowModelRef.current, onLoadingProgress);
-            nowModelRef.current = nowModel;
-            onLoadingChange(false);
+            await changeModel(firstModel);
+
+            // アンマウントされていた場合は後続処理をスキップ
+            if (cancelled) return;
 
             detachResize = attachResizeHandlers(ctx, container);
 
@@ -170,6 +195,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
 
         return () => {
             cancelled = true;
+            ctxRef.current = null;
             if (threeContext) {
                 // アニメーションループを先に停止（dispose前に必須）
                 // 停止しないとキャンバスがDOMから除去されてコンテキストロスト後も
@@ -185,7 +211,7 @@ export default function ThreeMain({ setChangeModel, onLoadingChange, onLoadingPr
                 threeContext.dispose();
             }
         };
-    }, [onLoadingChange, storeInfo]);
+    }, [onLoadingChange, storeInfo, changeModel]);
 
     return (
         <>
