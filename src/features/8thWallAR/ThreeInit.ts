@@ -7,8 +7,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { KTX2Loader } from 'three/examples/jsm/Addons.js';
+import { HDRLoader } from 'three/examples/jsm/Addons.js';
 import { TransformControls } from 'three/examples/jsm/Addons.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { PMREMGenerator } from 'three';
 import type { StoreInfo } from '@/data/types';
 import { loadModel, disposeModel, type ModelProps, type SceneState } from './ThreeLoad';
 import { handleClick } from './ThreeClick';
@@ -30,6 +32,12 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
 
     const defaultModel = storeInfo?.firstEnvironment?.defaultModel;
     const displaySettings = storeInfo?.firstEnvironment?.modelDisplaySettings;
+    const hdrPath = storeInfo?.firstEnvironment?.hdrPath ?? '/hdr/denden/';
+    const hdrFile = storeInfo?.firstEnvironment?.hdrFile ?? 'denden_2.1_small.hdr';
+    const lightSettings = storeInfo?.firstEnvironment?.lightSettings;
+    const ambientLightIntensity = lightSettings?.ambientLightIntensity ?? 0.8;
+    const directionalLightIntensity = lightSettings?.directionalLightIntensity ?? 0.5;
+    const toneMappingExposure = lightSettings?.toneMappingExposure ?? 0.8;
 
     let state: SceneState | null = null;
     let reticleShowTime: number | null = null;
@@ -42,6 +50,11 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
 
         onStart: ({ canvas }: { canvas: HTMLCanvasElement }) => {
             const { scene, camera, renderer } = XR8.Threejs.xrScene();
+
+            // Blenderの見え方と合わせるための設定
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = toneMappingExposure;
 
             // CSS2DRenderer（視覚的オーバーレイのみ。操作は renderer.domElement で受け取る）
             const labelRenderer = new CSS2DRenderer();
@@ -69,10 +82,20 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
             scene.add(reticle);
 
             // ライト
-            scene.add(new THREE.AmbientLight(0xffffff, 1));
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            scene.add(new THREE.AmbientLight(0xffffff, ambientLightIntensity));
+            const directionalLight = new THREE.DirectionalLight(0xffffff, directionalLightIntensity);
             directionalLight.position.set(1, 1, 1);
             scene.add(directionalLight);
+
+            // HDR環境マップ（ARjsと同様の設定）
+            const pmrem = new PMREMGenerator(renderer);
+            new HDRLoader()
+                .setPath(hdrPath)
+                .load(hdrFile, (hdr) => {
+                    const envTex = pmrem.fromEquirectangular(hdr).texture;
+                    scene.environment = envTex;
+                    hdr.dispose();
+                });
 
             // TransformControls（renderer.domElement に接続: XR8 キャンバスがタッチを受け取る）
             const transControls = new TransformControls(camera, renderer.domElement);
@@ -200,6 +223,7 @@ export function initScenePipelineModule(params: PipelineModuleParams): XR8Pipeli
             disposeModel(state.nowModel);
             state.nowModel = null;
             state.objectList.length = 0;
+            (state.reticle.material as THREE.MeshBasicMaterial).opacity = 1.0;
         },
 
         // クリーンアップ

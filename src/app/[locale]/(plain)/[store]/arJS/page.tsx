@@ -1,7 +1,8 @@
 'use client'
 
 import '../App.css';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import MenuContainer from '@/components/Menu/MenuContainer';
 import CompactMenuContainer from '@/components/Menu/CompactMenuContainer';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -10,7 +11,7 @@ import GuideQRCode from '@/components/ARjs/GuideQRCode';
 import ThreeMain from '@/features/ARjs/ThreeMain';
 import { findStoreBySlug } from '@/data/storeInfo';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo } from '@/data/storeMenus';
 import { useTranslations } from 'next-intl';
 
 import styled from "styled-components"
@@ -21,7 +22,7 @@ type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 // ページ遷移で来た場合のみリロードする（AR.jsのレイアウト問題を回避）
 const ARJS_RELOAD_KEY = 'arjs-reloaded';
 
-export default function ARjsPage() {
+function ARjsPageInner() {
     // i18nによるAR.jsのカメラ映像の位置ずれへの対処用コード
     // 本質的な根本原因は未解決
     const [isReady, setIsReady] = useState(false);
@@ -44,8 +45,44 @@ export default function ARjsPage() {
     const locale = catchLocale();
     const storeInfo = findStoreBySlug(nowStore);
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
+    const baseLocalizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
     const t = useTranslations('arjs');
+    const searchParams = useSearchParams();
+
+    // URLパラメータからの初期モデル解決
+    const modelIdParam = searchParams.get('model');
+    const initialProduct = modelIdParam
+        ? storeMenu.productModels.find(p => p.id === Number(modelIdParam))
+        : undefined;
+
+    // useMemoでオブジェクト参照を安定化（毎レンダーで新規オブジェクトになると無限ループになる）
+    const localizedStoreInfo = useMemo((): typeof baseLocalizedStoreInfo => {
+        if (!modelIdParam || !baseLocalizedStoreInfo?.firstEnvironment) return baseLocalizedStoreInfo;
+        const id = Number(modelIdParam);
+        const product = storeMenu.productModels.find(p => p.id === id);
+        if (!product) return baseLocalizedStoreInfo;
+        return {
+            ...baseLocalizedStoreInfo,
+            firstEnvironment: {
+                ...baseLocalizedStoreInfo.firstEnvironment!,
+                defaultModel: {
+                    name: product.name,
+                    path: product.model,
+                    detail: product.description,
+                    price: product.price,
+                }
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modelIdParam]);
+
+    const defaultModelId = storeMenu.productModels.find(
+        p => p.name === baseLocalizedStoreInfo?.firstEnvironment?.defaultModel?.name
+    )?.id;
+    const [currentModelId, setCurrentModelId] = useState<number | undefined>(
+        initialProduct?.id ?? defaultModelId
+    );
 
     const [changeModel, setChangeModel] = useState<ChangeModelFn>(() => async (info: ModelInfo) => {
         console.warn("changeModel is not yet initialized", info);
@@ -102,6 +139,15 @@ export default function ARjsPage() {
     // 3. モデル切替中 (isModelLoading)
     const showLoading = !isCameraReady || (isMarkerFound && !isInitialModelLoaded) || isModelLoading;
 
+    // モデル変更時にcurrentModelIdを追跡するラッパー
+    const trackedChangeModel: ChangeModelFn = useCallback(async (info) => {
+        if (info.modelName) {
+            const found = storeMenu.productModels.find(p => p.name === info.modelName);
+            if (found) setCurrentModelId(found.id);
+        }
+        await changeModel(info);
+    }, [changeModel, storeMenu.productModels]);
+
     // リロード待機中は何も表示しない
     if (!isReady) {
         return <LoadingPanel isVisible={true} text={guideText} progress={loadingProgress} />;
@@ -111,7 +157,7 @@ export default function ARjsPage() {
         <MyarJS>
             <LoadingPanel isVisible={showLoading} text={guideText} progress={loadingProgress} />
             <GuideQRCode isVisible={isGuideVisible} />
-            <ModelChangeContext.Provider value={{ changeModel }}>
+            <ModelChangeContext.Provider value={{ changeModel: trackedChangeModel }}>
                 <ThreeMain
                     setChangeModel={setChangeModel}
                     onCameraReady={handleCameraReady}
@@ -119,7 +165,8 @@ export default function ARjsPage() {
                     onInitialModelLoaded={handleInitialModelLoaded}
                     onLoadingChange={handleLoadingChange}
                     onLoadingProgress={setLoadingProgress}
-                    storeInfo={storeInfo}
+                    storeInfo={localizedStoreInfo}
+                    currentModelId={currentModelId}
                 />
                 {menuDisplayMode === 'compact' ? (
                     <CompactMenuContainer productCategory={storeMenu.productCategory} jaCategories={storeMenu.jaProductCategory} productModels={storeMenu.productModels} />
@@ -128,6 +175,14 @@ export default function ARjsPage() {
                 )}
             </ModelChangeContext.Provider>
         </MyarJS>
+    );
+}
+
+export default function ARjsPage() {
+    return (
+        <Suspense>
+            <ARjsPageInner />
+        </Suspense>
     );
 }
 

@@ -5,7 +5,6 @@ import type { ModelDisplaySettings } from '@/data/types';
 
 export type LoadCtx = {
     nowModel?: null|THREE.Group<THREE.Object3DEventMap>;
-    detailNum?: number;
     detailDiv?: null|HTMLElement;
 }
 
@@ -109,12 +108,7 @@ export async function loadModel(Model: ModelProps, ctx: ThreeCtx, onProgress?: (
 
         ctx.transControls.attach(clone);
         ctx.gizmo.visible = false;
-
-        // 初回だけ無条件で表示を行う
-        if (ctx.detailNum == 0) {
-            ctx.camera.layers.enable(1);
-            ctx.detailNum += 1;
-        }
+        ctx.camera.layers.disable(1);
 
         ctx.loader.manager = THREE.DefaultLoadingManager;
         return nowModel;

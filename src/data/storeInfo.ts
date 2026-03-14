@@ -91,10 +91,10 @@ const storeInfo: StoreInfo[] = [
             hdrPath: '/hdr/theSourceDiner/',
             hdrFile: 'theSourceDiner_3_small.hdr',
             defaultModel: {
-                name: 'チーズバーガー',
-                path: '/models/theSourceDiner/burger_cheese_joint_std_video_comp5.glb',
-                detail: 'とろけるチーズとジューシーなパティの王道チーズバーガー。シンプルながらも素材の美味しさが引き立つ、店主こだわりの一品です。',
-                price: '1,870',
+                name: '春野菜のクリームチャウダー風　クリームソースフィットチーネ',
+                path: '/models/theSourceDiner/pasta_monthly_mar_set_std_video_comp3.glb',
+                detail: '旬の春野菜をたっぷり使ったクリームチャウダー風の濃厚ソースが、もちもちのフィットチーネに絡み合う至高のパスタ！\n野菜の甘みとクリーミーなソースのハーモニーをお楽しみください。',
+                price: '1,760',
             },
             modelDisplaySettings: {
                 scale: 1,

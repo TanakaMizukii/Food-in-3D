@@ -5,20 +5,23 @@ import { useRouter, usePathname } from "next/navigation";
 import { getMobileOS } from "@/lib/detectOS";
 import { checkImmersiveARSupport } from "@/lib/checkWebXR";
 import { useTranslations } from 'next-intl';
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { BiCommentDetail } from "react-icons/bi";
 import { requestIMUPermission } from '@/lib/useDeviceOrientation';
 
 type PrimaryFabProps = {
     onOpenDetail: () => void;
     peekHeight?: number;
+    currentModelId?: number;
 };
 
-export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabProps) {
+export default function PrimaryFab({ onOpenDetail, peekHeight = 0, currentModelId }: PrimaryFabProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isIOS, setIsIOS] = useState(false);
+    const [arPulsing, setArPulsing] = useState(true);
+    const [detailPulsing, setDetailPulsing] = useState(true);
     const t = useTranslations('ar');
 
     useEffect(() => {
@@ -39,8 +42,9 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
 
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
         if (os === "android" || os === "ios") {
-            router.push(xr === "supported" ? `${base}/arView` : `${base}/arJS`);
+            router.push(xr === "supported" ? `${base}/arView${modelParam}` : `${base}/8thWallAR${modelParam}`);
         } else {
             router.push(`${base}/viewer`);
             alert(t('desktopAlert'));
@@ -61,11 +65,18 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
 
         // ★ "/" のときだけ空にして、 "//xxx" を防ぐ
         const base = parent === "/" ? "" : parent;
-        router.push(`${base}/8thWallAR`);
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        router.push(`${base}/8thWallAR${modelParam}`);
     }
 
     const toggleExpand = () => {
+        setArPulsing(false);
         setIsExpanded(!isExpanded);
+    }
+
+    const handleOpenDetail = () => {
+        setDetailPulsing(false);
+        onOpenDetail();
     }
 
     return(
@@ -77,20 +88,20 @@ export default function PrimaryFab({ onOpenDetail, peekHeight = 0 }: PrimaryFabP
                 <button className="ar-start-button" onClick={handleARStart} disabled={isLoading}>
                     {isLoading ? t('checking') : t('startButton')}
                 </button>
-                {isIOS && (
+                {/* {isIOS && (
                     <BetaButton onClick={handleBetaStart}>
-                        店舗外の方(β版)
+                        {t('betaButton')}
                     </BetaButton>
-                )}
+                )} */}
             </div>
 
             {/* ボタン行: AR FAB + 虫眼鏡 */}
             <div className="fab-row">
-                <button className="primary-fab" onClick={toggleExpand}>
+                <button className={`primary-fab${arPulsing ? ' pulsing' : ''}`} onClick={toggleExpand}>
                     {isExpanded ? '×' : 'AR'}
                 </button>
-                <button className="detail-fab" onClick={onOpenDetail}>
-                    <HiMagnifyingGlass />
+                <button className={`detail-fab${detailPulsing ? ' pulsing' : ''}`} onClick={handleOpenDetail}>
+                    <BiCommentDetail  />
                 </button>
             </div>
         </MyFabContainer>
@@ -149,15 +160,15 @@ const MyFabContainer = styled.div`
         gap: 40px;
     }
 
-    /* 虫眼鏡FAB */
+    /* 詳細FAB */
     .detail-fab {
         width: 52px;
         height: 52px;
-        background: rgba(0,0,0,0.55);
+        background: rgba(0,0,0,0.2);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.55);
         border-radius: 50%;
-        color: rgba(255,255,255,0.9);
+        color: rgba(255,255,255, 1);
         cursor: pointer;
         transition: all 0.2s;
         pointer-events: auto;
@@ -293,6 +304,27 @@ const MyFabContainer = styled.div`
 .primary-fab:disabled {
     opacity: 0.55;
     cursor: not-allowed;
+}
+
+/* パルスアニメーション（クリックされるまで） */
+    @keyframes fab-pulse-ar {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.20); }
+        100% { transform: scale(1); }
+    }
+    @keyframes fab-pulse-detail {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+.primary-fab.pulsing {
+    animation: fab-pulse-ar 1.4s ease-in-out infinite;
+}
+
+.detail-fab.pulsing {
+    animation: fab-pulse-detail 1.4s ease-in-out infinite;
+    animation-delay: 0.7s;
 }
 
 `

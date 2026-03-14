@@ -37,6 +37,7 @@ type ThreeMainProps = {
     onLoadingChange?: (loading: boolean) => void;
     onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
+    currentModelId?: number;
 };
 
 export default function ThreeMain({
@@ -47,6 +48,7 @@ export default function ThreeMain({
     onLoadingChange,
     onLoadingProgress,
     storeInfo,
+    currentModelId,
 }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
@@ -327,7 +329,8 @@ export default function ThreeMain({
     }, [storeInfo]);
 
     const handleExit = () => {
-        router.push(`/${locale}/${nowStore}/viewer`);
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        router.push(`/${locale}/${nowStore}/viewer${modelParam}`);
     };
 
     const handleClear = () => {

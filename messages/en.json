@@ -25,6 +25,7 @@
     "description": "Launch the camera to see products at actual size",
     "startButton": "Start AR",
     "checking": "Checking...",
+    "betaButton": "Outside the store (β)",
     "desktopAlert": "AR is not available on desktop. Please use a smartphone.",
     "cameraLoading": "Preparing camera...\nPlease wait.\n\nTap \"Allow\" when prompted",
     "scanning": "Detecting surface...",
@@ -48,7 +49,7 @@
   },
   "product": {
     "serving": "Serving",
-    "part": "Cut",
+    "part": "Ingredients Used",
     "category": "Category",
     "origin": "Origin",
     "recommendedFor": "Recommended for",

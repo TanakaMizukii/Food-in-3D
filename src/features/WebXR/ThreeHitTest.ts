@@ -1,50 +1,24 @@
 import * as THREE from 'three';
 import { ThreeCtx } from "./ThreeInit";
-import { loadModel } from "./ThreeLoad";
 import type { RefObject } from 'react';
 import type { ModelDisplaySettings } from '@/data/types';
 
-export async function updateHitTest(ctx: ThreeCtx, frame: XRFrame | undefined) {
-    if (!frame) return;
+export function updateHitTest(ctx: ThreeCtx, frame: XRFrame | undefined) {
+    if (!frame || !ctx.hitTestSource) return;
 
-    const session = ctx.renderer.xr.getSession();
-    if (!session) return;
-
-    if (ctx.hitTestSourceRequested === false) {
-        ctx.hitTestSourceRequested = true;
-        try {
-            const viewerReferenceSpace = await session.requestReferenceSpace('viewer');
-            const source = await session.requestHitTestSource?.({ space: viewerReferenceSpace });
-
-            if (source) {
-                ctx.hitTestSource = source;
-                session.addEventListener('end', () => {
-                    source.cancel();
-                    ctx.hitTestSource = null;
-                    ctx.hitTestSourceRequested = false;
-                }, { once: true });
+    const hitTestResults = frame.getHitTestResults(ctx.hitTestSource);
+    if (hitTestResults.length > 0) {
+        const hit = hitTestResults[0];
+        const referenceSpace = ctx.renderer.xr.getReferenceSpace();
+        if (referenceSpace) {
+            const pose = hit.getPose(referenceSpace);
+            if (pose) {
+                ctx.reticle.visible = true;
+                ctx.reticle.matrix.fromArray(pose.transform.matrix);
             }
-        } catch (error) {
-            console.error("Could not get hit test source:", error);
-            ctx.hitTestSourceRequested = false;
         }
-    }
-
-    if (ctx.hitTestSource) {
-        const hitTestResults = frame.getHitTestResults(ctx.hitTestSource);
-        if (hitTestResults.length > 0) {
-            const hit = hitTestResults[0];
-            const referenceSpace = ctx.renderer.xr.getReferenceSpace();
-            if (referenceSpace) {
-                const pose = hit.getPose(referenceSpace);
-                if (pose) {
-                    ctx.reticle.visible = true;
-                    ctx.reticle.matrix.fromArray(pose.transform.matrix);
-                }
-            }
-        } else {
-            ctx.reticle.visible = false;
-        }
+    } else {
+        ctx.reticle.visible = false;
     }
 
     // Raycaster for reticle transparency
@@ -71,6 +45,7 @@ export async function handleFirstHit(
     reticleShowTimeRef: RefObject<DOMHighResTimeStamp | null>,
     viewNumRef: RefObject<number>,
     firstModelInfo?: ModelInfo,
+    onLoad?: (info: ModelInfo) => Promise<void>,
 ) {
     if (viewNumRef.current !== 0) {
         return;
@@ -79,22 +54,15 @@ export async function handleFirstHit(
     const isVisible = ctx.reticle.visible;
 
     if (isVisible) {
+        // 平面検出時：スキャン画面を非表示にしてメニュー・ボタンを表示
         const scanningOverlay = document.getElementById('scanning-overlay');
-        const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
-        const openPanel = document.getElementById('menu-openGuide') || document.getElementById('compact-menu-openGuide');
         const arUI = document.getElementById('ar-ui');
         const exitButton = document.getElementById('exit-button');
-        const clearObjects = document.getElementById('clear-objects');
-        const resetHit = document.getElementById('reset-hit');
-        if (scanningOverlay && menuContainer && openPanel && arUI && exitButton && clearObjects && resetHit) {
-            scanningOverlay.style.display = 'none';
-            menuContainer.style.display = 'block';
-            openPanel.style.display = 'flex';
-            arUI.style.display = 'block';
-            exitButton.style.display = 'block';
-            clearObjects.style.display = 'flex';
-            resetHit.style.display = 'flex';
-        }
+        const menuContainer = document.getElementById('menu-container') || document.getElementById('compact-menu-container');
+        if (scanningOverlay) scanningOverlay.style.display = 'none';
+        if (arUI) arUI.style.display = 'block';
+        if (exitButton) exitButton.style.display = 'block';
+        if (menuContainer) menuContainer.style.display = 'flex';
 
         if (reticleShowTimeRef.current === null) {
             reticleShowTimeRef.current = timestamp;
@@ -103,7 +71,16 @@ export async function handleFirstHit(
         if (reticleShowTimeRef.current !== null && timestamp - reticleShowTimeRef.current > 1500) {
             viewNumRef.current = 1;
             reticleShowTimeRef.current = null;
-            await loadModel(firstModelInfo ?? {}, ctx);
+            await onLoad?.(firstModelInfo ?? {});
+            // モデルロード完了後：メニューオープンガイドとアクションボタンを表示
+            const openPanel = document.getElementById('menu-openGuide') || document.getElementById('compact-menu-openGuide');
+            const groupActions = document.getElementById('group-actions');
+            const clearObjects = document.getElementById('clear-objects');
+            const resetHit = document.getElementById('reset-hit');
+            if (openPanel) openPanel.style.display = 'flex';
+            if (groupActions) groupActions.style.display = 'flex';
+            if (clearObjects) clearObjects.style.display = 'flex';
+            if (resetHit) resetHit.style.display = 'flex';
         }
     } else {
         reticleShowTimeRef.current = null;

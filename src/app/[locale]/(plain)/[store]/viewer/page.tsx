@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import styled from 'styled-components';
 import '../App.css';
 import { ModelChangeContext } from '@/contexts/ModelChangeContext';
@@ -17,29 +18,60 @@ import SideSlidePanel from '@/components/Viewer/SideSlidePanel';
 import TutorialOverlay from '@/components/Viewer/TutorialOverlay';
 import ThreeMain from '@/features/3DViewer/ThreeMain';
 import { catchParentPathName, catchLocale } from '@/lib/catchPathname';
-import { getLocalizedStoreMenu } from '@/data/storeMenus';
+import { getLocalizedStoreMenu, getLocalizedStoreInfo, getStoreMenu } from '@/data/storeMenus';
 import { findStoreBySlug } from '@/data/storeInfo';
 
 type ModelInfo = { modelName?: string; modelPath?: string; modelDetail?: string; modelPrice?: string; };
 type ChangeModelFn = (info: ModelInfo) => Promise<void>;
 
-export default function ViewerPage() {
+function ViewerPageInner() {
     const nowStore = catchParentPathName();
     const locale = catchLocale();
     const storeMenu = getLocalizedStoreMenu(nowStore, locale);
     const storeInfo = findStoreBySlug(nowStore);
+    const baseLocalizedStoreInfo = getLocalizedStoreInfo(storeInfo, storeMenu, locale);
     const menuDisplayMode = storeInfo?.menuDisplayMode ?? 'standard';
+    const searchParams = useSearchParams();
+    const modelIdParam = searchParams.get('model');
 
-    // Find initial index based on storeInfo's default model
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const localizedStoreInfo = useMemo((): typeof baseLocalizedStoreInfo => {
+        if (!modelIdParam || !baseLocalizedStoreInfo?.firstEnvironment) return baseLocalizedStoreInfo;
+        const id = Number(modelIdParam);
+        const product = storeMenu.productModels.find(p => p.id === id);
+        if (!product) return baseLocalizedStoreInfo;
+        return {
+            ...baseLocalizedStoreInfo,
+            firstEnvironment: {
+                ...baseLocalizedStoreInfo.firstEnvironment!,
+                defaultModel: {
+                    name: product.name,
+                    path: product.model,
+                    detail: product.description,
+                    price: product.price,
+                }
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modelIdParam]);
+
+    // Find initial index based on URL ?model param, or storeInfo's default model (日本語のベースメニューでマッチ)
     const getInitialIndex = () => {
+        if (modelIdParam) {
+            const id = Number(modelIdParam);
+            const baseMenu = getStoreMenu(nowStore);
+            const idx = baseMenu.productModels.findIndex(p => p.id === id);
+            if (idx >= 0) return idx;
+        }
         if (!storeInfo?.firstEnvironment?.defaultModel) return 0;
         const defaultModelName = storeInfo.firstEnvironment.defaultModel.name;
-        const index = storeMenu.productModels.findIndex(p => p.name === defaultModelName);
+        const baseMenu = getStoreMenu(nowStore);
+        const index = baseMenu.productModels.findIndex(p => p.name === defaultModelName);
         return index >= 0 ? index : 0;
     };
 
     const [currentIndex, setCurrentIndex] = useState(getInitialIndex());
-    const [currentCategory, setCurrentCategory] = useState(1);
+    const [currentCategory, setCurrentCategory] = useState(storeMenu.categories[0]?.id ?? 1);
     const [loading, setLoading] = useState(true);
     const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
     const handleLoadingChange = useCallback((loading: boolean) => {
@@ -59,6 +91,11 @@ export default function ViewerPage() {
 
     const wrappedChangeModel: ChangeModelFn = async (info) => {
         setMenuOpen(false);
+        if (info.modelName) {
+            const baseMenu = getStoreMenu(nowStore);
+            const idx = baseMenu.productModels.findIndex(p => p.name === info.modelName);
+            if (idx >= 0) setCurrentIndex(idx);
+        }
         await changeModel(info);
     };
 
@@ -78,26 +115,34 @@ export default function ViewerPage() {
                         setChangeModel={setChangeModel}
                         onLoadingChange={handleLoadingChange}
                         onLoadingProgress={setLoadingProgress}
-                        storeInfo={storeInfo}
+                        storeInfo={localizedStoreInfo}
                     />
                 </SceneLayer>
 
                 <TopLayer>
                     <TopAppBar menuOpen={menuOpen} setMenuOpen={setMenuOpen} storeName={storeInfo?.true_name}/>
                     <CategoryCarousel currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} categories={storeMenu.categories}/>
-                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.productCategory}/>
+                    <SpecificPanels currentIndex={currentIndex} currentCategory={currentCategory} setCurrentIndex={setCurrentIndex} categories={storeMenu.categories} productModels={storeMenu.productModels} productCategory={storeMenu.jaProductCategory}/>
                 </TopLayer>
 
                 <BottomLayer>
                     <SideSlidePanel menuOpen={menuOpen} setMenuOpen={setMenuOpen} productModels={storeMenu.productModels} jaCategories={storeMenu.jaProductCategory} translatedCategories={storeMenu.productCategory} menuDisplayMode={menuDisplayMode}/>
-                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.productCategory}/>
+                    <NavArrows currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} productModels={storeMenu.productModels} currentCategory={currentCategory} categories={storeMenu.categories} productCategory={storeMenu.jaProductCategory}/>
                     <BottomSheet currentProduct={currentProduct} sheetExpanded={sheetExpanded} setSheetExpanded={setSheetExpanded} onPeekHeightChange={setPeekHeight}/>
                 </BottomLayer>
                 {/* BottomLayerの{ pointer-events: auto } に上書きされないようRoot直下に配置。*/}
-                <PrimaryFab onOpenDetail={() => setSheetExpanded(true)} peekHeight={peekHeight} />
+                <PrimaryFab onOpenDetail={() => setSheetExpanded(true)} peekHeight={peekHeight} currentModelId={currentProduct?.id} />
             </Root>
         </ModelChangeContext.Provider>
         </>
+    );
+}
+
+export default function ViewerPage() {
+    return (
+        <Suspense>
+            <ViewerPageInner />
+        </Suspense>
     );
 }
 

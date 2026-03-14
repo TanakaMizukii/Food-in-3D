@@ -45,7 +45,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
         alpha = true, // ARでは背景を透過させるためtrue推奨
         antialias = true,
         hdrPath = '/hdr/denden/',
-        hdrFile = 'dndn_2.1_small.hdr',
+        hdrFile = 'denden_2.1_small.hdr',
         lightSettings,
     } = opts;
 
@@ -64,7 +64,6 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}, onC
     renderer.toneMappingExposure = toneMappingExposure;
 
     const scene = new THREE.Scene();
-    scene.environmentIntensity = 1.2;
     const camera = new THREE.PerspectiveCamera();
     camera.far = 0.5;
 

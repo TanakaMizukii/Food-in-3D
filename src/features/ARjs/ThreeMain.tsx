@@ -23,9 +23,10 @@ type ThreeMainProps = {
     onLoadingChange?: (loading: boolean) => void;
     onLoadingProgress?: (progress: number) => void;
     storeInfo: StoreInfo | null;
+    currentModelId?: number;
 };
 
-export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, onLoadingChange, onLoadingProgress, storeInfo }: ThreeMainProps) {
+export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismiss, onInitialModelLoaded, onLoadingChange, onLoadingProgress, storeInfo, currentModelId }: ThreeMainProps) {
     const router = useRouter();
     const nowStore = catchParentPathName();
     const locale = catchLocale();
@@ -117,7 +118,8 @@ export default function ThreeMain({ setChangeModel, onCameraReady, onGuideDismis
     }, [onCameraReady, onGuideDismiss, storeInfo]);
 
     const handleExit = () => {
-        router.push(`/${locale}/${nowStore}/viewer`);
+        const modelParam = currentModelId !== undefined ? `?model=${currentModelId}` : '';
+        router.push(`/${locale}/${nowStore}/viewer${modelParam}`);
     };
 
     return (

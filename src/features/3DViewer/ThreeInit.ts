@@ -43,7 +43,7 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
         antialias = true,
         useControls = false,
         hdrPath = '/hdr/denden/',
-        hdrFile = 'dndn_2.1_small.hdr',
+        hdrFile = 'denden_2.1_small.hdr',
         cameraPosition = [0.34, 0.77, 0.49],
         controlsTarget = [0, 0.05, 0],
         lightSettings,
@@ -86,7 +86,6 @@ export async function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {
         controls.enableDamping = true;
         controls.dampingFactor = 0.5;
         controls.target.set(controlsTarget[0], controlsTarget[1], controlsTarget[2]);
-        console.log(controls.target);
     }
 
     // const helper = new THREE.AxesHelper(100);

@@ -22,7 +22,6 @@ export type ThreeCtx = {
     loader: GLTFLoader;
     mouse: THREE.Vector2;
     raycaster: THREE.Raycaster;
-    detailNum: number;
     objectList: THREE.Object3D[];
     hitTestSource: XRHitTestSource | null;
     hitTestSourceRequested: boolean;
@@ -47,7 +46,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
         alpha = false,
         antialias = true,
         hdrPath = '/hdr/denden/',
-        hdrFile = 'dndn_2.1_small.hdr',
+        hdrFile = 'denden_2.1_small.hdr',
         lightSettings,
     } = opts;
 
@@ -114,14 +113,13 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     transControls.showY = false;
     const gizmo = transControls.getHelper();
     scene.add(gizmo); // gizmoをシーンに追加
-    transControls.setMode('translate'); // モードを「移動」に固定
+    transControls.setMode('translate');
     gizmo.visible = false; // gizmoを初期状態で非表示に
 
     // マウスの位置を格納するベクトルを作成
     const mouse = new THREE.Vector2(-100, -100); // 初期値を画面外に設定
     // レイキャストの作成(初期値の設定)
     const raycaster = new THREE.Raycaster();
-    const detailNum = 0;
     const objectList: THREE.Object3D[] = [];
     const currentSession = undefined;
     const hitTestSource = null;
@@ -158,7 +156,7 @@ export function initThree(canvas: HTMLCanvasElement, opts: InitOptions = {}): Th
     });
 
     return { renderer, scene, camera, labelRenderer, loader, reticle, transControls, gizmo,
-        mouse, raycaster, detailNum, objectList, currentSession, hitTestSource, hitTestSourceRequested,
+        mouse, raycaster, objectList, currentSession, hitTestSource, hitTestSourceRequested,
         controller, dispose,
     };
 }

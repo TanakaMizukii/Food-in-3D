@@ -1,4 +1,4 @@
-import type { ProductModelsProps, Category, StoreTranslations } from './types';
+import type { ProductModelsProps, Category, StoreTranslations, StoreInfo } from './types';
 import type { Locale } from '@/i18n/routing';
 import { getLocalizedProductsSync, getLocalizedCategoriesSync } from '@/lib/getLocalizedMenu';
 
@@ -40,6 +40,32 @@ export const defaultStoreMenu: StoreMenu = storeMenuMap['denden'];
 // 店舗スラッグからメニューを取得する関数
 export function getStoreMenu(store: string): StoreMenu {
     return storeMenuMap[store] ?? defaultStoreMenu;
+}
+
+// storeInfoのdefaultModelテキストをローカライズした新しいstoreInfoを返す
+export function getLocalizedStoreInfo(storeInfo: StoreInfo | null, storeMenu: StoreMenu, locale: Locale): StoreInfo | null {
+    if (!storeInfo || locale === 'ja') return storeInfo;
+    const defaultModel = storeInfo.firstEnvironment?.defaultModel;
+    if (!defaultModel) return storeInfo;
+
+    // 日本語のベースメニューで一致するproductを探しindexを特定
+    const baseMenu = getStoreMenu(storeInfo.use_name);
+    const baseIndex = baseMenu.productModels.findIndex(p => p.name === defaultModel.name);
+    if (baseIndex < 0) return storeInfo;
+
+    const localizedProduct = storeMenu.productModels[baseIndex];
+    return {
+        ...storeInfo,
+        firstEnvironment: {
+            ...storeInfo.firstEnvironment!,
+            defaultModel: {
+                ...defaultModel,
+                name: localizedProduct.name,
+                detail: localizedProduct.description,
+                price: localizedProduct.price,
+            },
+        },
+    };
 }
 
 // 店舗スラッグとロケールからローカライズされたメニューを取得する関数

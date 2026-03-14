@@ -31,7 +31,6 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     const [loadingProgress, setLoadingProgress] = useState<number | undefined>(undefined);
     const reticleShowTimeRef = useRef<DOMHighResTimeStamp | null>(null);
     const viewNumRef = useRef<number>(0);
-    const inFlightRef = useRef(false);
     const reset = useRef(false);
 
     // 店舗のmodelDisplaySettingsを取得
@@ -56,48 +55,62 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     }, [changeModel, setChangeModel]);
 
     useEffect(() => {
-        if (!startAR || !ctx || ctx.currentSession) return;
-        if (inFlightRef.current) return;
-        inFlightRef.current = true;
+        if (!startAR || !ctx) return;
+
+        // 既にセッションが存在する場合はスキップ
+        if (ctx.renderer.xr.getSession()) return;
 
         (async () => {
             try {
-                // 既にRenderer側にセッションがあれば再利用 or 何もしない
-                const existing = ctx.renderer?.xr?.getSession?.();
-                if (existing) {
-                    // 必要ならctx.currentSession に同期だけ取る
-                    setCtx(prev => prev ? { ...prev, currentSession: existing } : prev);
-                    return;
-                }
-
                 const session = await startARSession();
                 if (!session) return;
 
                 ctx.renderer.xr.setReferenceSpaceType('local');
                 await ctx.renderer.xr.setSession(session);
 
-                setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: session } : prevCtx);
+                // Hit test source をセッション初期化直後に取得（アニメーションループ外で呼ぶことが重要）
+                if (typeof session.requestHitTestSource === 'function') {
+                    try {
+                        const viewerRefSpace = await session.requestReferenceSpace('viewer');
+                        const hitTestSource = await session.requestHitTestSource({ space: viewerRefSpace });
+                        if (hitTestSource) {
+                            ctx.hitTestSource = hitTestSource;
+                            session.addEventListener('end', () => {
+                                hitTestSource.cancel();
+                                ctx.hitTestSource = null;
+                                ctx.hitTestSourceRequested = false;
+                            }, { once: true });
+                        } else {
+                            console.warn('WebXR: hit-test source が作成できませんでした');
+                        }
+                    } catch (e) {
+                        console.error('WebXR: hit-test source の取得に失敗:', e);
+                    }
+                } else {
+                    console.warn('WebXR: requestHitTestSource が利用不可（hit-test 未付与の可能性）');
+                }
+                ctx.hitTestSourceRequested = true;
+
+                setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: session } : prevCtx);
 
                 // セッション終了時の処理
                 session.addEventListener('end', () => {
                     if (reset.current) {
                         handleSessionResetCleanup(ctx, reticleShowTimeRef, viewNumRef);
-                        setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: undefined } : prevCtx);
+                        setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: undefined } : prevCtx);
                         onSessionReset();
                     } else {
                         handleSessionEndCleanup(ctx, reticleShowTimeRef, viewNumRef);
-                        setCtx(prevCtx => prevCtx? { ...prevCtx, currentSession: undefined } : prevCtx);
+                        setCtx(prevCtx => prevCtx ? { ...prevCtx, currentSession: undefined } : prevCtx);
                         onSessionEnd();
                     }
                 });
             } catch (error) {
                 console.error("Failed to start AR session:", error);
                 alert(error);
-            } finally {
-                inFlightRef.current = false;
             }
         })();
-    }, [startAR, ctx, onSessionEnd]);
+    }, [startAR, ctx, onSessionEnd, onSessionReset]);
 
     useEffect(() => {
         // 初期化処理
@@ -131,13 +144,19 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
 
         // 毎フレーム実行部分
         threeContext.renderer.setAnimationLoop(animate);
-        async function animate(timestamp: DOMHighResTimeStamp, frame: XRFrame) {
+        function animate(timestamp: DOMHighResTimeStamp, frame: XRFrame) {
             // ヒットテスト実行関数
             updateHitTest(threeContext, frame);
-            // 初回ヒット時の処理関数
-            await handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo);
+            // 初回ヒット時の処理関数（fire-and-forget: viewNumRefで二重実行を防ぐ）
+            handleFirstHit(threeContext, timestamp, reticleShowTimeRef, viewNumRef, firstModelInfo, async (info) => {
+                setLoadingProgress(0);
+                await loadModel(info, threeContext, setLoadingProgress);
+                setLoadingProgress(undefined);
+            });
 
-            // レンダリング
+            // XRセッション中かつXRフレームがない場合はスキップ
+            // isPresenting より getSession() の方がタイミング的に信頼性が高い
+            if (threeContext.renderer.xr.getSession() && !frame) return;
             threeContext.renderer.render(threeContext.scene, threeContext.camera);
             threeContext.labelRenderer.render(threeContext.scene, threeContext.camera);
         };
@@ -145,6 +164,7 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
         return () => {
             threeContext.renderer.setAnimationLoop(null);
             threeContext.labelRenderer.domElement.removeEventListener('click', clickHandler);
+            threeContext.labelRenderer.domElement.parentNode?.removeChild(threeContext.labelRenderer.domElement);
             detach();
             threeContext.dispose();
         };
@@ -189,8 +209,8 @@ export default function ThreeMain({ setChangeModel, startAR, onSessionEnd, onSes
     return (
         <>
             <GuideScanPlane />
-            <LoadingPanel progress={loadingProgress} />
-            <ARHelper onExit={handleExit} onClear={handleClear} onReset={handleReset} showClearObjects={true} showResetHit={true}/>
+            <LoadingPanel isVisible={loadingProgress !== undefined} progress={loadingProgress} />
+            <ARHelper onExit={handleExit} onClear={handleClear} onReset={handleReset} showClearObjects={true} showResetHit={true} groupActions={true} />
             <div id="wrapper" ref={containerRef} >
                 <canvas id="myCanvas" ref={canvasRef} />
             </div>
